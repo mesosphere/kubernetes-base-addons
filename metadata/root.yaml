@@ -1,0 +1,384 @@
+---
+awsebscsiprovisioner:
+  display_name: awsebscsiprovisioner
+  description: awsebscsiprovisioner
+  logo: awsebscsiprovisioner/logo.svg
+  category: other
+  overview: awsebscsiprovisioner/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+awsebsprovisioner:
+  display_name: awsebsprovisioner
+  description: awsebsprovisioner
+  logo: awsebsprovisioner/logo.svg
+  category: other
+  overview: awsebsprovisioner/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+azuredisk-csi-driver:
+  display_name: azuredisk-csi-driver
+  description: azuredisk-csi-driver
+  logo: azuredisk-csi-driver/logo.svg
+  category: other
+  overview: azuredisk-csi-driver/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+azurediskprovisioner:
+  display_name: azurediskprovisioner
+  description: azurediskprovisioner
+  logo: azurediskprovisioner/logo.svg
+  category: other
+  overview: azurediskprovisioner/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+cert-manager:
+  display_name: cert-manager
+  description: cert-manager
+  logo: cert-manager/logo.svg
+  category: other
+  overview: cert-manager/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+dashboard:
+  display_name: dashboard
+  description: dashboard
+  logo: dashboard/logo.svg
+  category: other
+  overview: dashboard/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+defaultstorageclass-protection:
+  display_name: defaultstorageclass-protection
+  description: defaultstorageclass-protection
+  logo: defaultstorageclass-protection/logo.svg
+  category: other
+  overview: defaultstorageclass-protection/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+dex-k8s-authenticator:
+  display_name: dex-k8s-authenticator
+  description: dex-k8s-authenticator
+  logo: dex-k8s-authenticator/logo.svg
+  category: other
+  overview: dex-k8s-authenticator/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+dex:
+  display_name: dex
+  description: dex
+  logo: dex/logo.svg
+  category: other
+  overview: dex/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+dispatch:
+  display_name: dispatch
+  description: dispatch
+  logo: dispatch/logo.svg
+  category: other
+  overview: dispatch/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+elasticsearchexporter:
+  display_name: elasticsearchexporter
+  description: elasticsearchexporter
+  logo: elasticsearchexporter/logo.svg
+  category: other
+  overview: elasticsearchexporter/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+elasticsearch:
+  display_name: elasticsearch
+  description: elasticsearch
+  logo: elasticsearch/logo.svg
+  category: other
+  overview: elasticsearch/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+external-dns:
+  display_name: external-dns
+  description: external-dns
+  logo: external-dns/logo.svg
+  category: other
+  overview: external-dns/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+flagger:
+  display_name: flagger
+  description: flagger
+  logo: flagger/logo.svg
+  category: other
+  overview: flagger/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+fluentbit:
+  display_name: fluentbit
+  description: fluentbit
+  logo: fluentbit/logo.svg
+  category: other
+  overview: fluentbit/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+gatekeeper:
+  display_name: gatekeeper
+  description: gatekeeper
+  logo: gatekeeper/logo.svg
+  category: other
+  overview: gatekeeper/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+istio:
+  display_name: istio
+  description: istio
+  logo: istio/logo.svg
+  category: other
+  overview: istio/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+kibana:
+  display_name: kibana
+  description: kibana
+  logo: kibana/logo.svg
+  category: other
+  overview: kibana/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+kommander:
+  display_name: kommander
+  description: kommander
+  logo: kommander/logo.svg
+  category: other
+  overview: kommander/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+konvoyconfig:
+  display_name: konvoyconfig
+  description: konvoyconfig
+  logo: konvoyconfig/logo.svg
+  category: other
+  overview: konvoyconfig/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+kube-oidc-proxy:
+  display_name: kube-oidc-proxy
+  description: kube-oidc-proxy
+  logo: kube-oidc-proxy/logo.svg
+  category: other
+  overview: kube-oidc-proxy/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+kudo:
+  display_name: kudo
+  description: kudo
+  logo: kudo/logo.svg
+  category: other
+  overview: kudo/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+localvolumeprovisioner:
+  display_name: localvolumeprovisioner
+  description: localvolumeprovisioner
+  logo: localvolumeprovisioner/logo.svg
+  category: other
+  overview: localvolumeprovisioner/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+metallb:
+  display_name: metallb
+  description: metallb
+  logo: metallb/logo.svg
+  category: other
+  overview: metallb/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+nvidia:
+  display_name: nvidia
+  description: nvidia
+  logo: nvidia/logo.svg
+  category: other
+  overview: nvidia/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+opsportal:
+  display_name: opsportal
+  description: opsportal
+  logo: opsportal/logo.svg
+  category: other
+  overview: opsportal/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+prometheusadapter:
+  display_name: prometheusadapter
+  description: prometheusadapter
+  logo: prometheusadapter/logo.svg
+  category: other
+  overview: prometheusadapter/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+prometheus:
+  display_name: prometheus
+  description: prometheus
+  logo: prometheus/logo.svg
+  category: other
+  overview: prometheus/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+reloader:
+  display_name: reloader
+  description: reloader
+  logo: reloader/logo.svg
+  category: other
+  overview: reloader/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+traefik-forward-auth:
+  display_name: traefik-forward-auth
+  description: traefik-forward-auth
+  logo: traefik-forward-auth/logo.svg
+  category: other
+  overview: traefik-forward-auth/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+traefik:
+  display_name: traefik
+  description: traefik
+  logo: traefik/logo.svg
+  category: other
+  overview: traefik/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+velero:
+  display_name: velero
+  description: velero
+  logo: velero/logo.svg
+  category: other
+  overview: velero/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
