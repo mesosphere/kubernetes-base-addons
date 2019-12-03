@@ -1,0 +1,29 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: awsebsprovisioner
+  labels:
+    kubeaddons.mesosphere.io/name: awsebsprovisioner
+    kubeaddons.mesosphere.io/provides: storageclass
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-1"
+    appversion.kubeaddons.mesosphere.io/awsebsprovisioner: "1.0"
+    values.chart.helm.kubeaddons.mesosphere.io/awsebsprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/stable/awsebsprovisioner/values.yaml"
+spec:
+  namespace: kube-system
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: defaultstorageclass-protection
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: false
+      values: |
+        storageclass:
+          isDefault: false
+  chartReference:
+    chart: awsebsprovisioner
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.1.5
