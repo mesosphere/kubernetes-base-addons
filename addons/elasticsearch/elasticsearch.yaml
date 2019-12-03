@@ -1,0 +1,68 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: elasticsearch
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: elasticsearch
+    # TODO: we're temporarily supporting dependency on an existing default storage class
+    # on the cluster, this hack will trigger re-queue on Addons until one exists.
+    kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/helm/charts/6bfbc8018cd4440637b07c7559d5812e4d9db34d/stable/elasticsearch/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.0
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  chartReference:
+    chart: stable/elasticsearch
+    version: 1.32.0
+    values: |
+      ---
+      client:
+        heapSize: 1024m
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 1536Mi
+      master:
+        updateStrategy:
+          type: RollingUpdate
+        heapSize: 1024m
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+            cpu: 2000m
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 1536Mi
+      data:
+        updateStrategy:
+          type: RollingUpdate
+        hooks:
+          drain:
+            enabled: false
+        heapSize: 3072m
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+            cpu: 4000m
+            memory: 8192Mi
+          requests:
+            cpu: 1000m
+            memory: 4608Mi
