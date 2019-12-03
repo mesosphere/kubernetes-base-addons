@@ -1,0 +1,38 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: flagger
+  namespace: kubeaddons-flagger
+  labels:
+    kubeaddons.mesosphere.io/name: flagger
+  annotations:
+    sidecar.istio.io/inject: "false"
+    appversion.kubeaddons.mesosphere.io/flagger: "0.19.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.19.0"
+    docs.kubeaddons.mesosphere.io/flagger: "https://docs.flagger.app/"
+    values.chart.helm.kubeaddons.mesosphere.io/flagger: "https://raw.githubusercontent.com/weaveworks/flagger/0.19.0/charts/flagger/values.yaml"
+spec:
+  namespace: kubeaddons-flagger
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: false
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: false
+    - name: azure
+      enabled: false
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: istio
+  chartReference:
+    chart: flagger
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.19.0
+    values: |
+      ---
+      meshProvider: istio
+      metricsServer: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
