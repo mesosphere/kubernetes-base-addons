@@ -1,0 +1,48 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: dashboard
+  labels:
+    kubeaddons.mesosphere.io/name: dashboard
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.10.1-1"
+    appversion.kubeaddons.mesosphere.io/dashboard: "1.10.1"
+    endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
+    docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
+    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/5e7b6640dd6b566bb136fffaca1b54da392d3074/stable/kubernetes-dashboard/values.yaml"
+spec:
+  namespace: kube-system
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: stable/kubernetes-dashboard
+    version: 1.10.1
+    values: |
+      ---
+      # so that kubectl proxy works
+      fullnameOverride: 'kubernetes-dashboard'
+      enableInsecureLogin: true
+      service:
+        externalPort: 9090
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1000Mi
+        requests:
+          cpu: 500m
+          memory: 300Mi
+      image:
+        # override the default k8s.gcr.io/kubernetes-dashboard-amd64 repositry
+        # containerd mirror functionality does not support pulling these images
+        # TODO remove once https://github.com/containerd/containerd/issues/3756 is resolved
+        repository: gcr.io/google_containers/kubernetes-dashboard-amd64
