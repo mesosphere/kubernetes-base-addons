@@ -1,0 +1,41 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: opsportal
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: opsportal
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-1"
+    appversion.kubeaddons.mesosphere.io/opsportal: "1.0.0"
+    endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
+    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/stable/opsportal/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: opsportal
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.1.19
+    values: |
+      ---
+      bearerproxy:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      landing:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
