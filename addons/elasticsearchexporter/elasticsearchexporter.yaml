@@ -1,0 +1,39 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: elasticsearchexporter
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: elasticsearchexporter
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearchexporter: "1.1.0"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearchexporter: "https://raw.githubusercontent.com/helm/charts/08fc376647d43169743dcf04f1e88a2aec9e5f3d/stable/elasticsearch-exporter/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: elasticsearch
+  chartReference:
+    chart: stable/elasticsearch-exporter
+    version: 2.1.1
+    values: |
+      ---
+      es:
+        uri: http://elasticsearch-kubeaddons-client:9200
+      service:
+        labels:
+          servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+        metricsPort:
+          name: metrics
