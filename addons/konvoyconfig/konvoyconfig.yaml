@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/konvoyconfig: "https://raw.githubusercontent.com/mesosphere/charts/173f2200647defaf67e96b32cfdbb5b6932f1fa5/staging/konvoyconfig/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true

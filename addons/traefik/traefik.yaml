@@ -17,7 +17,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/helm/charts/c7e31361a28a10e30b4143b73439080d5e9f7d8b/stable/traefik/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager

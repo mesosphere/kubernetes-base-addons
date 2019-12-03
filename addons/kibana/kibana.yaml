@@ -14,7 +14,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/helm/charts/09004fa332094693e2e5fcffe474622ba15491ae/stable/kibana/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true

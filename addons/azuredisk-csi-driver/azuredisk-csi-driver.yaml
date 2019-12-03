@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/azuredisk-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/94333f633ccb198574f55bf0618ea182c727657a/stable/azuredisk-csi-driver/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   namespace: kube-system
   cloudProvider:
     - name: azure

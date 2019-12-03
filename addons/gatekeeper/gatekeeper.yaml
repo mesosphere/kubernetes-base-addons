@@ -13,7 +13,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/f52ab9415b53aee946ff8e55a60b50be193b7ea7/staging/gatekeeper/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager

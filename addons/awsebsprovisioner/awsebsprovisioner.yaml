@@ -16,7 +16,7 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: defaultstorageclass-protection
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: false

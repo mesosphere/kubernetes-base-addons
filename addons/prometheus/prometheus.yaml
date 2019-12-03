@@ -24,7 +24,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/3bc311e3fae9d608c528433963bf67ca6827513c/staging/prometheus-operator/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true

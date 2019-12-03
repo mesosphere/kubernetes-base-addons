@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/azurediskprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/efef983665c5bb1bef0901c4db26e90a32018cc8/stable/azurediskprovisioner/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: azure
       enabled: true

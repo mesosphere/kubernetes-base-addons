@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/helm/charts/f9efc8de7dcd6f93ebacc4b321d01a5aa819cdaa/stable/fluent-bit/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true

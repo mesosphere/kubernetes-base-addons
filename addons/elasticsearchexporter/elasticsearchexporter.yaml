@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearchexporter: "https://raw.githubusercontent.com/helm/charts/08fc376647d43169743dcf04f1e88a2aec9e5f3d/stable/elasticsearch-exporter/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true

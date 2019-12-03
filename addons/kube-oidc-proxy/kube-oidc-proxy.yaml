@@ -12,7 +12,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/fb01c5b81bb77e78d3a9ff5f5d8ec4b2703c5fb4/staging/kube-oidc-proxy/values.yaml"
 spec:
   kubernetes:
-    minSupportedVersion: v1.16.3
+    minSupportedVersion: v1.15.6
   cloudProvider:
     - name: aws
       enabled: true
