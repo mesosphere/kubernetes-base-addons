@@ -1,0 +1,74 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: kube-oidc-proxy
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: kube-oidc-proxy
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-1"
+    appversion.kubeaddons.mesosphere.io/kube-oidc-proxy: "v0.1.1"
+    values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/fb01c5b81bb77e78d3a9ff5f5d8ec4b2703c5fb4/staging/kube-oidc-proxy/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.16.3
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: ingresscontroller
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: cert-manager
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: dex
+  chartReference:
+    chart: kube-oidc-proxy
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.1.7
+    values: |
+      ---
+      image:
+        repository: quay.io/jetstack/kube-oidc-proxy
+        tag: v0.1.1
+        pullPolicy: IfNotPresent
+
+      deploymentAnnotations:
+        # The certificate can change because it was rotated or different cluster
+        # DNS name has been set.
+        secret.reloader.stakater.com/reload: "traefik-kubeaddons-certificate"
+
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          ingress.kubernetes.io/protocol: https
+          traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+        path: /konvoy/api-server
+        hosts:
+          - ""
+
+      # Created by init-container
+      tls:
+        secretName: kube-oidc-proxy-kubeaddons-server-tls
+
+      oidc:
+        clientId: kube-apiserver
+        # updated by initcontainer when working with a remote dex
+        issuerUrl: https://dex-kubeaddons.kubeaddons.svc.cluster.local:8080/dex
+        usernameClaim: email
+        groupsClaim: groups
+        groupsPrefix: "oidc:"
+        # placeholder : updated by initcontainer
+        caPEM: "placeholder"
+      initContainers:
+      - name: initialize-kube-oidc-proxy
+        image: mesosphere/kubeaddons-addon-initializer:v0.0.9
+        args: ["kube-oidc-proxy"]
