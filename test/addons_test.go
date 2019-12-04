@@ -32,7 +32,6 @@ var temporarilyFilteredAddons = []string{
 	"dispatch",
 	"external-dns",
 	"flagger",
-	"fluentbit",
 	"gatekeeper",
 	"istio",
 	"kibana",
