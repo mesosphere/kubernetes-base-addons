@@ -10,7 +10,7 @@ metadata:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-1"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.0.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
-    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/stable/opsportal/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/4155f480571eaf82c64ddd63d3d334b1105d0591/stable/opsportal/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -26,14 +26,9 @@ spec:
   chartReference:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.1.19
+    version: 0.1.21
     values: |
       ---
-      bearerproxy:
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
       landing:
         resources:
           requests:
