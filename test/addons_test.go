@@ -49,6 +49,7 @@ var temporarilyFilteredAddons = []string{
 
 // TestAddons tests deployment of all addons in this repository
 func TestAddons(t *testing.T) {
+	t.Log("testing filtered addon deployment")
 	cluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
 	if err != nil {
 		t.Fatal(err)
@@ -64,7 +65,7 @@ func TestAddons(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	testAddons := []v1beta1.AddonInterface{}
+	var testAddons []v1beta1.AddonInterface
 	for _, v := range addons {
 		isFiltered := false
 		for _, filtered := range append(temporarilyFilteredAddons, environmentConciousFilteredAddons...) {
@@ -88,4 +89,42 @@ func TestAddons(t *testing.T) {
 
 	th.Validate()
 	th.Deploy()
+}
+
+func TestPrometheusDeploy(t *testing.T){
+	t.Log("testing prometheus deployment")
+	// test prometheus
+	promCluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer promCluster.Cleanup()
+
+	if err := temp.DeployController(promCluster); err != nil {
+		t.Fatal(err)
+	}
+
+	addons, err := temp.Addons("../addons/")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var testAddons []v1beta1.AddonInterface
+	for _, addon := range addons {
+		switch addon[0].GetName() {
+		case "prometheus", "prometheusadapter", "opsportal":
+			testAddons = append(testAddons, addon[0])
+		default:
+			continue
+		}
+	}
+
+	ph, err := test.NewBasicTestHarness(t, promCluster, testAddons...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ph.Cleanup()
+
+	ph.Validate()
+	ph.Deploy()
 }
