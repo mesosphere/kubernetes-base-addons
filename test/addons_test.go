@@ -1,17 +1,149 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/blang/semver"
 
-	"github.com/mesosphere/kubeaddons/api/v1beta1"
 	"github.com/mesosphere/kubeaddons/hack/temp"
+	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
 	"github.com/mesosphere/kubeaddons/pkg/test"
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
 )
 
+const defaultKubernetesVersion = "1.15.6"
+
+var addonTestingGroups = map[string][]string{
+	// general - put smaller scope, low resource addons here to be tested in batch
+	"general": []string{"dashboard", "external-dns"},
+
+	// elasticsearch - put logging addons which rely on elasticsearch here
+	"elasticsearch": []string{"elasticsearch", "elasticsearchexporter", "kibana", "fluentbit"},
+
+	// prometheus - put monitoring addons which rely on prometheus here
+	"prometheus": []string{"prometheus", "prometheusadapter", "opsportal"},
+}
+
+func TestValidateUnhandledAddons(t *testing.T) {
+	unhandled, err := findUnhandled()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(unhandled) != 0 {
+		names := make([]string, len(unhandled))
+		for _, addon := range unhandled {
+			names = append(names, addon.GetName())
+		}
+		t.Fatal(fmt.Errorf("the following addons are not handled as part of a testing group: %+v", names))
+	}
+}
+
+func TestGeneralGroup(t *testing.T) {
+	if err := testgroup(t, "general"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestElasticSearchGroup(t *testing.T) {
+	if err := testgroup(t, "elasticsearch"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPrometheusGroup(t *testing.T) {
+	if err := testgroup(t, "prometheus"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Private Functions
+// -----------------------------------------------------------------------------
+
+func testgroup(t *testing.T, groupname string) error {
+	t.Logf("testing group %s", groupname)
+	cluster, err := kind.NewCluster(semver.MustParse(defaultKubernetesVersion))
+	if err != nil {
+		return err
+	}
+	defer cluster.Cleanup()
+
+	if err := temp.DeployController(cluster); err != nil {
+		return err
+	}
+
+	addons, err := addons(addonTestingGroups[groupname]...)
+	if err != nil {
+		return err
+	}
+
+	ph, err := test.NewBasicTestHarness(t, cluster, addons...)
+	if err != nil {
+		return err
+	}
+	defer ph.Cleanup()
+
+	ph.Validate()
+	ph.Deploy()
+
+	return nil
+}
+
+func addons(names ...string) ([]v1beta1.AddonInterface, error) {
+	var testAddons []v1beta1.AddonInterface
+
+	addons, err := temp.Addons("../addons/")
+	if err != nil {
+		return testAddons, err
+	}
+
+	for _, addon := range addons {
+		for _, name := range names {
+			if addon[0].GetName() == name {
+				testAddons = append(testAddons, addon[0])
+			}
+		}
+	}
+
+	if len(testAddons) != len(names) {
+		return testAddons, fmt.Errorf("got %d addons, expected %d", len(testAddons), len(names))
+	}
+
+	return testAddons, nil
+}
+
+var disabled = []string{
+	// kudo gets tested in https://github.com/mesosphere/kubeaddons-enterprise, and is likely going to be removed from this repository.
+	// See: https://jira.mesosphere.com/browse/DCOS-61842
+	"kudo",
+
+	// the following addons need tests added
+	// See: https://jira.mesosphere.com/browse/DCOS-61664
+	"cert-manager",
+	"dex-k8s-authenticator",
+	"kube-oidc-proxy",
+	"prometheusadapter",
+	"velero",
+	"dispatch",
+	"kommander",
+	"traefik",
+	"dex",
+	"traefik-forward-auth",
+	"istio",
+	"flagger",
+	"gatekeeper",
+	"reloader",
+	"localvolumeprovisioner",
+	"defaultstorageclass-protection",
+}
+
+// environmentConciousFilteredAddons are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
+// See: https://jira.mesosphere.com/browse/DCOS-61664
 var environmentConciousFilteredAddons = []string{
+	"dex",
+	"dex-k8s-authenticator",
 	"awsebscsiprovisioner",
 	"awsebsprovisioner",
 	"azuredisk-csi-driver",
@@ -22,109 +154,38 @@ var environmentConciousFilteredAddons = []string{
 	"nvidia",
 }
 
-// TODO - only doing a couple of addons for the moment, this will be expanded upon in later iterations
-// after we've worked out some of the issues with the testing environment and addon requirements.
-var temporarilyFilteredAddons = []string{
-	"cert-manager",
-	"defaultstorageclass-protection",
-	"dex-k8s-authenticator",
-	"dex",
-	"dispatch",
-	"external-dns",
-	"flagger",
-	"gatekeeper",
-	"istio",
-	"kibana",
-	"kommander",
-	"kube-oidc-proxy",
-	"opsportal",
-	"prometheusadapter",
-	"prometheus",
-	"reloader",
-	"traefik-forward-auth",
-	"traefik",
-	"velero",
-	"kudo",
-}
-
-// TestAddons tests deployment of all addons in this repository
-func TestAddons(t *testing.T) {
-	t.Log("testing filtered addon deployment")
-	cluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer cluster.Cleanup()
-
-	if err := temp.DeployController(cluster); err != nil {
-		t.Fatal(err)
-	}
+func findUnhandled() ([]v1beta1.AddonInterface, error) {
+	var unhandled []v1beta1.AddonInterface
 
 	addons, err := temp.Addons("../addons/")
 	if err != nil {
-		t.Fatal(err)
+		return unhandled, err
 	}
 
-	var testAddons []v1beta1.AddonInterface
-	for _, v := range addons {
-		isFiltered := false
-		for _, filtered := range append(temporarilyFilteredAddons, environmentConciousFilteredAddons...) {
-			if v[0].GetName() == filtered {
-				isFiltered = true
+	for _, revisions := range addons {
+		addon := revisions[0]
+		found := false
+		for _, v := range addonTestingGroups {
+			for _, name := range v {
+				if name == addon.GetName() {
+					found = true
+				}
 			}
 		}
-		if !isFiltered {
-			// TODO - for right now, we're only testing the latest revision.
-			// We're waiting on additional features from the test harness to
-			// expand this, see https://jira.mesosphere.com/browse/DCOS-61266
-			testAddons = append(testAddons, v[0])
+		for _, name := range environmentConciousFilteredAddons {
+			if addon.GetName() == name {
+				found = true
+			}
+		}
+		for _, name := range disabled {
+			if addon.GetName() == name {
+				found = true
+			}
+		}
+		if !found {
+			unhandled = append(unhandled, addon)
 		}
 	}
 
-	th, err := test.NewBasicTestHarness(t, cluster, testAddons...)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer th.Cleanup()
-
-	th.Validate()
-	th.Deploy()
-}
-
-func TestPrometheusDeploy(t *testing.T){
-	t.Log("testing prometheus deployment")
-	// test prometheus
-	promCluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer promCluster.Cleanup()
-
-	if err := temp.DeployController(promCluster); err != nil {
-		t.Fatal(err)
-	}
-
-	addons, err := temp.Addons("../addons/")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var testAddons []v1beta1.AddonInterface
-	for _, addon := range addons {
-		switch addon[0].GetName() {
-		case "prometheus", "prometheusadapter", "opsportal":
-			testAddons = append(testAddons, addon[0])
-		default:
-			continue
-		}
-	}
-
-	ph, err := test.NewBasicTestHarness(t, promCluster, testAddons...)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer ph.Cleanup()
-
-	ph.Validate()
-	ph.Deploy()
+	return unhandled, nil
 }
