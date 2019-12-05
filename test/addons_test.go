@@ -23,6 +23,9 @@ var addonTestingGroups = map[string][]string{
 
 	// prometheus - put monitoring addons which rely on prometheus here
 	"prometheus": []string{"prometheus", "prometheusadapter", "opsportal"},
+
+	// velero - put velero related addons in here
+	"velero": []string{"velero"},
 }
 
 func TestValidateUnhandledAddons(t *testing.T) {
@@ -54,6 +57,12 @@ func TestElasticSearchGroup(t *testing.T) {
 
 func TestPrometheusGroup(t *testing.T) {
 	if err := testgroup(t, "prometheus"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestVeleroGroup(t *testing.T) {
+	if err := testgroup(t, "velero"); err != nil {
 		t.Fatal(err)
 	}
 }
