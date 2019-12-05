@@ -94,6 +94,34 @@ func TestAddons(t *testing.T) {
 	th.Deploy()
 }
 
+func TestElasticSearchDeploy(t *testing.T) {
+	t.Log("testing elasticsearch deployment")
+	cluster, err := kind.NewCluster(semver.MustParse(defaultKubernetesVersion))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cluster.Cleanup()
+
+	if err := temp.DeployController(cluster); err != nil {
+		t.Fatal(err)
+	}
+
+	addons, err := addons("elasticsearch", "elasticsearchexporter", "kibana")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ph, err := test.NewBasicTestHarness(t, cluster, addons...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ph.Cleanup()
+
+	ph.Validate()
+	ph.Deploy()
+
+}
+
 func TestPrometheusDeploy(t *testing.T) {
 	t.Log("testing prometheus deployment")
 	promCluster, err := kind.NewCluster(semver.MustParse(defaultKubernetesVersion))
