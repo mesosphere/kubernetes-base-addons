@@ -12,6 +12,8 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
 )
 
+const defaultKubernetesVersion = "1.15.6"
+
 var environmentConciousFilteredAddons = []string{
 	"awsebscsiprovisioner",
 	"awsebsprovisioner",
@@ -51,7 +53,7 @@ var temporarilyFilteredAddons = []string{
 // TestAddons tests deployment of all addons in this repository
 func TestAddons(t *testing.T) {
 	t.Log("testing filtered addon deployment")
-	cluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
+	cluster, err := kind.NewCluster(semver.MustParse(defaultKubernetesVersion))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,8 +96,7 @@ func TestAddons(t *testing.T) {
 
 func TestPrometheusDeploy(t *testing.T) {
 	t.Log("testing prometheus deployment")
-	// test prometheus
-	promCluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
+	promCluster, err := kind.NewCluster(semver.MustParse(defaultKubernetesVersion))
 	if err != nil {
 		t.Fatal(err)
 	}
