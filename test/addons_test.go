@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/blang/semver"
@@ -91,7 +92,7 @@ func TestAddons(t *testing.T) {
 	th.Deploy()
 }
 
-func TestPrometheusDeploy(t *testing.T){
+func TestPrometheusDeploy(t *testing.T) {
 	t.Log("testing prometheus deployment")
 	// test prometheus
 	promCluster, err := kind.NewCluster(semver.MustParse("1.15.6"))
@@ -104,22 +105,12 @@ func TestPrometheusDeploy(t *testing.T){
 		t.Fatal(err)
 	}
 
-	addons, err := temp.Addons("../addons/")
+	addons, err := addons("prometheus", "prometheus-adapter", "opsportal")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	var testAddons []v1beta1.AddonInterface
-	for _, addon := range addons {
-		switch addon[0].GetName() {
-		case "prometheus", "prometheusadapter", "opsportal":
-			testAddons = append(testAddons, addon[0])
-		default:
-			continue
-		}
-	}
-
-	ph, err := test.NewBasicTestHarness(t, promCluster, testAddons...)
+	ph, err := test.NewBasicTestHarness(t, promCluster, addons...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,4 +118,31 @@ func TestPrometheusDeploy(t *testing.T){
 
 	ph.Validate()
 	ph.Deploy()
+}
+
+// -----------------------------------------------------------------------------
+// Private Functions
+// -----------------------------------------------------------------------------
+
+func addons(names ...string) ([]v1beta1.AddonInterface, error) {
+	var testAddons []v1beta1.AddonInterface
+
+	addons, err := temp.Addons("../addons/")
+	if err != nil {
+		return testAddons, err
+	}
+
+	for _, addon := range addons {
+		for _, name := range names {
+			if addon[0].GetName() == name {
+				testAddons = append(testAddons, addon[0])
+			}
+		}
+	}
+
+	if len(testAddons) != len(names) {
+		return testAddons, fmt.Errorf("got %d addons, expected %d", len(testAddons), len(names))
+	}
+
+	return testAddons, nil
 }
