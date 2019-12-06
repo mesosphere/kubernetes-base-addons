@@ -62,6 +62,12 @@ func TestPrometheusGroup(t *testing.T) {
 	}
 }
 
+func TestKommanderGroup(t *testing.T) {
+	if err := testgroup(t, "kommander"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------

@@ -42,6 +42,20 @@ prometheus:
     - "dispatch"
 
 # ------------------------------------------------------------------------------
+# Kommander
+#
+# All Kommander related addons should be tested as a part of this group
+# ------------------------------------------------------------------------------
+#    "kommander": {"opsportal", "cert-manager", "defaultstorageclass-protection", "localvolumeprovisioner", "traefik", "traefik-forward-auth", "dex", "kommander"},
+
+kommander:
+    - "opsportal"
+    - "cert-manager"
+    - "defaultstorageclass-protection"
+    - "localvolumeprovisioner"
+
+
+# ------------------------------------------------------------------------------
 # Disabled
 #
 # These are Addons which tests are currently disabled for.
