@@ -4,6 +4,14 @@ In this directory you will find [go tests](https://golang.org/pkg/testing/) whic
 
 This uses the [Kubeaddons](https://github.com/mesosphere/kubeaddons) addon testing framework, which is [documented here](https://github.com/mesosphere/kubeaddons/blob/master/docs/test/framework.md).
 
+## Usage
+
+To run tests which cover the changes to your local branch against `origin/master` run:
+
+```shell
+make test
+```
+
 ## New Addon Tests
 
 When addons are added to the repository, CI will fail on validation if tests (that  pass) are not provided for them.
@@ -26,3 +34,4 @@ Where `"general"` is a testing group containing several addons to test.
 
 From here, you can expand your tests within this function.
 
+**NOTE**: specific addons may be present in _multiple_ testing groups.
