@@ -12,9 +12,9 @@ metadata:
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
     values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/5e7b6640dd6b566bb136fffaca1b54da392d3074/stable/kubernetes-dashboard/values.yaml"
 spec:
-  namespace: kube-system
   kubernetes:
     minSupportedVersion: v1.15.6
+  namespace: kube-system
   cloudProvider:
     - name: aws
       enabled: true

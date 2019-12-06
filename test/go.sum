@@ -937,8 +937,8 @@ github.com/mattn/go-sqlite3 v1.11.0/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsO
 github.com/mattn/goveralls v0.0.2/go.mod h1:8d1ZMHsd7fW6IRPKQh46F2WRpyib5/X4FOpevwGNQEw=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
-github.com/mesosphere/kubeaddons v0.6.1-0.20191205184110-8608a87abee9 h1:ofQssnHGBNq5sVmM2AdJXKl0agKmNBcgmgaF78nb77s=
-github.com/mesosphere/kubeaddons v0.6.1-0.20191205184110-8608a87abee9/go.mod h1:r0Pv1TVWywZoH84yfC2FDCZ8wwOURl2OzzkyfkbMsyo=
+github.com/mesosphere/kubeaddons v0.6.1-0.20191205191456-60012764fb31 h1:wxLr56dXfUhRX3I9iIKsfZSlpz36OUIWiHGS2wssyPg=
+github.com/mesosphere/kubeaddons v0.6.1-0.20191205191456-60012764fb31/go.mod h1:2moy3SolLcTDrgr4E7HlCL5oAuwbZyIyGExJwLg0u5U=
 github.com/microcosm-cc/bluemonday v1.0.1/go.mod h1:hsXNsILzKxV+sX77C5b8FSuKF00vh2OMYv+xgHpAMF4=
 github.com/microcosm-cc/bluemonday v1.0.2/go.mod h1:iVP4YcDBq+n/5fb23BhYFvIMq/leAFZyRl6bYmGDlGc=
 github.com/mitchellh/copystructure v1.0.0 h1:Laisrj+bAB6b/yJwB5Bt3ITZhGJdqmxquMKeZ+mmkFQ=
