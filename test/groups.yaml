@@ -18,7 +18,6 @@
 general:
     - "dashboard"
     - "external-dns"
-    -  "dispatch"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -40,6 +39,7 @@ prometheus:
     - "prometheus"
     - "prometheusadapter"
     - "opsportal"
+    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Disabled
