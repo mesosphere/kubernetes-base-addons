@@ -2,9 +2,11 @@ package test
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 
 	"github.com/blang/semver"
+	"gopkg.in/yaml.v2"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
@@ -14,15 +16,17 @@ import (
 
 const defaultKubernetesVersion = "1.15.6"
 
-var addonTestingGroups = map[string][]string{
-	// general - put smaller scope, low resource addons here to be tested in batch
-	"general": []string{"dashboard", "external-dns"},
+var addonTestingGroups = make(map[string][]string)
 
-	// elasticsearch - put logging addons which rely on elasticsearch here
-	"elasticsearch": []string{"elasticsearch", "elasticsearchexporter", "kibana", "fluentbit"},
+func init() {
+	b, err := ioutil.ReadFile("groups.yaml")
+	if err != nil {
+		panic(err)
+	}
 
-	// prometheus - put monitoring addons which rely on prometheus here
-	"prometheus": []string{"prometheus", "prometheusadapter", "opsportal"},
+	if err := yaml.Unmarshal(b, addonTestingGroups); err != nil {
+		panic(err)
+	}
 }
 
 func TestValidateUnhandledAddons(t *testing.T) {
@@ -114,46 +118,6 @@ func addons(names ...string) ([]v1beta1.AddonInterface, error) {
 	return testAddons, nil
 }
 
-var disabled = []string{
-	// kudo gets tested in https://github.com/mesosphere/kubeaddons-enterprise, and is likely going to be removed from this repository.
-	// See: https://jira.mesosphere.com/browse/DCOS-61842
-	"kudo",
-
-	// the following addons need tests added
-	// See: https://jira.mesosphere.com/browse/DCOS-61664
-	"cert-manager",
-	"dex-k8s-authenticator",
-	"kube-oidc-proxy",
-	"prometheusadapter",
-	"velero",
-	"dispatch",
-	"kommander",
-	"traefik",
-	"dex",
-	"traefik-forward-auth",
-	"istio",
-	"flagger",
-	"gatekeeper",
-	"reloader",
-	"localvolumeprovisioner",
-	"defaultstorageclass-protection",
-}
-
-// environmentConciousFilteredAddons are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
-// See: https://jira.mesosphere.com/browse/DCOS-61664
-var environmentConciousFilteredAddons = []string{
-	"dex",
-	"dex-k8s-authenticator",
-	"awsebscsiprovisioner",
-	"awsebsprovisioner",
-	"azuredisk-csi-driver",
-	"azurediskprovisioner",
-	"konvoyconfig",
-	"localvolumeprovisioner",
-	"metallb",
-	"nvidia",
-}
-
 func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	var unhandled []v1beta1.AddonInterface
 
@@ -170,16 +134,6 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 				if name == addon.GetName() {
 					found = true
 				}
-			}
-		}
-		for _, name := range environmentConciousFilteredAddons {
-			if addon.GetName() == name {
-				found = true
-			}
-		}
-		for _, name := range disabled {
-			if addon.GetName() == name {
-				found = true
 			}
 		}
 		if !found {
