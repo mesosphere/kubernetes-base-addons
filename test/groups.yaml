@@ -39,6 +39,7 @@ prometheus:
     - "prometheus"
     - "prometheusadapter"
     - "opsportal"
+    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Disabled
@@ -69,7 +70,6 @@ disabled:
     - "kube-oidc-proxy"
     - "prometheusadapter"
     - "velero"
-    - "dispatch"
     - "kommander"
     - "traefik"
     - "dex"
