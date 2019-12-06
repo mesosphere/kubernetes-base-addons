@@ -18,6 +18,7 @@
 general:
     - "dashboard"
     - "external-dns"
+    -  "dispatch"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -69,7 +70,6 @@ disabled:
     - "kube-oidc-proxy"
     - "prometheusadapter"
     - "velero"
-    - "dispatch"
     - "kommander"
     - "traefik"
     - "dex"
