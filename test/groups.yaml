@@ -41,6 +41,17 @@ prometheus:
     - "opsportal"
 
 # ------------------------------------------------------------------------------
+# Storage
+#
+# All storage related addons which do not require a specific provider should be
+# tested as a part of this group.
+# ------------------------------------------------------------------------------
+storage:
+    - "cert-manager"
+    - "localvolumeprovisioner"
+    - "defaultstorageclass-protection"
+
+# ------------------------------------------------------------------------------
 # Disabled
 #
 # These are Addons which tests are currently disabled for.
@@ -78,6 +89,4 @@ disabled:
     - "flagger"
     - "gatekeeper"
     - "reloader"
-    - "localvolumeprovisioner"
-    - "defaultstorageclass-protection"
 

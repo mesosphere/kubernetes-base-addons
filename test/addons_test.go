@@ -18,31 +18,9 @@ const defaultKubernetesVersion = "1.15.6"
 
 var addonTestingGroups = make(map[string][]string)
 
-func init() {
-	b, err := ioutil.ReadFile("groups.yaml")
-	if err != nil {
-		panic(err)
-	}
-
-	if err := yaml.Unmarshal(b, addonTestingGroups); err != nil {
-		panic(err)
-	}
-}
-
-func TestValidateUnhandledAddons(t *testing.T) {
-	unhandled, err := findUnhandled()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(unhandled) != 0 {
-		names := make([]string, len(unhandled))
-		for _, addon := range unhandled {
-			names = append(names, addon.GetName())
-		}
-		t.Fatal(fmt.Errorf("the following addons are not handled as part of a testing group: %+v", names))
-	}
-}
+// -----------------------------------------------------------------------------
+// Test Groups
+// -----------------------------------------------------------------------------
 
 func TestGeneralGroup(t *testing.T) {
 	if err := testgroup(t, "general"); err != nil {
@@ -59,6 +37,31 @@ func TestElasticSearchGroup(t *testing.T) {
 func TestPrometheusGroup(t *testing.T) {
 	if err := testgroup(t, "prometheus"); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestStorageGroup(t *testing.T) {
+	if err := testgroup(t, "storage"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Test Validations
+// -----------------------------------------------------------------------------
+
+func TestValidateUnhandledAddons(t *testing.T) {
+	unhandled, err := findUnhandled()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(unhandled) != 0 {
+		names := make([]string, len(unhandled))
+		for _, addon := range unhandled {
+			names = append(names, addon.GetName())
+		}
+		t.Fatal(fmt.Errorf("the following addons are not handled as part of a testing group: %+v", names))
 	}
 }
 
@@ -142,4 +145,15 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	}
 
 	return unhandled, nil
+}
+
+func init() {
+	b, err := ioutil.ReadFile("groups.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	if err := yaml.Unmarshal(b, addonTestingGroups); err != nil {
+		panic(err)
+	}
 }
