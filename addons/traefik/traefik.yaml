@@ -67,7 +67,7 @@ spec:
 
       initContainers:
       - name: initialize-traefik-certificate
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.2
+        image: mesosphere/kubeaddons-addon-initializer:v0.1.5
         args: ["traefik"]
         env:
         - name: "TRAEFIK_INGRESS_NAMESPACE"
@@ -85,4 +85,4 @@ spec:
         - name: "TRAEFIK_CLUSTER_HOSTNAME_KEY"
           value: "clusterHostname"
 
-      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.1.2
+      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.1.5
