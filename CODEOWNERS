@@ -1,0 +1,7 @@
+# Reviewer and approver configuration for addons.
+# Implemented using GitHub's CODEOWNERS file.
+# All repos are to require TWO approvals before merge.
+# Reference: https://help.github.com/en/articles/about-code-owners
+# Order is important: later rules override preceding rules
+
+/addons/dispatch @devx
