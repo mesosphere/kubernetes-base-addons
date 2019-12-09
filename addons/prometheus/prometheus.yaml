@@ -37,7 +37,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 5.19.6
+    version: 5.19.7
     values: |
       ---
       defaultRules:
@@ -302,4 +302,4 @@ spec:
           # override the default k8s.gcr.io/kube-state-metrics repositry
           # containerd mirror functionality does not support pulling these images
           # TODO remove once https://github.com/containerd/containerd/issues/3756 is resolved
-          repository: gcr.io/google_containers/kube-state-metrics
+          repository: quay.io/coreos/kube-state-metrics
