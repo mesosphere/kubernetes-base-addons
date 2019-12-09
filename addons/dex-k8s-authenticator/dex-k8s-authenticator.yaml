@@ -68,7 +68,7 @@ spec:
         configmap.reloader.stakater.com/reload: "dex-k8s-authenticator-kubeaddons"
       initContainers:
       - name: initialize-dka-config
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.3
+        image: mesosphere/kubeaddons-addon-initializer:v0.1.5
         args: ["dexK8sAuthenticator"]
         env:
         - name: "DKA_CONFIGMAP_NAME"
