@@ -116,7 +116,7 @@ spec:
             # note: in order to run this container, mesosphereResources.enableAdditionalPrometheusRBACRules
             # needs to be set to true
             - name: get-cluster-id
-              image: mesosphere/kubeaddons-addon-initializer:v0.0.13
+              image: mesosphere/kubeaddons-addon-initializer:v0.1.5
               command: ["/bin/bash", "-c", "addon-initializer prometheus && sleep infinity"]
               env:
               - name: "PROMETHEUS_NAMESPACE"
