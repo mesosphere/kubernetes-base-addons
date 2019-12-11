@@ -49,10 +49,14 @@ prometheus:
 #    "kommander": {"opsportal", "cert-manager", "defaultstorageclass-protection", "localvolumeprovisioner", "traefik", "traefik-forward-auth", "dex", "kommander"},
 
 kommander:
+    - "metallb"
     - "opsportal"
     - "cert-manager"
-    - "defaultstorageclass-protection"
-    - "localvolumeprovisioner"
+    - "traefik"
+    - "dex"
+    - "konvoyconfig"
+    - "reloader"
+    - "kommander"
 
 
 # ------------------------------------------------------------------------------
@@ -67,31 +71,22 @@ disabled:
 
     # these are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
     # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "dex"
     - "dex-k8s-authenticator"
     - "awsebscsiprovisioner"
     - "awsebsprovisioner"
     - "azuredisk-csi-driver"
     - "azurediskprovisioner"
-    - "konvoyconfig"
-    - "metallb"
     - "nvidia"
 
     # the following addons need tests added
     # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "cert-manager"
     - "dex-k8s-authenticator"
     - "kube-oidc-proxy"
-    - "prometheusadapter"
     - "velero"
-    - "kommander"
-    - "traefik"
-    - "dex"
     - "traefik-forward-auth"
     - "istio"
     - "flagger"
     - "gatekeeper"
-    - "reloader"
     - "localvolumeprovisioner"
     - "defaultstorageclass-protection"
 

@@ -23,6 +23,7 @@ spec:
           address-pools:
           - name: default
             protocol: layer2
+            # configure addresses for your network
             addresses:
             - 172.17.1.200-172.17.1.250
     - name: none
@@ -33,12 +34,20 @@ spec:
           - name: default
             protocol: layer2
             # configure addresses for your network
-            addresses: []
+            addresses:
+            - 172.17.1.200-172.17.1.250
   chartReference:
     chart: stable/metallb
     version: 0.12.0
     values: |
       ---
+      configInline:
+        address-pools:
+        - name: default
+          protocol: layer2
+          # configure addresses for your network
+          addresses:
+          - 172.17.1.200-172.17.1.250
       controller:
         requests:
           cpu: 100m
