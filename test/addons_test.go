@@ -100,7 +100,7 @@ func testgroup(t *testing.T, groupname string) error {
 		return err
 	}
 
-	if err:= deployCertManagerCA(cluster); err != nil {
+	if err := deployCertManagerCA(cluster); err != nil {
 		return err
 	}
 
@@ -131,6 +131,7 @@ func addons(names ...string) ([]v1beta1.AddonInterface, error) {
 
 	for _, addon := range addons {
 		for _, name := range names {
+			overrides(addon[0])
 			if addon[0].GetName() == name {
 				testAddons = append(testAddons, addon[0])
 			}
@@ -184,8 +185,8 @@ func deployCertManagerCA(cluster test.Cluster) error {
 	ca := &x509.Certificate{
 		SerialNumber: big.NewInt(1653),
 		Subject: pkix.Name{
-			Organization:  []string{"d2iq"},
-			Country:       []string{"US"},
+			Organization: []string{"d2iq"},
+			Country:      []string{"US"},
 		},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(10, 0, 0),
@@ -205,7 +206,6 @@ func deployCertManagerCA(cluster test.Cluster) error {
 	certPath := path.Join(wd, "ca.crt")
 	keyPath := path.Join(wd, "ca.key")
 
-
 	certOut, err := os.Create(certPath)
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: ca_b})
 	certOut.Close()
@@ -216,7 +216,7 @@ func deployCertManagerCA(cluster test.Cluster) error {
 	keyOut.Close()
 
 	// create kubernetes-root-ca secret
-	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "secret", "tls", "kubernetes-root-ca", "--namespace=cert-manager", fmt.Sprintf("--cert=%s",certPath), fmt.Sprintf("--key=%s", keyPath)); err != nil {
+	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "secret", "tls", "kubernetes-root-ca", "--namespace=cert-manager", fmt.Sprintf("--cert=%s", certPath), fmt.Sprintf("--key=%s", keyPath)); err != nil {
 		return err
 	}
 
@@ -235,4 +235,27 @@ func kubectl(args ...string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+// -----------------------------------------------------------------------------
+// Private - CI Values Overrides
+// -----------------------------------------------------------------------------
+
+// TODO: a temporary place to put configuration overrides for addons
+// See: https://jira.mesosphere.com/browse/DCOS-62137
+func overrides(addon v1beta1.AddonInterface) {
+	if v, ok := addonOverrides[addon.GetName()]; ok {
+		addon.GetAddonSpec().ChartReference.Values = &v
+	}
+}
+
+var addonOverrides = map[string]string{
+	"metallb": `---
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - "172.17.1.200-172.17.1.250"
+`,
 }
