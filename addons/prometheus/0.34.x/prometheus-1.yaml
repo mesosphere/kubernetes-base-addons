@@ -105,6 +105,8 @@ spec:
                 targetPort: 5601
                 interval: 30s
         prometheusSpec:
+          image:
+            tag: v2.14.0
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
