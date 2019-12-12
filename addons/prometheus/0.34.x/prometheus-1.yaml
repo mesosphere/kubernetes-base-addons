@@ -107,6 +107,8 @@ spec:
         prometheusSpec:
           image:
             tag: v2.14.0
+          thanos:
+            version: v0.8.1
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
