@@ -46,8 +46,6 @@ prometheus:
 #
 # All Kommander related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
-#    "kommander": {"opsportal", "cert-manager", "defaultstorageclass-protection", "localvolumeprovisioner", "traefik", "traefik-forward-auth", "dex", "kommander"},
-
 kommander:
     - "metallb"
     - "opsportal"
