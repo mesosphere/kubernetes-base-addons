@@ -14,7 +14,7 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
-  namespace: kube-system
+  namespace: kubeaddons
   cloudProvider:
     - name: aws
       enabled: true
@@ -46,6 +46,8 @@ spec:
         repository: kubernetesui/dashboard
         tag: v2.0.0-beta6
         pullPolicy: Always
+      extraArgs:
+        - --namespace=kubeaddons
       ingress:
         enabled: true
         annotations:
