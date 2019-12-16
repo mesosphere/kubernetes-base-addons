@@ -24,9 +24,19 @@ spec:
       enabled: true
   chartReference:
     chart: stable/fluent-bit
-    version: 2.8.2
+    version: 2.8.4
     values: |
       ---
+      audit:
+        enable: true
+        input:
+          memBufLimit: 35MB
+          parser: docker
+          path: /var/log/kubernetes/audit/*.log
+          bufferChunkSize: 5MB
+          bufferMaxSize: 20MB
+          skipLongLines: off
+          key: kubernetes-audit
       backend:
         es:
           host: elasticsearch-kubeaddons-client
