@@ -78,6 +78,13 @@ func TestKommanderGroup(t *testing.T) {
 	}
 }
 
+func TestIstioGroup(t *testing.T) {
+	if err := testgroup(t, "istio"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
@@ -250,7 +257,8 @@ func overrides(addon v1beta1.AddonInterface) {
 }
 
 var addonOverrides = map[string]string{
-	"metallb": `---
+	"metallb": `
+---
 configInline:
   address-pools:
   - name: default
@@ -258,4 +266,59 @@ configInline:
     addresses:
     - "172.17.1.200-172.17.1.250"
 `,
+	"istio":
+`---
+      kiali:
+       enabled: true
+       contextPath: /ops/portal/kiali
+       ingress:
+         enabled: true
+         kubernetes.io/ingress.class: traefik
+         hosts:
+           - ""
+       dashboard:
+         auth:
+           strategy: anonymous
+       prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
+
+      tracing:
+        enabled: true
+        contextPath: /ops/portal/jaeger
+        ingress:
+          enabled: true
+          kubernetes.io/ingress.class: traefik
+          hosts:
+            - ""
+
+      grafana:
+        enabled: true
+
+      prometheus:
+        serviceName: prometheus-kubeaddons-prom-prometheus.kubeaddons
+
+      istiocoredns:
+        enabled: true
+
+      security:
+       selfSigned: true
+       caCert: /etc/cacerts/tls.crt
+       caKey: /etc/cacerts/tls.key
+       rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+       certChain: /etc/cacerts/tls.crt
+       enableNamespacesByDefault: false
+
+      global:
+       podDNSSearchNamespaces:
+       - global
+       - "{{ valueOrDefault .DeploymentMeta.Namespace \"default\" }}.global"
+
+       mtls:
+        enabled: true
+
+       multiCluster:
+        enabled: true
+
+       controlPlaneSecurityEnabled: true
+`,
 }
+
