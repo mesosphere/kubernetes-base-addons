@@ -10,18 +10,18 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.31.1-1"
-    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.31.1"
-    appversion.kubeaddons.mesosphere.io/prometheus: "2.9.2"
-    appversion.kubeaddons.mesosphere.io/alertmanager: "0.17.0"
-    appversion.kubeaddons.mesosphere.io/grafana: "6.2.5"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.34.0-1"
+    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.34.0"
+    appversion.kubeaddons.mesosphere.io/prometheus: "2.14.0"
+    appversion.kubeaddons.mesosphere.io/alertmanager: "0.19.0"
+    appversion.kubeaddons.mesosphere.io/grafana: "6.4.2"
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
     endpoint.kubeaddons.mesosphere.io/alertmanager: "/ops/portal/alertmanager"
     endpoint.kubeaddons.mesosphere.io/grafana: "/ops/portal/grafana"
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/3bc311e3fae9d608c528433963bf67ca6827513c/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/a370c215c08ca7e50055902177141554de5444e6/staging/prometheus-operator/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -37,7 +37,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 5.19.7
+    version: 8.3.3
     values: |
       ---
       defaultRules:
@@ -106,9 +106,8 @@ spec:
                 interval: 30s
         prometheusSpec:
           image:
-            tag: v2.9.2
+            tag: v2.14.0
           thanos:
-            baseImage: quay.io/thanos/thanos
             version: v0.8.1
           externalLabels:
             cluster: $(CLUSTER_ID)
@@ -227,8 +226,6 @@ spec:
               memory: 1000Mi
       alertmanager:
         alertmanagerSpec:
-          image:
-            tag: v0.17.0
           resources:
             limits:
               cpu: 100m
