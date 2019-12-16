@@ -31,7 +31,7 @@ spec:
         enable: true
         input:
           memBufLimit: 35MB
-          parser: docker
+          parser: cri
           path: /var/log/kubernetes/audit/*.log
           bufferChunkSize: 5MB
           bufferMaxSize: 20MB
