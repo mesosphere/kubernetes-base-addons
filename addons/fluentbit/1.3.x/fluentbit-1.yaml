@@ -31,7 +31,8 @@ spec:
         enable: true
         input:
           memBufLimit: 35MB
-          parser: cri
+          # TODO revisit this and create a custom json parser so that the timestamp makes sense
+          parser: json
           path: /var/log/kubernetes/audit/*.log
           bufferChunkSize: 5MB
           bufferMaxSize: 20MB
