@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 1.6.10
+    version: 1.6.12
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
