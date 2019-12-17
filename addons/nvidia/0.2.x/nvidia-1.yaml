@@ -7,8 +7,8 @@ metadata:
     kubeaddons.mesosphere.io/name: nvidia
     kubeaddons.mesosphere.io/provides: nvidia
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-1"
-    appversion.kubeaddons.mesosphere.io/nvidia: "0.1.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-1"
+    appversion.kubeaddons.mesosphere.io/nvidia: "0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/master/staging/nvidia/values.yaml"
 spec:
   namespace: kube-system
@@ -26,19 +26,16 @@ spec:
   chartReference:
     chart: nvidia
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.2
+    version: 0.2.0
     values: |
       ---
       nvidia-driver:
         image:
           tag: "418.87.01-centos7"
         resources:
-          limits:
-             cpu: 2000m
-             memory: 6144Mi
           requests:
-             cpu: 200m
-             memory: 256Mi
+             cpu: 500m
+             memory: 512Mi
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
       nvidia-device-plugin:
@@ -54,4 +51,16 @@ spec:
         initContainers:
         - name: init-wait
           image: busybox
-          command: ['sh', '-c', 'sleep 90']
+          command: ['sh', '-c', 'sleep 180']
+      nvidia-dcgm-exporter:
+        enabled: true
+        namespace: kubeaddons
+        nodeSelector:
+          konvoy.mesosphere.com/gpu-provider: NVIDIA
+        initContainers:
+        - name: init-wait
+          image: busybox
+          command: ['sh', '-c', 'sleep 200']
+      grafana:
+        enabled: true
+        namespace: kubeaddons
