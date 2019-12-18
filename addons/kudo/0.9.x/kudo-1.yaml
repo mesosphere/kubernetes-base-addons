@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kudo
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.0-1"
     appversion.kubeaddons.mesosphere.io/kudo: "0.9.0"
 spec:
   namespace: kube-system
