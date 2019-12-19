@@ -26,6 +26,8 @@ general:
     - "konvoyconfig"
     - "reloader"
     - "gatekeeper"
+    - "traefik-forward-auth"
+
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -98,7 +100,6 @@ disabled:
 
     # the following addons need tests added
     # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "traefik-forward-auth"
     - "dex-k8s-authenticator"
     - "kube-oidc-proxy"
     - "velero"
