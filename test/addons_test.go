@@ -24,8 +24,10 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
 )
 
-const defaultKubernetesVersion = "1.15.6"
-
+const (
+	defaultKubernetesVersion = "1.15.6"
+	patchStorageClass = "{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"false\"}}}"
+)
 var addonTestingGroups = make(map[string][]string)
 
 func init() {
@@ -84,6 +86,11 @@ func TestIstioGroup(t *testing.T) {
 	}
 }
 
+func TestLocalVolumeProvisionerGroup(t *testing.T) {
+	if err := testgroup(t, "localvolumeprovisioner"); err != nil {
+		t.Fatal(err)
+	}
+}
 
 // -----------------------------------------------------------------------------
 // Private Functions
@@ -107,12 +114,18 @@ func testgroup(t *testing.T, groupname string) error {
 		return err
 	}
 
+
 	if err := deployCertManagerCA(cluster); err != nil {
 		return err
 	}
 
 	addons, err := addons(addonTestingGroups[groupname]...)
 	if err != nil {
+		return err
+	}
+
+
+	if err := removeLocalPathAsDefaultStorage(cluster, addons); err != nil {
 		return err
 	}
 
@@ -234,6 +247,18 @@ func deployCertManagerCA(cluster test.Cluster) error {
 
 	defer os.Remove(certPath)
 	defer os.Remove(keyPath)
+	return nil
+}
+
+func removeLocalPathAsDefaultStorage(cluster test.Cluster, addons []v1beta1.AddonInterface) error {
+	for _, addon := range addons {
+		if addon.GetName() == "localvolumeprovisioner" {
+			if err := kubectl("--kubeconfig", cluster.ConfigPath(), "patch", "storageclass", "local-path", "-p", patchStorageClass); err != nil {
+				return err
+			}
+			return nil
+		}
+	}
 	return nil
 }
 
