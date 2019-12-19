@@ -24,7 +24,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.8
+    version: 1.72.10
     values: |
       ---
       replicas: 2
