@@ -87,8 +87,6 @@ localvolumeprovisioner:
     - "defaultstorageclass-protection"
     - "localvolumeprovisioner"
 
-
-
 # ------------------------------------------------------------------------------
 # Disabled
 #
@@ -114,4 +112,3 @@ disabled:
     - "dex-k8s-authenticator"
     - "kube-oidc-proxy"
     - "velero"
-

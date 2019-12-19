@@ -26,7 +26,7 @@ import (
 
 const (
 	defaultKubernetesVersion = "1.15.6"
-	patchStorageClass = "{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"false\"}}}"
+	patchStorageClass = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 )
 var addonTestingGroups = make(map[string][]string)
 
@@ -346,4 +346,3 @@ configInline:
        controlPlaneSecurityEnabled: true
 `,
 }
-
