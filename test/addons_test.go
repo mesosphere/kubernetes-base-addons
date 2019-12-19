@@ -113,8 +113,7 @@ func testgroup(t *testing.T, groupname string) error {
 	if err := temp.DeployController(cluster); err != nil {
 		return err
 	}
-
-
+	
 	if err := deployCertManagerCA(cluster); err != nil {
 		return err
 	}
