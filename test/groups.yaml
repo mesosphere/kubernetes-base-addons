@@ -28,7 +28,6 @@ general:
     - "gatekeeper"
     - "traefik-forward-auth"
 
-
 # ------------------------------------------------------------------------------
 # ElasticSearch
 #
