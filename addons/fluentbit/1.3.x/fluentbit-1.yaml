@@ -31,8 +31,7 @@ spec:
         enable: true
         input:
           memBufLimit: 35MB
-          # TODO revisit this and create a custom json parser so that the timestamp makes sense
-          parser: json
+          parser: kubernetes-audit
           path: /var/log/kubernetes/audit/*.log
           bufferChunkSize: 5MB
           bufferMaxSize: 20MB
@@ -72,3 +71,10 @@ spec:
           # we double it for 1 output (es)/2 input (tail, systemd) as an approximation
           cpu: 200m
           memory: 200Mi
+      parsers:
+        enabled: true
+        json:
+          - name: kubernetes-audit
+            timeKey: requestReceivedTimestamp
+            timeKeep: On
+            timeFormat: "%Y-%m-%dT%H:%M:%S.%L"
