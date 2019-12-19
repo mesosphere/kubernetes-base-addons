@@ -60,29 +60,29 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
-//func TestElasticSearchGroup(t *testing.T) {
-//	if err := testgroup(t, "elasticsearch"); err != nil {
-//		t.Fatal(err)
-//	}
-//}
-//
-//func TestPrometheusGroup(t *testing.T) {
-//	if err := testgroup(t, "prometheus"); err != nil {
-//		t.Fatal(err)
-//	}
-//}
-//
-//func TestKommanderGroup(t *testing.T) {
-//	if err := testgroup(t, "kommander"); err != nil {
-//		t.Fatal(err)
-//	}
-//}
-//
-//func TestIstioGroup(t *testing.T) {
-//	if err := testgroup(t, "istio"); err != nil {
-//		t.Fatal(err)
-//	}
-//}
+func TestElasticSearchGroup(t *testing.T) {
+	if err := testgroup(t, "elasticsearch"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPrometheusGroup(t *testing.T) {
+	if err := testgroup(t, "prometheus"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestKommanderGroup(t *testing.T) {
+	if err := testgroup(t, "kommander"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestIstioGroup(t *testing.T) {
+	if err := testgroup(t, "istio"); err != nil {
+		t.Fatal(err)
+	}
+}
 
 
 // -----------------------------------------------------------------------------
@@ -226,11 +226,6 @@ func deployCertManagerCA(cluster test.Cluster) error {
 	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "secret", "tls", "kubernetes-root-ca", "--namespace=cert-manager", fmt.Sprintf("--cert=%s", certPath), fmt.Sprintf("--key=%s", keyPath)); err != nil {
 		return err
 	}
-
-	// create konvoyconfig-kubeaddons configmap
-	//if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "configmap", "konvoyconfig-kubeaddons", "--namespace=kubeaddons", "--from-literal=clusterHostname=kommander.example.com"); err != nil {
-	//	return err
-	//}
 
 	defer os.Remove(certPath)
 	defer os.Remove(keyPath)
