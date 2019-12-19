@@ -22,3 +22,11 @@ You will find that any particular addon directory (e.g. `addons/prometheus`) may
 
 The **intention of revisions is to maintain a flat history of addon changes**. If you are making changes to any particular addon you should be making a revision of that addon as a copy of the original file with the changes made therein and the `addon-revision` version updated to reflect the new version appropriately.
 
+### notes & caveats
+
+In the `v1beta1` version our of API, there are some elements of our addon specifications that act as metadata and [may be removed in future](https://jira.mesosphere.com/browse/DCOS-62438). Here are some conditions under which *a new revision will not be needed* when updating an addon:
+
+1. If you're *only adding* a new `CloudProvider`
+2. If you're *only adding* labels or annotations to the object metdata
+
+These cases are safe to update in place.
