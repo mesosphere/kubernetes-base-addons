@@ -1,0 +1,27 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: kudo
+  labels:
+    kubeaddons.mesosphere.io/name: kudo
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.4-1"
+    appversion.kubeaddons.mesosphere.io/kudo: "0.7.4"
+spec:
+  namespace: kube-system
+  kubernetes:
+    minSupportedVersion: v1.16.0
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: kudo
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.1.1
