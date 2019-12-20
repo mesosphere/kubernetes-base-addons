@@ -6,9 +6,6 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
-    # TODO: we're temporarily supporting dependency on an existing default storage class
-    # on the cluster, this hack will trigger re-queue on Addons until one exists.
-    kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.2-1"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.2"
