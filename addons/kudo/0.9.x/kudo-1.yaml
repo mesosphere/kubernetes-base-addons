@@ -24,4 +24,4 @@ spec:
   chartReference:
     chart: kudo
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.3
+    version: 0.1.4
