@@ -49,8 +49,8 @@ spec:
           versionMap:
             1.15.4: kommander-beta4
             1.15.5: kommander-beta6
-            1.15.6: kommander-beta9
-            1.16.3: kommander-beta9
+            1.15.6: kommander-beta8
+            1.16.3: kommander-beta8
 
       kommander-karma:
         karma:
