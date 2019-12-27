@@ -44,7 +44,7 @@ spec:
             kind: ClusterIssuer
         konvoy:
           allowUnofficialReleases: true
-        kubeaddonsConfigs:
+        kubeaddonsRepository:
           versionStrategy: mapped-kubernetes-version
           versionMap:
             1.15.4: kommander-beta4
