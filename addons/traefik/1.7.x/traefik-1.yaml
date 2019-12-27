@@ -33,9 +33,9 @@ spec:
           servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
       resources:
         limits:
-          cpu: 2000m
-        requests:
           cpu: 1000m
+        requests:
+          cpu: 500m
       rbac:
         enabled: true
       metrics:
