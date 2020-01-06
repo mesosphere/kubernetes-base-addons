@@ -1,0 +1,34 @@
+resource "src-git": {
+  type: "git"
+  param url: "$(context.git.url)"
+  param revision: "$(context.git.commit)"
+}
+
+task "test": {
+  inputs: ["src-git"]
+
+  steps: [
+    {
+      name: "test"
+      image: "mesosphere/kubeaddons-ci:latest"
+      privileged: true
+      env:
+      - GIT_TERMINAL_PROMPT: "1"
+      - ADDON_TESTS_SETUP_WAIT_DURATION: "30m"
+      - GOPRIVATE: "github.com/mesosphere/kubeaddons"
+      volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+      command: ["/bin/sh"]
+      args: ["-c", "set -euo pipefail; cd test/; perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'; cpan -i YAML 2> /dev/null; cpan -i File::Slurp 2> /dev/null; git fetch; if [ -f scripts/test-wrapper.go ]; then;     for g in `go run scripts/test-wrapper.go`;     do;         go test -race -v -run $g;     done; else;     ./scripts/test-wrapper.pl; fi"]
+    }
+  ]
+}
+
+actions: [
+  {
+    tasks: ["test"]
+    on push: {
+      branches: ["master"]
+    }
+  }
+]
