@@ -86,6 +86,12 @@ func TestLocalVolumeProvisionerGroup(t *testing.T) {
 	}
 }
 
+func TestDispatchGroup(t *testing.T) {
+	if err := testgroup(t, "dispatch"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
@@ -218,6 +224,21 @@ func overrides(addon v1beta1.AddonInterface) {
 }
 
 var addonOverrides = map[string]string{
+	"dispatch": `
+---
+argo-cd:
+  prometheus:
+    enabled: true
+    release: prometheus-kubeaddons
+
+prometheus:
+  enabled: true
+  release: prometheus-kubeaddons
+
+minio:
+  persistence:
+    size: 1Gi
+`,
 	"metallb": `
 ---
 configInline:
