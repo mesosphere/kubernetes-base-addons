@@ -36,7 +36,7 @@ spec:
         tag: v3.0.4-beta.1
       resources:
         limits:
-          cpu: 1000m
+          cpu: 500m
           memory: 500Mi
         requests:
           cpu: 200m
