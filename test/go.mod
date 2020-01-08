@@ -7,7 +7,7 @@ require (
 	github.com/emicklei/go-restful v2.11.1+incompatible // indirect
 	github.com/go-openapi/spec v0.19.4 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
-	github.com/mesosphere/kubeaddons v0.7.0
+	github.com/mesosphere/kubeaddons v0.7.2
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.13.0 // indirect
