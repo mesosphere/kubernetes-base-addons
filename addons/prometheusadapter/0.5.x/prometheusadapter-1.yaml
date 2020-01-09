@@ -27,7 +27,7 @@ spec:
         kubeaddons.mesosphere.io/name: prometheus
   chartReference:
     chart: stable/prometheus-adapter
-    version: 1.1.0
+    version: 2.0.0
     values: |
       ---
       prometheus:
@@ -53,7 +53,7 @@ spec:
                  resource: namespace
                 pod_name:
                  resource: pod
-            containerLabel: container_name
+            containerLabel: container
           memory:
             containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>}) by (<<.GroupBy>>)
             nodeQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,id='/'}) by (<<.GroupBy>>)
@@ -65,5 +65,5 @@ spec:
                  resource: namespace
                 pod_name:
                  resource: pod
-            containerLabel: container_name
+            containerLabel: container
           window: 1m
