@@ -29,6 +29,7 @@ general:
     - "traefik-forward-auth"
     - "dex-k8s-authenticator"
     - "kube-oidc-proxy"
+    - "velero"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -107,7 +108,3 @@ disabled:
     - "azuredisk-csi-driver"
     - "azurediskprovisioner"
     - "nvidia"
-
-    # the following addons need tests added
-    # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "velero"
