@@ -20,7 +20,7 @@ spec:
     minSupportedVersion: v1.15.6
   requires:
     - matchLabels:
-        kubeaddons.mesosphere.io/provides: storageclass
+        kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   cloudProvider:
     - name: aws
       enabled: false
