@@ -5,6 +5,7 @@ metadata:
   name: dispatch
   labels:
     kubeaddons.mesosphere.io/name: dispatch
+    kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.4.1-1"
     appversion.kubeaddons.mesosphere.io/dispatch: "0.4.1"
@@ -18,9 +19,6 @@ spec:
   namespace: dispatch
   kubernetes:
     minSupportedVersion: v1.15.6
-  requires:
-    - matchLabels:
-        kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   cloudProvider:
     - name: aws
       enabled: false
