@@ -9,6 +9,12 @@ metadata:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.163.2-1"
     appversion.kubeaddons.mesosphere.io/kommander: "1.163.2"
     endpoint.kubeaddons.mesosphere.io/kommander: /ops/portal/kommander
+    appversion.kubeaddons.mesosphere.io/thanos: 0.3.9
+    appversion.kubeaddons.mesosphere.io/karma: 1.4.0
+    endpoint.kubeaddons.mesosphere.io/thanos: /kommander/monitoring/query
+    endpoint.kubeaddons.mesosphere.io/karma: /kommander/monitoring/karma
+    docs.kubeaddons.mesosphere.io/thanos: "https://thanos.io/getting-started.md/"
+    docs.kubeaddons.mesosphere.io/karma: "https://github.com/prymitive/karma"
     values.chart.helm.kubeaddons.mesosphere.io/kommander: "https://raw.githubusercontent.com/mesosphere/charts/master/stable/kommander/values.yaml"
     helmv2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=0.1.22\", \"strategy\": \"delete\"}]"
 spec:
