@@ -10,6 +10,8 @@ metadata:
     appversion.kubeaddons.mesosphere.io/istio: "1.3.3"
     appversion.kubeaddons.mesosphere.io/kiali: "1.3.3"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.3.3"
+    stage.kubeaddons.mesosphere.io/kiali: Preview
+    stage.kubeaddons.mesosphere.io/jaeger: Preview
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
     endpoint.kubeaddons.mesosphere.io/jaeger: "/ops/portal/jaeger"
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
