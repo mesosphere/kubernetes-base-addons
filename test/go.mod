@@ -4,10 +4,12 @@ go 1.13
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/docker/docker v1.4.2-0.20190916154449-92cc603036dd
 	github.com/emicklei/go-restful v2.11.1+incompatible // indirect
 	github.com/go-openapi/spec v0.19.4 // indirect
+	github.com/google/uuid v1.1.1
 	github.com/imdario/mergo v0.3.8 // indirect
-	github.com/mesosphere/kubeaddons v0.7.0
+	github.com/mesosphere/kubeaddons v0.7.3
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.13.0 // indirect
@@ -20,6 +22,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.0.0-20191121021419-88daf26ec3b8 // indirect
 	k8s.io/utils v0.0.0-20191114200735-6ca3b61696b6 // indirect
 	sigs.k8s.io/controller-runtime v0.4.0 // indirect
+	sigs.k8s.io/kind v0.5.1
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.0.0-20191016111102-bec269661e48

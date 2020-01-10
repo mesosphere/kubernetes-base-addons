@@ -1,33 +1,36 @@
 package test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"crypto/x509/pkix"
-	"encoding/pem"
+	"context"
 	"fmt"
 	"io/ioutil"
-	"math/big"
 	"os"
 	"os/exec"
-	"path"
 	"testing"
-	"time"
 
 	"github.com/blang/semver"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
+
+	"sigs.k8s.io/kind/pkg/container/cri"
+	volumetypes "github.com/docker/docker/api/types/volume"
+	docker "github.com/docker/docker/client"
+
+	"sigs.k8s.io/kind/pkg/cluster/create"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
+	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	"github.com/mesosphere/kubeaddons/pkg/test"
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
 )
 
 const (
 	defaultKubernetesVersion = "1.15.6"
-	patchStorageClass = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
+	patchStorageClass        = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 )
+
 var addonTestingGroups = make(map[string][]string)
 
 func init() {
@@ -92,9 +95,60 @@ func TestLocalVolumeProvisionerGroup(t *testing.T) {
 	}
 }
 
+func TestDispatchGroup(t *testing.T) {
+	if err := testgroup(t, "dispatch"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
+
+func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
+	if err != nil {
+		return fmt.Errorf("creating docker client: %w", err)
+	}
+	dockerClient.NegotiateAPIVersion(context.TODO())
+
+	for index := 0; index < numberVolumes; index++ {
+		volumeName := fmt.Sprintf("%s-%d", nodePrefix, index)
+
+		volume, err := dockerClient.VolumeCreate(context.TODO(), volumetypes.VolumeCreateBody{
+			Driver: "local",
+			Name:   volumeName,
+		})
+		if err != nil {
+			return fmt.Errorf("creating volume for node: %w", err)
+		}
+
+		node.ExtraMounts = append(node.ExtraMounts, cri.Mount{
+			ContainerPath: fmt.Sprintf("/mnt/disks/%s", volumeName),
+			HostPath:      volume.Mountpoint,
+		})
+	}
+
+	return nil
+}
+
+func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
+	if err != nil {
+		return fmt.Errorf("creating docker client: %w", err)
+	}
+	dockerClient.NegotiateAPIVersion(context.TODO())
+
+	for index := 0; index < numberVolumes; index++ {
+		volumeName := fmt.Sprintf("%s-%d", nodePrefix, index)
+
+		if err := dockerClient.VolumeRemove(context.TODO(), volumeName, false); err != nil {
+			return fmt.Errorf("removing volume for node: %w", err)
+		}
+	}
+
+	return nil
+}
 
 func testgroup(t *testing.T, groupname string) error {
 	t.Logf("testing group %s", groupname)
@@ -104,17 +158,27 @@ func testgroup(t *testing.T, groupname string) error {
 		return err
 	}
 
-	cluster, err := kind.NewCluster(version)
+	u := uuid.New()
+
+	node := v1alpha3.Node{}
+	if err := createNodeVolumes(3, u.String(), &node); err != nil {
+		return err
+	}
+	defer func() {
+		if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
+			t.Logf("error: %s", err)
+		}
+	}()
+
+	cluster, err := kind.NewCluster(version, create.WithV1Alpha3(&v1alpha3.Cluster{
+		Nodes: []v1alpha3.Node{ node, },
+	}))
 	if err != nil {
 		return err
 	}
 	defer cluster.Cleanup()
 
-	if err := temp.DeployController(cluster); err != nil {
-		return err
-	}
-	
-	if err := deployCertManagerCA(cluster); err != nil {
+	if err := temp.DeployController(cluster, "kind"); err != nil {
 		return err
 	}
 
@@ -122,7 +186,6 @@ func testgroup(t *testing.T, groupname string) error {
 	if err != nil {
 		return err
 	}
-
 
 	if err := removeLocalPathAsDefaultStorage(cluster, addons); err != nil {
 		return err
@@ -143,7 +206,11 @@ func testgroup(t *testing.T, groupname string) error {
 func addons(names ...string) ([]v1beta1.AddonInterface, error) {
 	var testAddons []v1beta1.AddonInterface
 
-	addons, err := temp.Addons("../addons/")
+	repo, err := local.NewRepository("base", "../addons")
+	if err != nil {
+		return testAddons, err
+	}
+	addons, err := repo.ListAddons()
 	if err != nil {
 		return testAddons, err
 	}
@@ -166,8 +233,11 @@ func addons(names ...string) ([]v1beta1.AddonInterface, error) {
 
 func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	var unhandled []v1beta1.AddonInterface
-
-	addons, err := temp.Addons("../addons/")
+	repo, err := local.NewRepository("base", "../addons")
+	if err != nil {
+		return unhandled, err
+	}
+	addons, err := repo.ListAddons()
 	if err != nil {
 		return unhandled, err
 	}
@@ -188,65 +258,6 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	}
 
 	return unhandled, nil
-}
-
-func deployCertManagerCA(cluster test.Cluster) error {
-	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "namespace", "cert-manager"); err != nil {
-		return err
-	}
-
-	// create secret
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	ca := &x509.Certificate{
-		SerialNumber: big.NewInt(1653),
-		Subject: pkix.Name{
-			Organization: []string{"d2iq"},
-			Country:      []string{"US"},
-		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(10, 0, 0),
-		IsCA:                  true,
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
-		BasicConstraintsValid: true,
-	}
-
-	priv, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		return err
-	}
-	pub := &priv.PublicKey
-	ca_b, err := x509.CreateCertificate(rand.Reader, ca, ca, pub, priv)
-
-	certPath := path.Join(wd, "ca.crt")
-	keyPath := path.Join(wd, "ca.key")
-
-	certOut, err := os.Create(certPath)
-	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: ca_b})
-	certOut.Close()
-
-	// Private key
-	keyOut, err := os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
-	keyOut.Close()
-
-	// create kubernetes-root-ca secret
-	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "secret", "tls", "kubernetes-root-ca", "--namespace=cert-manager", fmt.Sprintf("--cert=%s", certPath), fmt.Sprintf("--key=%s", keyPath)); err != nil {
-		return err
-	}
-
-	// create konvoyconfig-kubeaddons configmap
-	if err := kubectl("--kubeconfig", cluster.ConfigPath(), "create", "configmap", "konvoyconfig-kubeaddons", "--namespace=kubeaddons", "--from-literal=clusterHostname=kommander.example.com"); err != nil {
-		return err
-	}
-
-	defer os.Remove(certPath)
-	defer os.Remove(keyPath)
-	return nil
 }
 
 func removeLocalPathAsDefaultStorage(cluster test.Cluster, addons []v1beta1.AddonInterface) error {
@@ -281,6 +292,21 @@ func overrides(addon v1beta1.AddonInterface) {
 }
 
 var addonOverrides = map[string]string{
+	"dispatch": `
+---
+argo-cd:
+  prometheus:
+    enabled: true
+    release: prometheus-kubeaddons
+
+prometheus:
+  enabled: true
+  release: prometheus-kubeaddons
+
+minio:
+  persistence:
+    size: 1Gi
+`,
 	"metallb": `
 ---
 configInline:
@@ -290,8 +316,8 @@ configInline:
     addresses:
     - "172.17.1.200-172.17.1.250"
 `,
-	"istio":
-`---
+	"istio": `
+---
       kiali:
        enabled: true
        contextPath: /ops/portal/kiali
