@@ -30,7 +30,7 @@ spec:
   chartReference:
     chart: kommander
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.3.4
+    version: 0.3.9
     values: |
       ---
       ingress:
@@ -47,10 +47,9 @@ spec:
         kubeaddonsRepository:
           versionStrategy: mapped-kubernetes-version
           versionMap:
-            1.15.4: kommander-beta4
-            1.15.5: kommander-beta6
-            1.15.6: kommander-beta9
-            1.16.3: kommander-beta9
+            1.15.6: v1.3.0-rc.1
+            1.16.3: v1.3.0-rc.1
+            1.16.4: v1.3.0-rc.1
 
       kommander-karma:
         karma:
