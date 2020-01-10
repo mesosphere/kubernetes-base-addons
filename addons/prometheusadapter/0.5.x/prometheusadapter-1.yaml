@@ -39,12 +39,12 @@ spec:
         requests:
            cpu: 1000m
            memory: 1000Mi
-      metricsRelistInterval: 30s
+      metricsRelistInterval: 60s
       rules:
         resource:
           cpu:
-            containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
-            nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[1m])) by (<<.GroupBy>>)
+            containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)
+            nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[2m])) by (<<.GroupBy>>)
             resources:
               overrides:
                 node:
