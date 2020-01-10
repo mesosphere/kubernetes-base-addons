@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,7 +9,15 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
+
+	"sigs.k8s.io/kind/pkg/container/cri"
+	volumetypes "github.com/docker/docker/api/types/volume"
+	docker "github.com/docker/docker/client"
+
+	"sigs.k8s.io/kind/pkg/cluster/create"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
@@ -86,9 +95,60 @@ func TestLocalVolumeProvisionerGroup(t *testing.T) {
 	}
 }
 
+func TestDispatchGroup(t *testing.T) {
+	if err := testgroup(t, "dispatch"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
+
+func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
+	if err != nil {
+		return fmt.Errorf("creating docker client: %w", err)
+	}
+	dockerClient.NegotiateAPIVersion(context.TODO())
+
+	for index := 0; index < numberVolumes; index++ {
+		volumeName := fmt.Sprintf("%s-%d", nodePrefix, index)
+
+		volume, err := dockerClient.VolumeCreate(context.TODO(), volumetypes.VolumeCreateBody{
+			Driver: "local",
+			Name:   volumeName,
+		})
+		if err != nil {
+			return fmt.Errorf("creating volume for node: %w", err)
+		}
+
+		node.ExtraMounts = append(node.ExtraMounts, cri.Mount{
+			ContainerPath: fmt.Sprintf("/mnt/disks/%s", volumeName),
+			HostPath:      volume.Mountpoint,
+		})
+	}
+
+	return nil
+}
+
+func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
+	if err != nil {
+		return fmt.Errorf("creating docker client: %w", err)
+	}
+	dockerClient.NegotiateAPIVersion(context.TODO())
+
+	for index := 0; index < numberVolumes; index++ {
+		volumeName := fmt.Sprintf("%s-%d", nodePrefix, index)
+
+		if err := dockerClient.VolumeRemove(context.TODO(), volumeName, false); err != nil {
+			return fmt.Errorf("removing volume for node: %w", err)
+		}
+	}
+
+	return nil
+}
 
 func testgroup(t *testing.T, groupname string) error {
 	t.Logf("testing group %s", groupname)
@@ -98,7 +158,21 @@ func testgroup(t *testing.T, groupname string) error {
 		return err
 	}
 
-	cluster, err := kind.NewCluster(version)
+	u := uuid.New()
+
+	node := v1alpha3.Node{}
+	if err := createNodeVolumes(3, u.String(), &node); err != nil {
+		return err
+	}
+	defer func() {
+		if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
+			t.Logf("error: %s", err)
+		}
+	}()
+
+	cluster, err := kind.NewCluster(version, create.WithV1Alpha3(&v1alpha3.Cluster{
+		Nodes: []v1alpha3.Node{ node, },
+	}))
 	if err != nil {
 		return err
 	}
@@ -218,6 +292,21 @@ func overrides(addon v1beta1.AddonInterface) {
 }
 
 var addonOverrides = map[string]string{
+	"dispatch": `
+---
+argo-cd:
+  prometheus:
+    enabled: true
+    release: prometheus-kubeaddons
+
+prometheus:
+  enabled: true
+  release: prometheus-kubeaddons
+
+minio:
+  persistence:
+    size: 1Gi
+`,
 	"metallb": `
 ---
 configInline:
