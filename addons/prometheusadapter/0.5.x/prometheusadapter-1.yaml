@@ -51,7 +51,7 @@ spec:
                  resource: node
                 namespace:
                  resource: namespace
-                pod_name:
+                pod:
                  resource: pod
             containerLabel: container
           memory:
@@ -63,7 +63,7 @@ spec:
                  resource: node
                 namespace:
                  resource: namespace
-                pod_name:
+                pod:
                  resource: pod
             containerLabel: container
           window: 1m
