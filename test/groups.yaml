@@ -26,6 +26,10 @@ general:
     - "konvoyconfig"
     - "reloader"
     - "gatekeeper"
+    - "traefik-forward-auth"
+    - "dex-k8s-authenticator"
+    - "kube-oidc-proxy"
+    - "velero"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -47,7 +51,6 @@ prometheus:
     - "prometheus"
     - "prometheusadapter"
     - "opsportal"
-    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Kommander
@@ -88,6 +91,20 @@ localvolumeprovisioner:
     - "localvolumeprovisioner"
 
 # ------------------------------------------------------------------------------
+# Dispatch
+#
+# All Dispatch related addons should be tested as a part of this group
+# ------------------------------------------------------------------------------
+dispatch:
+    - "cert-manager"
+    - "defaultstorageclass-protection"
+    - "localvolumeprovisioner"
+    - "prometheus"
+    - "prometheusadapter"
+    - "opsportal"
+    - "dispatch"
+
+# ------------------------------------------------------------------------------
 # Disabled
 #
 # These are Addons which tests are currently disabled for.
@@ -99,16 +116,8 @@ disabled:
 
     # these are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
     # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "dex-k8s-authenticator"
     - "awsebscsiprovisioner"
     - "awsebsprovisioner"
     - "azuredisk-csi-driver"
     - "azurediskprovisioner"
     - "nvidia"
-
-    # the following addons need tests added
-    # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "traefik-forward-auth"
-    - "dex-k8s-authenticator"
-    - "kube-oidc-proxy"
-    - "velero"
