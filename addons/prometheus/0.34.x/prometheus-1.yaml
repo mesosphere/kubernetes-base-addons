@@ -22,6 +22,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
     values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/a370c215c08ca7e50055902177141554de5444e6/staging/prometheus-operator/values.yaml"
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=5.19.7", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -37,7 +38,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 8.3.3
+    version: 8.3.7
     values: |
       ---
       defaultRules:
