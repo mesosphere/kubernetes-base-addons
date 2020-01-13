@@ -51,7 +51,6 @@ prometheus:
     - "prometheus"
     - "prometheusadapter"
     - "opsportal"
-    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Kommander
@@ -90,6 +89,20 @@ localvolumeprovisioner:
     - "cert-manager"
     - "defaultstorageclass-protection"
     - "localvolumeprovisioner"
+
+# ------------------------------------------------------------------------------
+# Dispatch
+#
+# All Dispatch related addons should be tested as a part of this group
+# ------------------------------------------------------------------------------
+dispatch:
+    - "cert-manager"
+    - "defaultstorageclass-protection"
+    - "localvolumeprovisioner"
+    - "prometheus"
+    - "prometheusadapter"
+    - "opsportal"
+    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Disabled
