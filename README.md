@@ -9,6 +9,7 @@ The structure of this repository follows the [Kubeaddons Catalog Documentation](
 You will find the following directories here:
 
 * `addons/` - containing the actual manifests for addon resources
+* `deployments/` - containing the default addons depending on the Kubernetes version
 * `metadata/` - containing static metadata for the addons in `addons/`
 * `test/` - containing integration tests for the addons in `addons/`
 
