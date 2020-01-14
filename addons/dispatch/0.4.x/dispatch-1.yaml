@@ -7,8 +7,8 @@ metadata:
     kubeaddons.mesosphere.io/name: dispatch
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.4.2-1"
-    appversion.kubeaddons.mesosphere.io/dispatch: "0.4.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.4.3-1"
+    appversion.kubeaddons.mesosphere.io/dispatch: "0.4.3"
     endpoint.kubeaddons.mesosphere.io/dispatch: /dispatch/tekton/
     docs.kubeaddons.mesosphere.io/dispatch: "https://beta-dispatch.d2iq.com/"
     stage.kubeaddons.mesosphere.io/dispatch: Beta
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: dispatch
     repo: https://mesosphere.github.io/dispatch
-    version: v0-4-2
+    version: v0.4.3
     values: |
       ---
       argo-cd:
