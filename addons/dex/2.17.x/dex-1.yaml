@@ -28,13 +28,13 @@ spec:
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 1.6.12
+    version: 1.6.13
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
       # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.17.0-mesosphere/README.mesosphere.md
       image: mesosphere/dex
-      imageTag: v2.17.0-21-g4386-mesosphere
+      imageTag: v2.17.0-25-g5597-mesosphere
       resources:
         requests:
           cpu: 100m
