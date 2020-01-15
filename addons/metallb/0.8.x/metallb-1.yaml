@@ -40,10 +40,16 @@ spec:
     values: |
       ---
       controller:
+        image:
+          repository: metallb/controller
+          tag: v0.8.3
         requests:
           cpu: 100m
           memory: 100Mi
       speaker:
+        image:
+          repository: metallb/speaker
+          tag: v0.8.3
         requests:
           cpu: 100m
           memory: 100Mi
