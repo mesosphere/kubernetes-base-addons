@@ -39,6 +39,10 @@ spec:
           enabled: true
           release: prometheus-kubeaddons
 
-      prometheus:
-        enabled: true
-        release: prometheus-kubeaddons
+      global:
+        prometheus:
+          enabled: true
+          release: prometheus-kubeaddons
+        grafana:
+          enabled: true
+          namespace: kubeaddons
