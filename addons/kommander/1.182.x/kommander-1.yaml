@@ -1,0 +1,77 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: kommander
+  labels:
+    kubeaddons.mesosphere.io/name: kommander
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.182.14-1"
+    appversion.kubeaddons.mesosphere.io/kommander: "1.182.14"
+    endpoint.kubeaddons.mesosphere.io/kommander: /ops/portal/kommander
+    appversion.kubeaddons.mesosphere.io/thanos: 0.3.9
+    appversion.kubeaddons.mesosphere.io/karma: 1.4.0
+    endpoint.kubeaddons.mesosphere.io/thanos: /kommander/monitoring/query
+    endpoint.kubeaddons.mesosphere.io/karma: /kommander/monitoring/karma
+    docs.kubeaddons.mesosphere.io/thanos: "https://thanos.io/getting-started.md/"
+    docs.kubeaddons.mesosphere.io/karma: "https://github.com/prymitive/karma"
+    values.chart.helm.kubeaddons.mesosphere.io/kommander: "https://raw.githubusercontent.com/mesosphere/charts/master/stable/kommander/values.yaml"
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=0.1.22", "strategy": "delete"}]'
+spec:
+  namespace: kommander
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: cert-manager
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: kommander
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.3.9
+    values: |
+      ---
+      ingress:
+        extraAnnotations:
+          traefik.ingress.kubernetes.io/priority: "2"
+
+      kommander-cluster-lifecycle:
+        certificates:
+          issuer:
+            name: kubernetes-ca
+            kind: ClusterIssuer
+        konvoy:
+          allowUnofficialReleases: true
+        kubeaddonsRepository:
+          versionStrategy: mapped-kubernetes-version
+          versionMap:
+            1.15.6: v1.3.0-rc.1
+            1.16.3: v1.3.0-rc.1
+            1.16.4: v1.3.0-rc.1
+
+      kommander-karma:
+        karma:
+          deployment:
+            annotations:
+              configmap.reloader.stakater.com/reload: kommander-kubeaddons-config
+
+      federate:
+        kubeaddons:
+          image:
+            repository: "mesosphere/kubeaddons"
+            tag: "v0.5.3"
+            pullPolicy: IfNotPresent
+
+      kubeaddons-catalog:
+        image:
+          repository: mesosphere/kubeaddons-catalog
+          tag: "v0.5.3"
+          pullPolicy: IfNotPresent
