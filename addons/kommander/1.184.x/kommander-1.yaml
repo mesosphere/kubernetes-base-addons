@@ -39,7 +39,7 @@ spec:
   chartReference:
     chart: kommander
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.3.14
+    version: 0.3.15
     values: |
       ---
       ingress:
@@ -53,25 +53,12 @@ spec:
             kind: ClusterIssuer
         konvoy:
           allowUnofficialReleases: true
-        kubeaddonsRepository:
-          versionStrategy: mapped-kubernetes-version
-          versionMap:
-            1.15.6: v1.3.0-rc.1
-            1.16.3: v1.3.0-rc.1
-            1.16.4: v1.3.0-rc.1
 
       kommander-karma:
         karma:
           deployment:
             annotations:
               configmap.reloader.stakater.com/reload: kommander-kubeaddons-config
-
-      federate:
-        kubeaddons:
-          image:
-            repository: "mesosphere/kubeaddons"
-            tag: "v0.5.3"
-            pullPolicy: IfNotPresent
 
       kubeaddons-catalog:
         image:
