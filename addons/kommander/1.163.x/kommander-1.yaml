@@ -50,8 +50,6 @@ spec:
             kind: ClusterIssuer
         konvoy:
           allowUnofficialReleases: true
-        kubeaddonsRepository:
-          versionStrategy: repository-tag
 
       kommander-karma:
         karma:
