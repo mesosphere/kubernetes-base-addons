@@ -32,7 +32,7 @@ spec:
   chartReference:
     chart: kube-oidc-proxy
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.7
+    version: 0.1.8
     values: |
       ---
       image:
@@ -66,9 +66,7 @@ spec:
         usernameClaim: email
         groupsClaim: groups
         groupsPrefix: "oidc:"
-        # placeholder : updated by initcontainer
-        caPEM: "placeholder"
       initContainers:
       - name: initialize-kube-oidc-proxy
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.5
+        image: mesosphere/kubeaddons-addon-initializer:v0.1.9
         args: ["kube-oidc-proxy"]
