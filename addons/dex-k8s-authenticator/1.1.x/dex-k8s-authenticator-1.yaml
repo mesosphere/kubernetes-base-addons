@@ -30,7 +30,7 @@ spec:
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.1.12
+    version: 1.1.13
     values: |
       ---
       image:
@@ -68,7 +68,7 @@ spec:
         configmap.reloader.stakater.com/reload: "dex-k8s-authenticator-kubeaddons"
       initContainers:
       - name: initialize-dka-config
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.5
+        image: mesosphere/kubeaddons-addon-initializer:v0.1.9
         args: ["dexK8sAuthenticator"]
         env:
         - name: "DKA_CONFIGMAP_NAME"
