@@ -64,7 +64,7 @@ spec:
          Strip_Underscores true
       resources:
         limits:
-          memory: 500Mi
+          memory: 750Mi
         requests:
           # values extracted from a 1 output/1 input setup here:
           # https://github.com/fluent/fluent-bit-kubernetes-logging/blob/master/fluent-bit-daemonset-kafka-rest.yml
