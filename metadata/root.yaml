@@ -251,18 +251,6 @@ kube-oidc-proxy:
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
 ---
-kudo:
-  display_name: kudo
-  description: kudo
-  logo: kudo/logo.svg
-  category: other
-  overview: kudo/overview.md
-  resources:
-    links:
-      - type: support
-        title: Submit a Support Request
-        link: https://d2iq.com/services-and-support
----
 localvolumeprovisioner:
   display_name: localvolumeprovisioner
   description: localvolumeprovisioner
