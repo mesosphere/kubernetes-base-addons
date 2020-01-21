@@ -110,10 +110,6 @@ dispatch:
 # These are Addons which tests are currently disabled for.
 # ------------------------------------------------------------------------------
 disabled:
-    # kudo gets tested in https://github.com/mesosphere/kubeaddons-enterprise, and is likely going to be removed from this repository.
-    # See: https://jira.mesosphere.com/browse/DCOS-61842
-    - "kudo"
-
     # these are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
     # See: https://jira.mesosphere.com/browse/DCOS-61664
     - "awsebscsiprovisioner"
