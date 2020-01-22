@@ -75,7 +75,15 @@ func getGroupsToTest(modifiedAddons []addonName) ([]groupName, error) {
 		for group, addons := range g {
 			for _, name := range addons {
 				if name == modifiedAddonName {
-					testGroups = append(testGroups, group)
+					exists := false
+					for _, existingGroup := range testGroups {
+						if group == existingGroup {
+							exists = true
+						}
+					}
+					if !exists {
+						testGroups = append(testGroups, group)
+					}
 				}
 			}
 		}
