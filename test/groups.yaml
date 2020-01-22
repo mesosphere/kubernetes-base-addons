@@ -41,6 +41,7 @@ elasticsearch:
     - "elasticsearchexporter"
     - "kibana"
     - "fluentbit"
+    - "elasticsearch-curator"
 
 # ------------------------------------------------------------------------------
 # Prometheus
