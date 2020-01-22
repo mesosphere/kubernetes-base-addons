@@ -89,5 +89,9 @@ func getGroupsToTest(modifiedAddons []addonName) ([]groupName, error) {
 		}
 	}
 
+	if len(testGroups) < 1 {
+		return nil, fmt.Errorf("error: there were no testGroups to test")
+	}
+
 	return testGroups, nil
 }

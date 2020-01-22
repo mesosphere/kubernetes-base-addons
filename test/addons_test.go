@@ -65,7 +65,7 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
-func TestElasticSearchGroup(t *testing.T) {
+func TestElasticsearchGroup(t *testing.T) {
 	if err := testgroup(t, "elasticsearch"); err != nil {
 		t.Fatal(err)
 	}
