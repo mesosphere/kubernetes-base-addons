@@ -35,6 +35,10 @@ spec:
         enabled: true
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
+        initContainers:
+        - name: init-wait
+          image: busybox
+          command: ['sh', '-c', 'sleep 200']
       nvidia-device-plugin:
         enabled: true
         resources:
@@ -46,6 +50,10 @@ spec:
              memory: 128Mi
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
+        initContainers:
+        - name: init-wait
+          image: busybox
+          command: ['sh', '-c', 'sleep 180']
       nvidia-driver:
         enabled: true
         image:
