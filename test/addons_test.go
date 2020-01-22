@@ -171,7 +171,7 @@ func testgroup(t *testing.T, groupname string) error {
 	}()
 
 	cluster, err := kind.NewCluster(version, create.WithV1Alpha3(&v1alpha3.Cluster{
-		Nodes: []v1alpha3.Node{ node, },
+		Nodes: []v1alpha3.Node{node},
 	}))
 	if err != nil {
 		return err
