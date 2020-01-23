@@ -65,7 +65,7 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
-func TestElasticSearchGroup(t *testing.T) {
+func TestElasticsearchGroup(t *testing.T) {
 	if err := testgroup(t, "elasticsearch"); err != nil {
 		t.Fatal(err)
 	}
@@ -171,7 +171,7 @@ func testgroup(t *testing.T, groupname string) error {
 	}()
 
 	cluster, err := kind.NewCluster(version, create.WithV1Alpha3(&v1alpha3.Cluster{
-		Nodes: []v1alpha3.Node{ node, },
+		Nodes: []v1alpha3.Node{node},
 	}))
 	if err != nil {
 		return err
