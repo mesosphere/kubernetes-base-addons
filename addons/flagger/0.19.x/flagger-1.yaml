@@ -19,11 +19,13 @@ spec:
   cloudProvider:
     - name: aws
       enabled: false
+    - name: azure
+      enabled: false
+    - name: gcp
+      enabled: false
     - name: docker
       enabled: false
     - name: none
-      enabled: false
-    - name: azure
       enabled: false
   requires:
     - matchLabels:

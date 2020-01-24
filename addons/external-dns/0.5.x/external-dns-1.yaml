@@ -21,6 +21,8 @@ spec:
         domainFilters: []
     - name: azure
       enabled: false
+    - name: gcp
+      enabled: false
     - name: docker
       enabled: false
     - name: none

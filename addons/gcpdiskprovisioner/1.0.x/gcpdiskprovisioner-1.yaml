@@ -1,0 +1,27 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: gcpdiskprovisioner
+  labels:
+    kubeaddons.mesosphere.io/name: gcpdiskprovisioner
+    kubeaddons.mesosphere.io/provides: storageclass
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-1"
+    appversion.kubeaddons.mesosphere.io/gcpdiskprovisioner: "1.0"
+    values.chart.helm.kubeaddons.mesosphere.io/gcpdiskprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/e4a2db5b484b9d4a1a0989d9bc0a2760ceaa7eaf/stable/gcpdiskprovisioner/values.yaml"
+spec:
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: defaultstorageclass-protection
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: gcpdisk-csi-driver
+  kubernetes:
+    minSupportedVersion: v1.15.0
+  cloudProvider:
+    - name: gcp
+      enabled: true
+  chartReference:
+    chart: gcpdiskprovisioner
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.1.0

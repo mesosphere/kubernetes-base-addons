@@ -191,6 +191,30 @@ gatekeeper:
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
 ---
+gcpdisk-csi-driver:
+  display_name: gcpdisk-csi-driver
+  description: gcpdisk-csi-driver
+  logo: gcpdisk-csi-driver/logo.svg
+  category: other
+  overview: gcpdisk-csi-driver/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
+gcpdiskprovisioner:
+  display_name: gcpdiskprovisioner
+  description: gcpdiskprovisioner
+  logo: gcpdiskprovisioner/logo.svg
+  category: other
+  overview: gcpdiskprovisioner/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+---
 istio:
   display_name: istio
   description: istio
