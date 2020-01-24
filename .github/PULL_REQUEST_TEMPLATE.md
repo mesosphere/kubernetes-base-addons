@@ -23,7 +23,6 @@ Enter your extended release note in the block below. If the PR requires addition
 
 * [ ] The commit message explains the changes and why are needed.
 * [ ] The code builds and passes lint/style checks locally.
-* [ ] The relevant subset of e2e tests pass locally.
-* [ ] The core changes are covered by unit tests.
-* [ ] The core changes are covered by e2e tests.
+* [ ] The relevant subset of integration tests pass locally.
+* [ ] The core changes are covered by tests.
 * [ ] The documentation is updated where needed.
