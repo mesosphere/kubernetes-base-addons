@@ -118,3 +118,5 @@ disabled:
     - "azuredisk-csi-driver"
     - "azurediskprovisioner"
     - "nvidia"
+    - "gcpdisk-csi-driver"
+    - "gcpdiskprovisioner"

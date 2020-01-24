@@ -20,6 +20,8 @@ spec:
       enabled: true
     - name: azure
       enabled: true
+    - name: gcp
+      enabled: true
     - name: docker
       enabled: false
     - name: none

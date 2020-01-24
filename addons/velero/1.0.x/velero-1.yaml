@@ -41,6 +41,8 @@ spec:
       enabled: true
     - name: azure
       enabled: true
+    - name: gcp
+      enabled: true
     - name: none
       enabled: true
   chartReference:
