@@ -29,6 +29,9 @@ spec:
       enabled: false
     - name: none
       enabled: false
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: prometheus
   chartReference:
     chart: dispatch
     repo: https://mesosphere.github.io/charts/stable
