@@ -21,7 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.12
+    version: 1.72.13
     values: |
       ---
       replicas: 2
@@ -40,8 +40,17 @@ spec:
           enabled: true
       dashboard:
         enabled: true
-        domain: traefik.localhost.localdomain
+        domain: ""
         serviceType: ClusterIP
+        ingress:
+          path: /ops/portal/traefik
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
       kubernetes:
         ingressEndpoint:
           publishedService: "kubeaddons/traefik-kubeaddons"
