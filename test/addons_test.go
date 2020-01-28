@@ -12,11 +12,8 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 
-	"sigs.k8s.io/kind/pkg/container/cri"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
-
-	"sigs.k8s.io/kind/pkg/cluster/create"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
@@ -123,7 +120,7 @@ func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node
 			return fmt.Errorf("creating volume for node: %w", err)
 		}
 
-		node.ExtraMounts = append(node.ExtraMounts, cri.Mount{
+		node.ExtraMounts = append(node.ExtraMounts, v1alpha3.Mount{
 			ContainerPath: fmt.Sprintf("/mnt/disks/%s", volumeName),
 			HostPath:      volume.Mountpoint,
 		})
@@ -170,9 +167,7 @@ func testgroup(t *testing.T, groupname string) error {
 		}
 	}()
 
-	cluster, err := kind.NewCluster(version, create.WithV1Alpha3(&v1alpha3.Cluster{
-		Nodes: []v1alpha3.Node{node},
-	}))
+	cluster, err := kind.NewCluster(version)
 	if err != nil {
 		return err
 	}
@@ -263,7 +258,7 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 func removeLocalPathAsDefaultStorage(cluster test.Cluster, addons []v1beta1.AddonInterface) error {
 	for _, addon := range addons {
 		if addon.GetName() == "localvolumeprovisioner" {
-			if err := kubectl("--kubeconfig", cluster.ConfigPath(), "patch", "storageclass", "local-path", "-p", patchStorageClass); err != nil {
+			if err := kubectl("patch", "storageclass", "local-path", "-p", patchStorageClass); err != nil {
 				return err
 			}
 			return nil
