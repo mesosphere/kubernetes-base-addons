@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.34.0-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.34.0-3"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.34.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.14.0"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.19.0"
@@ -60,6 +60,17 @@ spec:
         # see: https://github.com/mesosphere/kubeaddons-extrasteps/tree/master/pkg/prometheus/prometheus.go
         enableAdditionalPrometheusRBACRules: true
       prometheus:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          paths:
+            - /ops/portal/prometheus
         service:
           additionalPorts:
             # Service port for Thanos gRPC.
@@ -245,6 +256,17 @@ spec:
               cpu: 300m
               memory: 1500Mi
       alertmanager:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          paths:
+            - /ops/portal/alertmanager
         alertmanagerSpec:
           resources:
             limits:
@@ -254,6 +276,18 @@ spec:
               cpu: 10m
               memory: 50Mi
       grafana:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          hosts: [""]
+          path: /ops/portal/grafana
         grafana.ini:
           server:
             protocol: http
