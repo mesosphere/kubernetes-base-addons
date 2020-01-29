@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/google/uuid"
-	"gopkg.in/yaml.v2"
-
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
+	"github.com/google/uuid"
+	"gopkg.in/yaml.v2"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
+	"sigs.k8s.io/kind/pkg/cluster"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
@@ -167,7 +167,9 @@ func testgroup(t *testing.T, groupname string) error {
 		}
 	}()
 
-	cluster, err := kind.NewCluster(version)
+	cluster, err := kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{
+		Nodes: []v1alpha3.Node{node},
+	}))
 	if err != nil {
 		return err
 	}
