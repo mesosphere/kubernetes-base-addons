@@ -171,6 +171,10 @@ func testgroup(t *testing.T, groupname string) error {
 		Nodes: []v1alpha3.Node{node},
 	}))
 	if err != nil {
+		// try to clean up in case cluster was created and reference available
+		if cluster != nil {
+			_ = cluster.Cleanup()
+		}
 		return err
 	}
 	defer cluster.Cleanup()
