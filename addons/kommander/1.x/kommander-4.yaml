@@ -11,7 +11,7 @@ metadata:
     endpoint.kubeaddons.mesosphere.io/kommander: /ops/portal/kommander/ui
     appversion.kubeaddons.mesosphere.io/thanos: 0.3.9
     appversion.kubeaddons.mesosphere.io/karma: 1.4.0
-    appversion.kubeaddons.mesosphere.io/kommander-grafana: 6.4.2
+    appversion.kubeaddons.mesosphere.io/kommander-grafana: 6.6.0
     endpoint.kubeaddons.mesosphere.io/thanos: /ops/portal/kommander/monitoring/query
     endpoint.kubeaddons.mesosphere.io/karma: /ops/portal/kommander/monitoring/karma
     endpoint.kubeaddons.mesosphere.io/kommander-grafana: "/ops/portal/kommander/monitoring/grafana"
