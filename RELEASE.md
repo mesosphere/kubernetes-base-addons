@@ -40,7 +40,7 @@ Each _**Thursday**_, this repository should be tagged for SOAK testing as follow
 
 - Parse the PR logs for release notes and generate and commit a Changelog.md
 - One _**tag**_ is made for the each supported version of Kubernetes with an incremented release counter
-- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-2`, the new SOAK tag will be `testing-1.17-3`.
+- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-5`, the new SOAK tag will be `testing-1.17-6`.
 - For the previous Kubernetes version, the last release may have been `stable-1.16-9`. The new tag for this Kubernetes version is `testing-1.16-10`.
 - The oldest supported release similarly might be `testing-1.15-27` for a prior `stable-1.15-26`.
 
