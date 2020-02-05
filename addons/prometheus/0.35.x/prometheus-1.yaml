@@ -121,8 +121,6 @@ spec:
                 targetPort: 5601
                 interval: 30s
         prometheusSpec:
-          image:
-            tag: v2.14.0
           thanos:
             version: v0.8.1
           externalLabels:
