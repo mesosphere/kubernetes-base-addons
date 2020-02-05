@@ -27,7 +27,7 @@ Releases are tags which are cut from `master` and other branches and are intende
 
 While you may see other tags in our [releases page](https://github.com/mesosphere/kubernetes-base-addons/releases) the only releases which are official and supported releases are those designated as non-prerelease and specifically mentioned to be official releases.
 
-**NOTE**: Do not use `master` for production, instead pick a supported release version.
+**NOTE**: Do not use `master` for production. Instead, pick a supported release version.
 
 For the release process, see the [release](RELEASE.md) document.
 
