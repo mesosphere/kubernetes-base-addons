@@ -44,7 +44,7 @@ Each _**Thursday**_, this repository should be tagged for SOAK testing as follow
 - For the previous Kubernetes version, the last release may have been `stable-1.16-9`. The new tag for this Kubernetes version is `testing-1.16-10`.
 - The oldest supported release similarly might be `testing-1.15-27` for a prior `stable-1.15-26`.
 
-**NOTE:** If a breaking change causes a diversion from an older release of Kubernetes to a newer one, prior to tagging the older version must be branched, ie. `stable-1.16-9` would become `stable-1.16`, the changes since the `stable-1.16-9` tag would be merged into this branch, and the new _tag_ would still be `testing-1.16.10` but pointing to the last change on the `stable-1.16` branch.
+**NOTE:** If a breaking change causes a diversion from an older release of Kubernetes to a newer one, prior to tagging the older version must be branched, ie. `stable-1.16-9` would become `stable-1.16`, the changes since the `stable-1.16-9` tag would be merged into this branch, and the new _tag_ would still be `testing-1.16-10` but pointing to the last change on the `stable-1.16` branch.
 
 - This set of Addons are installed into a SOAK cluster<sup>[2](#footnote2)</sup>.
 
