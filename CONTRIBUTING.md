@@ -23,4 +23,6 @@ You will find that any particular addon directory (e.g. `addons/prometheus`) may
 
 The **intention of revisions is to maintain a flat history of addon changes**. If you are making changes to any particular addon you should be making a revision of that addon as a copy of the original file with the changes made therein and the `addon-revision` version updated to reflect the new version appropriately.
 
+New directories can be created for minor versions of a release (e.g. a directory named `v0.9.x`) and contain any revisions matching that minor release. You create new files which should follow the patter `<addon_name>-<version>-<revision>` (e.g. `helloworld-v0.9.1-1.yaml`) keeping in mind revisions start over from 1 again if the patch version updates.
+
 Right now adding revisions is a manual process (see [DCOS-62943](https://jira.mesosphere.com/browse/DCOS-62943) related to automating this in future iterations). To make it easier for reviewers to review PRs where revisions are [manually] added make the first commit in your branch a commit to ONLY copy the previous revision to the new revision file. That way the following commits can actually include your changes and will be easier to historically follow without needing to manually diff the files.
