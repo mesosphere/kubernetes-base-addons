@@ -2,7 +2,7 @@
 
 This repository contains the default sets of addons needed to bootstrap [D2iQ Kubernetes](https://d2iq.com/solutions/ksphere).
 
-# Overview
+## Overview
 
 The structure of this repository follows the [Kubeaddons Catalog Documentation](https://github.com/mesosphere/kubeaddons/blob/master/tools/catalog/README.md) in reference, and uses the [Addon Revision concept covered therein](https://github.com/mesosphere/kubeaddons/blob/master/tools/catalog/README.md#special-addonrepository-options---addon-revisions).
 
@@ -13,7 +13,7 @@ You will find the following directories here:
 * `metadata/` - containing static metadata for the addons in `addons/`
 * `test/` - containing integration tests for the addons in `addons/`
 
-# Support
+## Support
 
 There is **no community support for this software at this time**, and this repository (while publicly visible) is only intended for consumption by D2iQ personnel.
 
@@ -21,7 +21,7 @@ If you are here looking for addon support as an end-user, support is given as pe
 
 Please [contact D2iQ](https://d2iq.com/contact) for questions and more information.
 
-# Releases
+## Releases
 
 Releases are tags which are cut from `master` and other branches and are intended to signify a single supported instance of `kubernetes-base-addons`.
 
@@ -31,7 +31,7 @@ While you may see other tags in our [releases page](https://github.com/mesospher
 
 For the release process, see the [release](RELEASE.md) document.
 
-## Creating a Release
+### Creating a Release
 
 Creating a releases is as simple as cutting a tag and making a [Github release](https://help.github.com/en/github/administering-a-repository/creating-releases).
 
@@ -41,6 +41,6 @@ Some supported releases are supported via the terms of support for some other KS
 
 For all other non-official releases, make sure your tag and description are distinctly different from the official release pattern, explain the purpose of your release, and mark is as a `pre-release`.
 
-# Contributing
+## Contributing
 
 See our [Contributing Documentation](CONTRIBUTING.md).

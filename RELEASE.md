@@ -14,13 +14,13 @@ Changes to Konvoy or Kommander to create a resource needed by an Addon should be
 
 ## Schedule
 
-Releases should be weekly on Wednesdays, or as needed to address CVEs.
+Releases should be bi-weekly<sup>[1](#footnote1)</sup> on Wednesdays, or as needed to address CVEs.
 
 ## Considerations
 
 ### Kubernetes
 
-The Addons in this repo are the minimum base set of supported<sup>[1](#footnote1)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
+The Addons in this repo are the minimum base set of supported<sup>[2](#footnote2)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
 
 Kubernetes support must be maintained for the latest general release of Kubernetes and the two prior minor releases.
 At the time of this writing, the latest Kubernetes release is 1.17.2.
@@ -32,13 +32,15 @@ As much as possible, we will try to maintain a `master` branch that is compatibl
 If there is a variation in the Kubernetes API which requires a _**breaking change**_ to the Addon, a _**branch**_ will be made for the prior Kubernetes versions.
 All future changes adopted into master will need to be back-ported to those branches.
 
+**NOTE**: No other changes may be breaking. Extreme changes, like moving from traefik 1.7 to 2.2, must be done in such a way that the transition is transparent to the user.
+
 ## Process
 
 ### Testing Release (Weekly, Thursday)
 
 Each _**Thursday**_, this repository should be tagged for SOAK testing as follows:
 
-- Parse the PR logs for release notes and generate and commit a Changelog.md
+- Using automation, parse the PR logs for release notes and generate and commit a Changelog.md
 - One _**tag**_ is made for the each supported version of Kubernetes with an incremented release counter
 - If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-5`, the new SOAK tag will be `testing-1.17-6`.
 - For the previous Kubernetes version, the last release may have been `stable-1.16-9`. The new tag for this Kubernetes version is `testing-1.16-10`.
@@ -46,7 +48,7 @@ Each _**Thursday**_, this repository should be tagged for SOAK testing as follow
 
 **NOTE:** If a breaking change causes a diversion from an older release of Kubernetes to a newer one, prior to tagging the older version must be branched, ie. `stable-1.16-9` would become `stable-1.16`, the changes since the `stable-1.16-9` tag would be merged into this branch, and the new _tag_ would still be `testing-1.16-10` but pointing to the last change on the `stable-1.16` branch.
 
-- This set of Addons are installed into a SOAK cluster<sup>[2](#footnote2)</sup>.
+- This set of Addons are installed into a SOAK cluster<sup>[3](#footnote3)</sup>.
 
 ### Stable Release (Weekly, Wednesday)
 
@@ -56,6 +58,8 @@ Each _**Wednesday**_:
 - Create `stable-` tags for the `testing-` tags that ran in SOAK.
 - Announce the release.
 
-<a name="footnote1">1</a>: A supported Addon is one which has been tested to work in concert with other Addons in the same release. This suite of Addons, as a whole, constitute a set for which D2iQ customers can get support with their software contract. Variations from the configurations and suite of Addons are not expected to be the responsibility of D2iQ support.
+<a name="footnote1">1</a>: Based on a two-week soak cycle. If we can have overlapping soak clusters, we can accelerate this.
 
-<sup>[2](#footnote2)</sup>: At the time of this writing, this process is as yet undetermined as there are no clusters in which to do this SOAK.
+<a name="footnote2">2</a>: A supported Addon is one which has been tested to work in concert with other Addons in the same release. This suite of Addons, as a whole, constitute a set for which D2iQ customers can get support with their software contract. Variations from the configurations and suite of Addons are not expected to be the responsibility of D2iQ support.
+
+<a name="footnote3">3</a>: At the time of this writing, this process is as yet undetermined as there are no clusters in which to do this SOAK.
