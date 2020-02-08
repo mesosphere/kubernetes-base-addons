@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.17.0-2"
-    appversion.kubeaddons.mesosphere.io/dex: "2.17.0"
-    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/stable/dex/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-1"
+    appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
+    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/e9a641f07194fce82acbda71b03f83c448c7092d/stable/dex/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -30,13 +30,13 @@ spec:
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 1.6.13
+    version: 2.8.0
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
       # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.17.0-mesosphere/README.mesosphere.md
       image: mesosphere/dex
-      imageTag: v2.17.0-25-g5597-mesosphere
+      imageTag: v2.22.0-2-g3657-d2iq
       resources:
         requests:
           cpu: 100m
@@ -53,10 +53,10 @@ spec:
         path: /dex
         hosts:
           - ""
+      https: true
       ports:
-        - name: https
+        web:
           containerPort: 8080
-          protocol: TCP
       certs:
         web:
           create: false
@@ -74,12 +74,11 @@ spec:
         logger:
           level: debug
         web:
-          http: 127.0.0.1:8081
-          https: 0.0.0.0:8080
+          address: 0.0.0.0
           tlsCert: /etc/dex/tls/https/server/tls.crt
           tlsKey: /etc/dex/tls/https/server/tls.key
         grpc:
-          addr: 0.0.0.0:5000
+          address: 0.0.0.0
           tlsCert: /etc/dex/tls/grpc/server/tls.crt
           tlsKey: /etc/dex/tls/grpc/server/tls.key
           tlsClientCA: /etc/dex/tls/grpc/ca/tls.crt
