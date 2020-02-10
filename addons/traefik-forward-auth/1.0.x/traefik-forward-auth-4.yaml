@@ -5,10 +5,21 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-4"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: dex
@@ -23,7 +34,7 @@ spec:
       replicaCount: 1
       image:
         repository: mesosphere/traefik-forward-auth
-        tag: 2.0.0
+        tag: 2.0.3
         pullPolicy: IfNotPresent
       resources:
         requests:
@@ -79,4 +90,3 @@ spec:
           value: "kubeaddons"
         - name: "TFA_INGRESS_SERVICE_NAME"
           value: "traefik-kubeaddons"
-
