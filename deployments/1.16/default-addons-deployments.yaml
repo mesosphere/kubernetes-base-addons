@@ -5,4 +5,4 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: default-ksphere-addons-1.16.x
 spec:
-  addons: ["traefik-kommander"]
+  addons: ["traefik-default"]

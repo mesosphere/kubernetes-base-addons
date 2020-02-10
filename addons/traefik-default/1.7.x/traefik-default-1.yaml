@@ -2,9 +2,9 @@
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
-  name: traefik-kommander
+  name: traefik-default
   labels:
-    kubeaddons.mesosphere.io/name: traefik-kommander
+    kubeaddons.mesosphere.io/name: traefik-default
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.2-5"
@@ -21,5 +21,16 @@ spec:
     version: 1.72.14
     values: |
       ---
-      rbac:
+      ssl:
         enabled: true
+        enforced: true
+        # TODO: This comment might no longer be true.
+        # dex service is exposed with TLS certificate signed by self signed root
+        # Dex CA certificate. It is not clear if traefik supports configuring
+        # trusted certificates per backend. This should be investigated in a
+        # separate issue.
+        # See: https://jira.mesosphere.com/browse/DCOS-56033
+        insecureSkipVerify: true
+        # TODO: We need to require users to provision the CA in a secret before
+        # connecting the managed cluster
+        caSecretName: custom-cert
