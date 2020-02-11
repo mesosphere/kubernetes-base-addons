@@ -55,10 +55,6 @@ spec:
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
           velero: false
-        # This option grants the Prometheus pod the necessary permissions that the
-        # "get-cluster-id" container defined in prometheus.prometheusSpec.containers requires.
-        # see: https://github.com/mesosphere/kubeaddons-extrasteps/tree/master/pkg/prometheus/prometheus.go
-        enableAdditionalPrometheusRBACRules: true
       prometheus:
         ingress:
           enabled: true
@@ -126,16 +122,6 @@ spec:
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
-            # note: in order to run this container, mesosphereResources.enableAdditionalPrometheusRBACRules
-            # needs to be set to true
-            - name: get-cluster-id
-              image: mesosphere/kubeaddons-addon-initializer:v0.1.5
-              command: ["/bin/bash", "-c", "addon-initializer prometheus && sleep infinity"]
-              env:
-              - name: "PROMETHEUS_NAMESPACE"
-                value: "kubeaddons"
-              - name: "CLUSTER_ID_CONFIGMAP_NAME"
-                value: "cluster-info-configmap"
             - name: prometheus-config-reloader
               envFrom:
               - configMapRef:
