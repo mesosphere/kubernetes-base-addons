@@ -1,0 +1,92 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: traefik-forward-auth
+  namespace: kubeaddons
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-4"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: dex
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: ingresscontroller
+  chartReference:
+    chart: traefik-forward-auth
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.2.13
+    values: |
+      ---
+      replicaCount: 1
+      image:
+        repository: mesosphere/traefik-forward-auth
+        tag: 2.0.3
+        pullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      service:
+        type: ClusterIP
+        port: 4181
+      traefikForwardAuth:
+        # oidcUri will be overridden by the init-container
+        oidcUri: "https://dex-kubeaddons.kubeaddons.svc.cluster.local:8080/dex"
+        clientId: traefik-forward-auth
+        clientSecret:
+          valueFrom:
+            secretKeyRef:
+              name: dex-client-secret-traefik-forward-auth
+              key: client_secret
+        cookieSecure: true
+        userCookieName: "konvoy_profile_name"
+        extraConfig:
+          auth-host = dex-kubeaddons.kubeaddons.svc.cluster.local:8080
+        enableRBAC: true
+        enableImpersonation: true
+        rbacPassThroughPaths: ["/ops/portal/kubernetes/", "/ops/portal/kubernetes/*"]
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          ingress.kubernetes.io/protocol: https
+          traefik.ingress.kubernetes.io/auth-type: forward
+          traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+          traefik.ingress.kubernetes.io/priority: "1"
+        paths:
+          - /_oauth
+        hosts:
+          - ""
+        tls: []
+      deploymentAnnotations:
+        # The certificate can change because it was rotated or different cluster
+        # DNS name has been set.
+        secret.reloader.stakater.com/reload: "traefik-kubeaddons-certificate,dex-kubeaddons"
+      initContainers:
+      # initialize-traefik-forward-auth deploys credentials for use by the proxy
+      - name: initialize-traefik-forward-auth
+        image: mesosphere/kubeaddons-addon-initializer:v0.1.8
+        args: ["traefikforwardauth"]
+        env:
+        - name: "TFA_CONFIGMAP_NAME"
+          value: "traefik-forward-auth-kubeaddons-configmap"
+        - name: "TFA_NAMESPACE"
+          value: "kubeaddons"
+        - name: "TFA_INGRESS_NAMESPACE"
+          value: "kubeaddons"
+        - name: "TFA_INGRESS_SERVICE_NAME"
+          value: "traefik-kubeaddons"
