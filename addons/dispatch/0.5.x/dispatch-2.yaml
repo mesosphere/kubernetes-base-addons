@@ -46,12 +46,21 @@ spec:
         controller:
           metrics:
             enabled: true
+            serviceMonitor:
+              additionalLabels:
+                release: prometheus-kubeaddons
         server:
           metrics:
             enabled: true
+            serviceMonitor:
+              additionalLabels:
+                release: prometheus-kubeaddons
         repoServer:
           metrics:
             enabled: true
+            serviceMonitor:
+              additionalLabels:
+                release: prometheus-kubeaddons
 
       global:
         prometheus:
