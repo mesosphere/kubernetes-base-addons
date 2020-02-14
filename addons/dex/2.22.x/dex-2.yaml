@@ -99,7 +99,7 @@ spec:
             - 'https://PUBLIC.URI/_oauth'
       initContainers:
       - name: initialize-dex
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.7
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.3
         args: ["dex"]
         env:
         - name: "DEX_NAMESPACE"
