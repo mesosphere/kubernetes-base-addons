@@ -4,6 +4,4 @@
 # Reference: https://help.github.com/en/articles/about-code-owners
 # Order is important: later rules override preceding rules
 
-* @joejulian @shaneutt
-
-/addons/dispatch @devx
+* @mesosphere/sig-ksphere-catalog

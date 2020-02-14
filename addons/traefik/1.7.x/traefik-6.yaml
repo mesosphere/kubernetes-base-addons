@@ -7,32 +7,21 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.2-4"
-    appversion.kubeaddons.mesosphere.io/traefik: "1.7.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.2-6"
+    appversion.kubeaddons.mesosphere.io/traefik: "1.7.12"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
     values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/5529163bb54ab1b951ffa2eaa60957722bd617db/staging/traefik/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
-  cloudProvider:
-    - name: aws
-      enabled: true
-    - name: azure
-      enabled: true
-    - name: gcp
-      enabled: true
-    - name: docker
-      enabled: true
-    - name: none
-      enabled: true
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.13
+    version: 1.72.15
     values: |
       ---
       replicas: 2

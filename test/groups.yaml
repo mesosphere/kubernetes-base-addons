@@ -54,21 +54,6 @@ prometheus:
     - "opsportal"
 
 # ------------------------------------------------------------------------------
-# Kommander
-#
-# All Kommander related addons should be tested as a part of this group
-# ------------------------------------------------------------------------------
-kommander:
-    - "metallb"
-    - "opsportal"
-    - "cert-manager"
-    - "traefik"
-    - "dex"
-    - "konvoyconfig"
-    - "reloader"
-    - "kommander"
-
-# ------------------------------------------------------------------------------
 # Istio
 #
 # All Istio related addons should be tested as a part of this group
@@ -90,20 +75,6 @@ localvolumeprovisioner:
     - "cert-manager"
     - "defaultstorageclass-protection"
     - "localvolumeprovisioner"
-
-# ------------------------------------------------------------------------------
-# Dispatch
-#
-# All Dispatch related addons should be tested as a part of this group
-# ------------------------------------------------------------------------------
-dispatch:
-    - "cert-manager"
-    - "defaultstorageclass-protection"
-    - "localvolumeprovisioner"
-    - "prometheus"
-    - "prometheusadapter"
-    - "opsportal"
-    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Disabled

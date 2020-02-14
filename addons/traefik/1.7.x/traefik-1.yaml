@@ -18,6 +18,17 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
