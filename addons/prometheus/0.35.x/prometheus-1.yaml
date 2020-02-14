@@ -42,7 +42,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 8.3.10
+    version: 8.7.1
     values: |
       ---
       defaultRules:
