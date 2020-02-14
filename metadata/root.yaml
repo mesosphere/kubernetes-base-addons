@@ -107,18 +107,6 @@ dex:
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
 ---
-dispatch:
-  display_name: dispatch
-  description: dispatch
-  logo: dispatch/logo.svg
-  category: other
-  overview: dispatch/overview.md
-  resources:
-    links:
-      - type: support
-        title: Submit a Support Request
-        link: https://d2iq.com/services-and-support
----
 elasticsearchexporter:
   display_name: elasticsearchexporter
   description: elasticsearchexporter
