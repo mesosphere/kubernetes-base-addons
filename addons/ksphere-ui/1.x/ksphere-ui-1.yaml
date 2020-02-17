@@ -9,8 +9,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.192.3-1"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.192.3"
-    endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/dashboard
-    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/kommander/v1.192.3/chart/kommander-ui/values.yaml"
+    endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/console/
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
