@@ -17,3 +17,8 @@ spec:
     chart: kommander-ui
     repo: https://mesosphere.github.io/kommander/charts/
     version: 2.26.3
+    values: |
+      ---
+      kommander-ui:
+        ingress:
+          path: /ops/portal/dashboard
