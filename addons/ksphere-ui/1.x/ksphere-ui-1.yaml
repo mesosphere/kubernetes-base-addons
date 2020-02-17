@@ -1,0 +1,20 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: ksphere-ui
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: ksphere-ui
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.192.3-1"
+    appversion.kubeaddons.mesosphere.io/opsportal: "1.192.3"
+    endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/dashboard
+    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/kommander/v1.192.3/chart/kommander-ui/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  chartReference:
+    chart: kommander-ui
+    repo: https://mesosphere.github.io/kommander/charts/index.yaml
+    version: 1.192.3
