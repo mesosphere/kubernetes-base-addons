@@ -16,5 +16,5 @@ spec:
     minSupportedVersion: v1.15.6
   chartReference:
     chart: kommander-ui
-    repo: https://mesosphere.github.io/kommander/charts/index.yaml
+    repo: https://mesosphere.github.io/kommander/charts/
     version: 1.192.3
