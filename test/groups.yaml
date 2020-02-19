@@ -92,6 +92,14 @@ localvolumeprovisioner:
     - "localvolumeprovisioner"
 
 # ------------------------------------------------------------------------------
+# Kiam
+#
+# All Kiam related addons and dependencies should be tested as a part of this group
+# ------------------------------------------------------------------------------
+kiam:
+    - "kiam"
+
+# ------------------------------------------------------------------------------
 # Disabled
 #
 # These are Addons which tests are currently disabled for.
