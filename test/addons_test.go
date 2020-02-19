@@ -280,4 +280,14 @@ func overrides(addon v1beta1.AddonInterface) {
 	}
 }
 
-var addonOverrides = map[string]string{}
+var addonOverrides = map[string]string{
+	"metallb": `
+---
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - "172.17.1.200-172.17.1.250"
+`,
+}
