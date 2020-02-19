@@ -1,0 +1,30 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: kiam
+  labels:
+    kubeaddons.mesosphere.io/name: kiam
+    kubeaddons.mesosphere.io/provides: iam
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.5.0-1"
+    appversion.kubeaddons.mesosphere.io/kiam: "3.5.0"
+    values.chart.helm.kubeaddons.mesosphere.io/kiam: "https://raw.githubusercontent.com/uswitch/kiam/master/helm/kiam/values.yaml"
+spec:
+  namespace: kube-system
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+  chartReference:
+    chart: kiam
+    repo: https://uswitch.github.io/kiam-helm-charts/charts
+    version: 5.7.0
+    values: |
+      ---
+      server:
+        # kube2iam-default
+        assumeRoleArn: null
+        # arn:aws:iam::0123456789:role/
+        roleBaseArn: null
