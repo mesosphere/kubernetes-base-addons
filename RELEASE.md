@@ -10,7 +10,7 @@ Changes to Konvoy or Kommander to create a resource needed by an Addon should be
   - [Branches and Tags](#branches-and-tags)
 - [Process](#process)
   - [Testing Release (Weekly, Thursday)](#testing-release-weekly-thursday)
-  - [Stable Release (Weekly, Wednesday)](#stable-release-weekly-wednesday)
+  - [Stable Release (Biweekly, Wednesday)](#stable-release-biweekly-wednesday)
 
 ## Schedule
 
@@ -38,22 +38,22 @@ All future changes adopted into master will need to be back-ported to those bran
 
 ### Testing Release (Weekly, Thursday)
 
-Each _**Thursday**_, this repository should be tagged for SOAK testing as follows:
+Every other _**Thursday**_, this repository should be tagged for SOAK testing as follows:
 
 - Using automation, parse the PR logs for release notes and generate and commit a Changelog.md
 - One _**tag**_ is made for the each supported version of Kubernetes with an incremented release counter
-- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-5`, the new SOAK tag will be `testing-1.17-6`.
-- For the previous Kubernetes version, the last release may have been `stable-1.16-9`. The new tag for this Kubernetes version is `testing-1.16-10`.
-- The oldest supported release similarly might be `testing-1.15-27` for a prior `stable-1.15-26`.
-- These tag versions, in the form of `major.minor-dist`, only the `major.minor` refer to the kubernetes version. The api within a minor version should not be changing so there should never be a need to refer to the kubernetes patch version.
+- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-1.5.x`, the new SOAK tag will be `testing-1.17-1.6.0`.
+- For the previous Kubernetes version, the last release may have been `stable-1.16-1.9.x`. The new tag for this Kubernetes version is `testing-1.16-1.10.0`.
+- The oldest supported release similarly might be `testing-1.15-1.27.0` for a prior `stable-1.15-1.26.x`.
+- These tag versions, in the form of `major.minor-semver`, only the `major.minor` refer to the kubernetes version. The api within a minor version should not be changing so there should never be a need to refer to the kubernetes patch version.
 
-**NOTE:** If a breaking change causes a diversion from an older release of Kubernetes to a newer one, prior to tagging the older version must be branched, ie. `stable-1.16-9` would become `stable-1.16`, the changes since the `stable-1.16-9` tag would be merged into this branch, and the new _tag_ would still be `testing-1.16-10` but pointing to the last change on the `stable-1.16` branch.
+**NOTE:** If a breaking change causes a diversion from an older release of Kubernetes to a newer one, prior to tagging the older version must be branched, ie. `stable-1.16-1.9.0` would become `stable-1.16`, the changes since the `stable-1.16-1.9.0` tag would be merged into this branch, and the new _tag_ would still be `testing-1.16-1.10.0` but pointing to the last change on the `stable-1.16` branch.
 
 - This set of Addons are installed into a SOAK cluster<sup>[3](#footnote3)</sup>.
 
-### Stable Release (Weekly, Wednesday)
+### Stable Release (Biweekly, Wednesday)
 
-Each _**Wednesday**_:
+Every other _**Wednesday**_, the day before the next testing release:
 
 - As a standing agenda item in sig-ksphere-catalog, vote go/no-go on the release of the Addons that have been SOAK tested.
 - Create `stable-` tags for the `testing-` tags that ran in SOAK.
