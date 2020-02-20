@@ -41,6 +41,16 @@ Some supported releases are supported via the terms of support for some other KS
 
 For all other non-official releases, make sure your tag and description are distinctly different from the official release pattern, explain the purpose of your release, and mark is as a `pre-release`.
 
+### Testing
+
+The test suite can be exercised locally by running
+
+    make test
+
+
+Pull Requests against this repo is tested by Teamcity and Dispatch. 
+Dispatchfile defines the config and exercises the test in the Makefile.
+
 ## Contributing
 
 See our [Contributing Documentation](CONTRIBUTING.md).
