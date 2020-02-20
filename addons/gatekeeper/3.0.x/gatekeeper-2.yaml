@@ -31,7 +31,7 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.3.3
+    version: 0.3.4
     values: |
       ---
       image:

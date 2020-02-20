@@ -37,7 +37,7 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.4.3
+    version: 1.4.4
     values: |
       kiali:
        enabled: true
