@@ -11,6 +11,15 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: false
+    - name: azure
+      enabled: false
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: false
   chartReference:
     chart: nfs-server-provisioner
     repo: https://mesosphere.github.io/charts/staging
