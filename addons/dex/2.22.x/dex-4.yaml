@@ -1,0 +1,116 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: dex
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: dex
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-3"
+    appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
+    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/a9307cb8667b1601bce2eda3da0be024fd317fad/stable/dex/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: ingresscontroller
+  chartReference:
+    chart: dex
+    repo: https://mesosphere.github.io/charts/stable
+    version: 2.8.3
+    values: |
+      ---
+      # Temporarily we're going to use our custom built container. Documentation
+      # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.17.0-mesosphere/README.mesosphere.md
+      image: mesosphere/dex
+      imageTag: v2.22.0-2-g3657-d2iq
+      resources:
+        requests:
+          cpu: 100m
+          memory: 50Mi
+      deploymentAnnotations:
+        # The certificate can change because it was rotated or different cluster
+        # DNS name has been set.
+        secret.reloader.stakater.com/reload: "traefik-kubeaddons-certificate,ops-portal-credentials"
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          ingress.kubernetes.io/protocol: https
+        path: /dex
+        hosts:
+          - ""
+      https: true
+      ports:
+        web:
+          containerPort: 8080
+      certs:
+        web:
+          create: false
+          secret:
+            tlsName: dex
+      config:
+        issuer: https://dex-kubeaddons.kubeaddons.svc.cluster.local:8080/dex
+        frontend:
+          issuer: Kubernetes
+          theme: d2iq
+        storage:
+          type: kubernetes
+          config:
+            inCluster: true
+        logger:
+          level: debug
+        web:
+          address: 0.0.0.0
+          tlsCert: /etc/dex/tls/https/server/tls.crt
+          tlsKey: /etc/dex/tls/https/server/tls.key
+        grpc:
+          address: 0.0.0.0
+          tlsCert: /etc/dex/tls/grpc/server/tls.crt
+          tlsKey: /etc/dex/tls/grpc/server/tls.key
+          tlsClientCA: /etc/dex/tls/grpc/ca/tls.crt
+        oauth2:
+          skipApprovalScreen: true
+        staticClients:
+        # `redirectURIs` and `secret` values are modified in `configureDexStaticClients`
+        - id: kube-apiserver
+          # This `id` must by in sync with `dex-k8s-authenticator.yaml` value as well as
+          # kube-apiserver flag `oidc-client-id`.
+          name: 'Kubernetes CLI authenticator'
+          redirectURIs:
+            - 'https://PUBLIC.URI/token/callback/kubernetes-cluster'
+            - 'https://PUBLIC.URI/token/callback'
+        - id: traefik-forward-auth
+          name: 'Ops Portal authenticator'
+          redirectURIs:
+            - 'https://PUBLIC.URI/_oauth'
+      initContainers:
+      - name: initialize-dex
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.3
+        args: ["dex"]
+        env:
+        - name: "DEX_NAMESPACE"
+          value: "kubeaddons"
+        - name: "DEX_SECRET_NAME"
+          value: "dex-kubeaddons"
+        - name: "OPS_PORTAL_NAMESPACE"
+          value: "kubeaddons"
+        - name: "OPS_PORTAL_SECRET_NAME"
+          value: "ops-portal-credentials"
+        - name: "TRAEFIK_NAMESPACE"
+          value: "kubeaddons"
+        - name: "TRAEFIK_SERVICE_NAME"
+          value: "traefik-kubeaddons"
