@@ -1,0 +1,30 @@
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  annotations:
+    appversion.kubeaddons.mesosphere.io/nfs-server-provisioner: 2.3.0
+    catalog.kubeaddons.mesosphere.io/addon-revision: 0.6.0-1
+  labels:
+    kubeaddons.mesosphere.io/name: nfsserverprovisioner
+  name: nfsserverprovisioner
+  namespace: kubeaddons
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  chartReference:
+    chart: nfs-server-provisioner
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.6.0
+    values: |
+      persistence:
+        enabled: true
+        size: 100Gi
+      storageClass:
+        name: nfsserverprovisioner
+      resources:
+        limits:
+           cpu: 1000m
+           memory: 1024Mi
+        requests:
+           cpu: 50m
+           memory: 256Mi
