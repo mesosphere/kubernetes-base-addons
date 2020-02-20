@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: opsportal
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-10"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.0.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
     values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/4155f480571eaf82c64ddd63d3d334b1105d0591/stable/opsportal/values.yaml"
@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.2.6
+    version: 0.2.8
     values: |
       ---
       landing:
@@ -47,4 +47,3 @@ spec:
         ## to the opsportal-admin role. This mimics the existing security policy where any authenticated and whitelisted user
         ## has full access to the opsportal. This option will be removed in the 0.3 release of this chart.
         allowAllAuthenticated: false
-  
