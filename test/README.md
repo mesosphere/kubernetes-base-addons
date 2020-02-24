@@ -1,3 +1,4 @@
+do not merge - ci test
 # Addon Tests
 
 In this directory you will find [go tests](https://golang.org/pkg/testing/) which cover integration testing of the addons in this repo.
