@@ -1,0 +1,85 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: dex-k8s-authenticator
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: dex-k8s-authenticator
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.1-3"
+    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.1.1"
+    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/staging/dex-k8s-authenticator/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: dex
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: ingresscontroller
+  chartReference:
+    chart: dex-k8s-authenticator
+    repo: https://mesosphere.github.io/charts/staging
+    version: 1.1.14
+    values: |
+      ---
+      image:
+        repository: mesosphere/dex-k8s-authenticator
+        tag: v1.1.0-43-gb097-d2iq
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+        path: /token
+        hosts:
+          - ""
+      dexK8sAuthenticator:
+        #logoUrl: http://<path-to-your-logo.png>
+        #tlsCert: /path/to/dex-client.crt
+        #tlsKey: /path/to/dex-client.key
+        clusters:
+        - name: kubernetes-cluster
+          short_description: "Kubernetes cluster"
+          description: "Kubernetes cluster authenticator"
+          # client_secret: value is generated automatically via initContainers
+          client_id: kube-apiserver
+          issuer: https://dex-kubeaddons.kubeaddons.svc.cluster.local:8080/dex
+          # This URI is just a placeholder and it will be replaced during initContainers
+          # with a URL pointing to the traefik ingress public load balancer.
+          redirect_uri: https://dex-k8s-authenticator-kubeaddons.kubeaddons.svc.cluster.local:5555/token/callback/kubernetes-cluster
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      deploymentAnnotations:
+        # The certificate can change because it was rotated or different cluster
+        # DNS name has been set.
+        secret.reloader.stakater.com/reload: "traefik-kubeaddons-certificate"
+        configmap.reloader.stakater.com/reload: "dex-k8s-authenticator-kubeaddons"
+      initContainers:
+      - name: initialize-dka-config
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.1
+        args: ["dexK8sAuthenticator"]
+        env:
+        - name: "DKA_CONFIGMAP_NAME"
+          value: "dex-k8s-authenticator-kubeaddons"
+        - name: "DKA_NAMESPACE"
+          value: "kubeaddons"
+        - name: "DKA_INGRESS_NAMESPACE"
+          value: "kubeaddons"
+        - name: "DKA_INGRESS_SERVICE_NAME"
+          value: "traefik-kubeaddons"
+        - name: "DKA_WEB_PREFIX_PATH"
+          value: "/token"
