@@ -18,6 +18,7 @@
 # provided to point it at a backend other than the default, we will create and manage a distributed Minio (https://min.io/)
 # cluster which uses the default storage class for the cluster to maintain the backups.
 #
+#
 # WARNING: using the default (fallback) backend is for testing purposes only and should not be used in production.
 # ------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta1

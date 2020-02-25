@@ -16,20 +16,35 @@
 # require any dependencies or significant work to deploy.
 # ------------------------------------------------------------------------------
 general:
-    - "metallb"
-    - "opsportal"
     - "dashboard"
-    - "external-dns"
-    - "cert-manager"
-    - "traefik"
-    - "dex"
+
+# ------------------------------------------------------------------------------
+# Backups
+#
+# Addons related to backup and restore tools are tested as part of this group.
+# ------------------------------------------------------------------------------
+backups:
+    - "metallb"
+    - "velero"
+
+# ------------------------------------------------------------------------------
+# SSO
+#
+# Addons related to our single sign-on stack are tested as part of this group
+# ------------------------------------------------------------------------------
+sso:
     - "konvoyconfig"
+    - "external-dns"
+    - "metallb"
+    - "traefik"
+    - "opsportal"
+    - "cert-manager"
+    - "dex"
+    - "dex-k8s-authenticator"
+    - "kube-oidc-proxy"
     - "reloader"
     - "gatekeeper"
     - "traefik-forward-auth"
-    - "dex-k8s-authenticator"
-    - "kube-oidc-proxy"
-    - "velero"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
