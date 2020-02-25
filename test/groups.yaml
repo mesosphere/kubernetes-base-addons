@@ -92,12 +92,12 @@ localvolumeprovisioner:
     - "localvolumeprovisioner"
 
 # ------------------------------------------------------------------------------
-# Nfs
+# NFS Server Provisioner
 #
-# All Nfs related addons should be tested as a part of this group
+# All NFS Server Provisioner related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
-nfs:
-    - "nfs"
+nfsserverprovisioner:
+    - "nfsserverprovisioner"
 
 # ------------------------------------------------------------------------------
 # Disabled
