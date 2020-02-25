@@ -14,7 +14,6 @@ import (
 
 type groupName string
 type addonName string
-type groups map[groupName][]addonName
 
 var re = regexp.MustCompile(`^addons/([a-z]+)/?`)
 
@@ -65,12 +64,20 @@ func getGroupsToTest(modifiedAddons []addonName) ([]groupName, error) {
 		return nil, err
 	}
 
-	g := make(groups)
+	g := make(map[groupName][]addonName)
 	if err := yaml.Unmarshal(b, &g); err != nil {
 		return nil, err
 	}
 
 	testGroups := make([]groupName, 0)
+	// if no Addon has been modified, return all existing groups
+	if len(modifiedAddons) == 0 {
+		for group, _ := range g {
+			testGroups = append(testGroups, group)
+		}
+		return testGroups, nil
+	}
+
 	for _, modifiedAddonName := range modifiedAddons {
 		for group, addons := range g {
 			for _, name := range addons {

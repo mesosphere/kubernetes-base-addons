@@ -1,0 +1,82 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: fluentbit
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: fluentbit
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.3.2-2"
+    appversion.kubeaddons.mesosphere.io/fluentbit: "1.3.2"
+    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/helm/charts/f9efc8de7dcd6f93ebacc4b321d01a5aa819cdaa/stable/fluent-bit/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  chartReference:
+    chart: stable/fluent-bit
+    version: 2.8.4
+    values: |
+      ---
+      audit:
+        enable: false
+        input:
+          memBufLimit: 35MB
+          parser: kubernetes-audit
+          path: /var/log/kubernetes/audit/*.log
+          bufferChunkSize: 5MB
+          bufferMaxSize: 20MB
+          skipLongLines: off
+          key: kubernetes-audit
+      backend:
+        es:
+          host: elasticsearch-kubeaddons-client
+          time_key: '@ts'
+        type: es
+      filter:
+        mergeJSONLog: false
+      input:
+        tail:
+          parser: cri
+        systemd:
+          enabled: true
+          filters:
+            systemdUnit: []
+      metrics:
+        enabled: true
+        service:
+          labels:
+            servicemonitor.kubeaddons.mesosphere.io/path: "api__v1__metrics__prometheus"
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      extraEntries:
+        input: |-
+         Strip_Underscores true
+      resources:
+        limits:
+          memory: 750Mi
+        requests:
+          # values extracted from a 1 output/1 input setup here:
+          # https://github.com/fluent/fluent-bit-kubernetes-logging/blob/master/fluent-bit-daemonset-kafka-rest.yml
+          # we double it for 1 output (es)/2 input (tail, systemd) as an approximation
+          cpu: 200m
+          memory: 200Mi
+      parsers:
+        enabled: true
+        json:
+          - name: kubernetes-audit
+            timeKey: requestReceivedTimestamp
+            timeKeep: On
+            timeFormat: "%Y-%m-%dT%H:%M:%S.%L"

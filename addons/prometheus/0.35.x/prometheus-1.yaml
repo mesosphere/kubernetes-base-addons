@@ -1,0 +1,340 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: prometheus
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: prometheus
+    # TODO: we're temporarily supporting dependency on an existing default storage class
+    # on the cluster, this hack will trigger re-queue on Addons until one exists.
+    kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.35.0-1"
+    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.35.0"
+    appversion.kubeaddons.mesosphere.io/prometheus: "2.15.2"
+    appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
+    appversion.kubeaddons.mesosphere.io/grafana: "6.4.2"
+    endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
+    endpoint.kubeaddons.mesosphere.io/alertmanager: "/ops/portal/alertmanager"
+    endpoint.kubeaddons.mesosphere.io/grafana: "/ops/portal/grafana"
+    docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
+    docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
+    docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/a370c215c08ca7e50055902177141554de5444e6/staging/prometheus-operator/values.yaml"
+    # The prometheus-operator chart from prior Konvoy releases can't be upgraded to this chart version.
+    # See https://jira.d2iq.com/browse/DCOS-62924.
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=5.19.7", "strategy": "delete"}]'
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  chartReference:
+    chart: prometheus-operator
+    repo: https://mesosphere.github.io/charts/staging
+    version: 8.7.1
+    values: |
+      ---
+      defaultRules:
+        rules:
+          etcd: false
+      mesosphereResources:
+        create: true
+        rules:
+          etcd: true
+          # addon alert rules are defaulted to false to prevent potential misfires if addons
+          # are disabled.
+          velero: false
+      prometheus:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          paths:
+            - /ops/portal/prometheus
+        service:
+          additionalPorts:
+            # Service port for Thanos gRPC.
+            - name: grpc
+              port: 10901
+              targetPort: grpc
+        additionalServiceMonitors:
+          - name: kubeaddons-service-monitor-metrics
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+                - kommander
+                - velero
+            endpoints:
+              - port: metrics
+                interval: 30s
+              - port: monitoring
+                interval: 30s
+              # Service port for Thanos Querier, running in Kommander.
+              # If we ever add a Kommander-specific Prometheus, this
+              # endpoint should be removed and added to that Prometheus's
+              # configuration.
+              - targetPort: 10902
+                interval: 30s
+          - name: kubeaddons-service-monitor-api-v1-metrics-prometheus
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "api__v1__metrics__prometheus"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - path: /api/v1/metrics/prometheus
+                port: metrics
+                interval: 30s
+          - name: kubeaddons-service-monitor-prometheus-metrics
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "prometheus__metrics"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - path: /_prometheus/metrics
+                targetPort: 5601
+                interval: 30s
+        prometheusSpec:
+          thanos:
+            version: v0.8.1
+          externalLabels:
+            cluster: $(CLUSTER_ID)
+          containers:
+            - name: prometheus-config-reloader
+              envFrom:
+              - configMapRef:
+                  name: cluster-info-configmap
+          additionalScrapeConfigs:
+            - job_name: 'kubernetes-nodes-containerd'
+              metrics_path: /v1/metrics
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: node
+              relabel_configs:
+                - source_labels: [__address__]
+                  regex: '(.*):10250'
+                  replacement: '${1}:1338'
+                  target_label: __address__
+            - job_name: 'gpu_metrics'
+              metrics_path: /gpu/metrics
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: node
+              relabel_configs:
+                - source_labels: [__address__]
+                  regex: '(.*):10250'
+                  replacement: '${1}:9400'
+                  target_label: __address__
+                - source_labels: [__meta_kubernetes_node_label_konvoy_mesosphere_com_gpu_provider]
+                  regex: NVIDIA
+                  action: keep
+            - job_name: 'kubernetes-calico-node'
+              metrics_path: /metrics
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: pod
+                  namespaces:
+                    names:
+                    - kube-system
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                regex: calico-node
+                action: keep
+              - source_labels: [__meta_kubernetes_pod_container_port_name]
+                regex: .*metrics
+                action: keep
+              - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                target_label: name
+                action: replace
+              - source_labels: [__meta_kubernetes_pod_container_port_name]
+                target_label: endpoint
+                action: replace
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                target_label: node
+                action: replace
+              - source_labels: [__meta_kubernetes_pod_name]
+                target_label: pod
+                action: replace
+              - source_labels: [__meta_kubernetes_namespace]
+                target_label: namespace
+                action: replace
+            - job_name: 'kubernetes-keepalived'
+              metrics_path: /snmp
+              params:
+                target: ["127.0.0.1:6161"]
+                module: ["keepalived"]
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: pod
+                  namespaces:
+                    names:
+                    - kube-system
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_container_port_protocol]
+                regex: TCP
+                action: keep
+              - source_labels: [__meta_kubernetes_pod_container_port_number]
+                regex: "6161"
+                action: keep
+              - source_labels: [__meta_kubernetes_pod_container_port_name]
+                target_label: endpoint
+                action: replace
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                target_label: node
+                action: replace
+              - source_labels: [__meta_kubernetes_pod_name]
+                target_label: pod
+                action: replace
+              - source_labels: [__meta_kubernetes_namespace]
+                target_label: namespace
+                action: replace
+          enableAdminAPI: true
+          secrets:
+            - etcd-certs
+          externalUrl: "/ops/portal/prometheus"
+          storageSpec:
+            volumeClaimTemplate:
+              metadata:
+                name: db
+              spec:
+                accessModes: ["ReadWriteOnce"]
+                # 50Gi is the default size for the chart
+                resources:
+                  requests:
+                    storage: 50Gi
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 2500Mi
+            requests:
+              cpu: 300m
+              memory: 1500Mi
+      alertmanager:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          paths:
+            - /ops/portal/alertmanager
+        alertmanagerSpec:
+          resources:
+            limits:
+              cpu: 100m
+              memory: 50Mi
+            requests:
+              cpu: 10m
+              memory: 50Mi
+      grafana:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+          hosts: [""]
+          path: /ops/portal/grafana
+        grafana.ini:
+          server:
+            protocol: http
+            enable_gzip: true
+            root_url: "%(protocol)s://%(domain)s:%(http_port)s/ops/portal/grafana"
+          auth.proxy:
+            enabled: true
+            header_name: X-Forwarded-User
+            auto-sign-up: true
+          auth.basic:
+            enabled: false
+          users:
+            auto_assign_org_role: Admin
+        service:
+          type: ClusterIP
+          port: 3000
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          limits:
+            cpu: 300m
+            memory: 100Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 10
+        rbac:
+          pspUseAppArmor: false
+        # to avoid needing to download any plugins at runtime, use a container and a shared volume
+        # do not enable the plugins here, instead rebuild the mesosphere/grafana-plugins image with the new plugins
+        plugins: []
+        #  - grafana-piechart-panel
+        extraEmptyDirMounts:
+          - name: plugins
+            mountPath: /var/lib/grafana/plugins/
+        extraInitContainers:
+          - name: grafana-plugins-install
+            image: mesosphere/grafana-plugins:v0.0.1
+            command: ["/bin/sh", "-c", "cp -a /var/lib/grafana/plugins/. /var/lib/grafana/shared-plugins/"]
+            volumeMounts:
+            - name: plugins
+              mountPath: /var/lib/grafana/shared-plugins/
+      kubeEtcd:
+        enabled: true
+        serviceMonitor:
+          scheme: "https"
+          caFile: "/etc/prometheus/secrets/etcd-certs/ca.crt"
+          certFile: "/etc/prometheus/secrets/etcd-certs/server.crt"
+          keyFile: "/etc/prometheus/secrets/etcd-certs/server.key"
+      kube-state-metrics:
+        image:
+          # override the default k8s.gcr.io/kube-state-metrics repositry
+          # containerd mirror functionality does not support pulling these images
+          # TODO remove once https://github.com/containerd/containerd/issues/3756 is resolved
+          repository: quay.io/coreos/kube-state-metrics

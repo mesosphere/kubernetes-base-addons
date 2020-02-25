@@ -8,9 +8,10 @@ metadata:
     kubeaddons.mesosphere.io/name: nvidia
     kubeaddons.mesosphere.io/provides: nvidia
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.3.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-3"
     appversion.kubeaddons.mesosphere.io/nvidia: "0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/master/staging/nvidia/values.yaml"
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=0.4.0", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -26,7 +27,7 @@ spec:
   chartReference:
     chart: nvidia
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.3.1
+    version: 0.3.2
     values: |
       ---
       grafana:
