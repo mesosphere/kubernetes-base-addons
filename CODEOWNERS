@@ -5,5 +5,3 @@
 # Order is important: later rules override preceding rules
 
 * @mesosphere/sig-ksphere-catalog
-
-/addons/dispatch @devx

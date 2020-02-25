@@ -16,20 +16,35 @@
 # require any dependencies or significant work to deploy.
 # ------------------------------------------------------------------------------
 general:
-    - "metallb"
-    - "opsportal"
     - "dashboard"
-    - "external-dns"
-    - "cert-manager"
-    - "traefik"
-    - "dex"
+
+# ------------------------------------------------------------------------------
+# Backups
+#
+# Addons related to backup and restore tools are tested as part of this group.
+# ------------------------------------------------------------------------------
+backups:
+    - "metallb"
+    - "velero"
+
+# ------------------------------------------------------------------------------
+# SSO
+#
+# Addons related to our single sign-on stack are tested as part of this group
+# ------------------------------------------------------------------------------
+sso:
     - "konvoyconfig"
+    - "external-dns"
+    - "metallb"
+    - "traefik"
+    - "opsportal"
+    - "cert-manager"
+    - "dex"
+    - "dex-k8s-authenticator"
+    - "kube-oidc-proxy"
     - "reloader"
     - "gatekeeper"
     - "traefik-forward-auth"
-    - "dex-k8s-authenticator"
-    - "kube-oidc-proxy"
-    - "velero"
 
 # ------------------------------------------------------------------------------
 # ElasticSearch
@@ -54,21 +69,6 @@ prometheus:
     - "opsportal"
 
 # ------------------------------------------------------------------------------
-# Kommander
-#
-# All Kommander related addons should be tested as a part of this group
-# ------------------------------------------------------------------------------
-kommander:
-    - "metallb"
-    - "opsportal"
-    - "cert-manager"
-    - "traefik"
-    - "dex"
-    - "konvoyconfig"
-    - "reloader"
-    - "kommander"
-
-# ------------------------------------------------------------------------------
 # Istio
 #
 # All Istio related addons should be tested as a part of this group
@@ -90,20 +90,6 @@ localvolumeprovisioner:
     - "cert-manager"
     - "defaultstorageclass-protection"
     - "localvolumeprovisioner"
-
-# ------------------------------------------------------------------------------
-# Dispatch
-#
-# All Dispatch related addons should be tested as a part of this group
-# ------------------------------------------------------------------------------
-dispatch:
-    - "cert-manager"
-    - "defaultstorageclass-protection"
-    - "localvolumeprovisioner"
-    - "prometheus"
-    - "prometheusadapter"
-    - "opsportal"
-    - "dispatch"
 
 # ------------------------------------------------------------------------------
 # Disabled

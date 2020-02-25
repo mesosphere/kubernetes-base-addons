@@ -62,6 +62,18 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
+func TestBackupsGroup(t *testing.T) {
+	if err := testgroup(t, "backups"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSsoGroup(t *testing.T) {
+	if err := testgroup(t, "sso"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestElasticsearchGroup(t *testing.T) {
 	if err := testgroup(t, "elasticsearch"); err != nil {
 		t.Fatal(err)
@@ -74,12 +86,6 @@ func TestPrometheusGroup(t *testing.T) {
 	}
 }
 
-func TestKommanderGroup(t *testing.T) {
-	if err := testgroup(t, "kommander"); err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestIstioGroup(t *testing.T) {
 	if err := testgroup(t, "istio"); err != nil {
 		t.Fatal(err)
@@ -88,12 +94,6 @@ func TestIstioGroup(t *testing.T) {
 
 func TestLocalVolumeProvisionerGroup(t *testing.T) {
 	if err := testgroup(t, "localvolumeprovisioner"); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestDispatchGroup(t *testing.T) {
-	if err := testgroup(t, "dispatch"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -293,21 +293,6 @@ func overrides(addon v1beta1.AddonInterface) {
 }
 
 var addonOverrides = map[string]string{
-	"dispatch": `
----
-argo-cd:
-  prometheus:
-    enabled: true
-    release: prometheus-kubeaddons
-
-prometheus:
-  enabled: true
-  release: prometheus-kubeaddons
-
-minio:
-  persistence:
-    size: 1Gi
-`,
 	"metallb": `
 ---
 configInline:
@@ -316,59 +301,5 @@ configInline:
     protocol: layer2
     addresses:
     - "172.17.1.200-172.17.1.250"
-`,
-	"istio": `
----
-      kiali:
-       enabled: true
-       contextPath: /ops/portal/kiali
-       ingress:
-         enabled: true
-         kubernetes.io/ingress.class: traefik
-         hosts:
-           - ""
-       dashboard:
-         auth:
-           strategy: anonymous
-       prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
-
-      tracing:
-        enabled: true
-        contextPath: /ops/portal/jaeger
-        ingress:
-          enabled: true
-          kubernetes.io/ingress.class: traefik
-          hosts:
-            - ""
-
-      grafana:
-        enabled: true
-
-      prometheus:
-        serviceName: prometheus-kubeaddons-prom-prometheus.kubeaddons
-
-      istiocoredns:
-        enabled: true
-
-      security:
-       selfSigned: true
-       caCert: /etc/cacerts/tls.crt
-       caKey: /etc/cacerts/tls.key
-       rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-       certChain: /etc/cacerts/tls.crt
-       enableNamespacesByDefault: false
-
-      global:
-       podDNSSearchNamespaces:
-       - global
-       - "{{ valueOrDefault .DeploymentMeta.Namespace \"default\" }}.global"
-
-       mtls:
-        enabled: true
-
-       multiCluster:
-        enabled: true
-
-       controlPlaneSecurityEnabled: true
 `,
 }
