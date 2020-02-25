@@ -62,6 +62,18 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
+func TestBackupsGroup(t *testing.T) {
+	if err := testgroup(t, "backups"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSsoGroup(t *testing.T) {
+	if err := testgroup(t, "sso"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestElasticsearchGroup(t *testing.T) {
 	if err := testgroup(t, "elasticsearch"); err != nil {
 		t.Fatal(err)
@@ -280,4 +292,14 @@ func overrides(addon v1beta1.AddonInterface) {
 	}
 }
 
-var addonOverrides = map[string]string{}
+var addonOverrides = map[string]string{
+	"metallb": `
+---
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - "172.17.1.200-172.17.1.250"
+`,
+}
