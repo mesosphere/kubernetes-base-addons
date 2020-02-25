@@ -3,7 +3,7 @@ kind: Addon
 metadata:
   annotations:
     appversion.kubeaddons.mesosphere.io/nfs-server-provisioner: 2.3.0
-    catalog.kubeaddons.mesosphere.io/addon-revision: 0.6.0-1
+    catalog.kubeaddons.mesosphere.io/addon-revision: 2.3.0-1
   labels:
     kubeaddons.mesosphere.io/name: nfsserverprovisioner
   name: nfsserverprovisioner
