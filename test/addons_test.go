@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"sync"
@@ -13,12 +12,14 @@ import (
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
-	"gopkg.in/yaml.v2"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 	"sigs.k8s.io/kind/pkg/cluster"
 
 	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
+	"github.com/mesosphere/kubeaddons/pkg/catalog"
+	"github.com/mesosphere/kubeaddons/pkg/repositories"
+	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	"github.com/mesosphere/kubeaddons/pkg/test"
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
@@ -28,17 +29,39 @@ const (
 	controllerBundle         = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
 	defaultKubernetesVersion = "1.15.6"
 	patchStorageClass        = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
+
+	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
+	comRepoRef    = "master"
+	comRepoRemote = "origin"
 )
 
-var addonTestingGroups = make(map[string][]string)
+var (
+	cat       catalog.Catalog
+	localRepo repositories.Repository
+	comRepo   repositories.Repository
+	groups    map[string][]v1beta1.AddonInterface
+)
 
 func init() {
-	b, err := ioutil.ReadFile("groups.yaml")
+	var err error
+
+	localRepo, err = local.NewRepository("local", "../addons")
 	if err != nil {
 		panic(err)
 	}
 
-	if err := yaml.Unmarshal(b, addonTestingGroups); err != nil {
+	comRepo, err = git.NewRemoteRepository(comRepoURL, comRepoRef, comRepoRemote)
+	if err != nil {
+		panic(err)
+	}
+
+	cat, err = catalog.NewCatalog(localRepo, comRepo)
+	if err != nil {
+		panic(err)
+	}
+
+	groups, err = test.AddonsForGroupsFile("groups.yaml", cat)
+	if err != nil {
 		panic(err)
 	}
 }
@@ -185,15 +208,7 @@ func testgroup(t *testing.T, groupname string) error {
 		return err
 	}
 
-	addons, err := addons(addonTestingGroups[groupname]...)
-	if err != nil {
-		return err
-	}
-
-	if err := removeLocalPathAsDefaultStorage(cluster, addons); err != nil {
-		return err
-	}
-
+	addons := groups[groupname]
 	ph, err := test.NewBasicTestHarness(t, cluster, addons...)
 	if err != nil {
 		return err
@@ -213,34 +228,6 @@ func testgroup(t *testing.T, groupname string) error {
 	return nil
 }
 
-func addons(names ...string) ([]v1beta1.AddonInterface, error) {
-	var testAddons []v1beta1.AddonInterface
-
-	repo, err := local.NewRepository("base", "../addons")
-	if err != nil {
-		return testAddons, err
-	}
-	addons, err := repo.ListAddons()
-	if err != nil {
-		return testAddons, err
-	}
-
-	for _, addon := range addons {
-		for _, name := range names {
-			overrides(addon[0])
-			if addon[0].GetName() == name {
-				testAddons = append(testAddons, addon[0])
-			}
-		}
-	}
-
-	if len(testAddons) != len(names) {
-		return testAddons, fmt.Errorf("got %d addons, expected %d", len(testAddons), len(names))
-	}
-
-	return testAddons, nil
-}
-
 func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	var unhandled []v1beta1.AddonInterface
 	repo, err := local.NewRepository("base", "../addons")
@@ -255,9 +242,9 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	for _, revisions := range addons {
 		addon := revisions[0]
 		found := false
-		for _, v := range addonTestingGroups {
-			for _, name := range v {
-				if name == addon.GetName() {
+		for _, v := range groups {
+			for _, r := range v {
+				if r.GetName() == addon.GetName() {
 					found = true
 				}
 			}
