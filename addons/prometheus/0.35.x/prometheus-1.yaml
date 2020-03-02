@@ -6,7 +6,7 @@ metadata:
   namespace: kubeaddons
   labels:
     kubeaddons.mesosphere.io/name: prometheus
-    # TODO: we're temporarily supporting dependency on an existing default storage class
+    # TODO: we are temporarily supporting dependency on an existing default storage class
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
