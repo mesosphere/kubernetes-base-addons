@@ -16,8 +16,6 @@ require (
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/genproto v0.0.0-20190916214212-f660b8655731 // indirect
-	gopkg.in/yaml.v2 v2.2.8
-	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
 	k8s.io/utils v0.0.0-20191114200735-6ca3b61696b6 // indirect
 	sigs.k8s.io/kind v0.7.0
 )
