@@ -3,19 +3,19 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/mesosphere/kubeaddons/pkg/catalog"
+	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
+	"github.com/mesosphere/kubeaddons/pkg/test"
 )
 
-type groupName string
 type addonName string
 
-var re = regexp.MustCompile(`^addons/([a-z]+)/?`)
+var re = regexp.MustCompile(`^addons/([a-zA-Z-]+)/?`)
 
 func main() {
 	modifiedAddons, err := getModifiedAddons()
@@ -23,13 +23,42 @@ func main() {
 		panic(err)
 	}
 
-	testGroups, err := getGroupsToTest(modifiedAddons)
+	r, err := local.NewRepository("local", "../addons/")
 	if err != nil {
 		panic(err)
 	}
 
-	for _, group := range testGroups {
-		fmt.Printf("Test%sGroup\n", strings.Title(string(group)))
+	c, err := catalog.NewCatalog(r)
+	if err != nil {
+		panic(err)
+	}
+
+	groups, err := test.AddonsForGroupsFile("groups.yaml", c)
+	if err != nil {
+		panic(err)
+	}
+
+	atLeastOneGroupNeedsTesting := false
+	for group, addons := range groups {
+		included := false
+		for _, addon := range addons {
+			for _, addonName := range modifiedAddons {
+				if addon.GetName() == string(addonName) {
+					included = true
+					atLeastOneGroupNeedsTesting = true
+				}
+			}
+		}
+
+		if included {
+			fmt.Printf("Test%sGroup\n", strings.Title(string(group)))
+		}
+	}
+
+	if !atLeastOneGroupNeedsTesting {
+		for group := range groups {
+			fmt.Printf("Test%sGroup\n", strings.Title(string(group)))
+		}
 	}
 }
 
@@ -56,49 +85,4 @@ func getModifiedAddons() ([]addonName, error) {
 	}
 
 	return addonsModified, nil
-}
-
-func getGroupsToTest(modifiedAddons []addonName) ([]groupName, error) {
-	b, err := ioutil.ReadFile("groups.yaml")
-	if err != nil {
-		return nil, err
-	}
-
-	g := make(map[groupName][]addonName)
-	if err := yaml.Unmarshal(b, &g); err != nil {
-		return nil, err
-	}
-
-	testGroups := make([]groupName, 0)
-	// if no Addon has been modified, return all existing groups
-	if len(modifiedAddons) == 0 {
-		for group, _ := range g {
-			testGroups = append(testGroups, group)
-		}
-		return testGroups, nil
-	}
-
-	for _, modifiedAddonName := range modifiedAddons {
-		for group, addons := range g {
-			for _, name := range addons {
-				if name == modifiedAddonName {
-					exists := false
-					for _, existingGroup := range testGroups {
-						if group == existingGroup {
-							exists = true
-						}
-					}
-					if !exists {
-						testGroups = append(testGroups, group)
-					}
-				}
-			}
-		}
-	}
-
-	if len(testGroups) < 1 {
-		return nil, fmt.Errorf("error: there were no testGroups to test")
-	}
-
-	return testGroups, nil
 }
