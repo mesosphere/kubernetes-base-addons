@@ -209,6 +209,10 @@ func testgroup(t *testing.T, groupname string) error {
 	}
 
 	addons := groups[groupname]
+	for _, addon := range addons {
+		overrides(addon)
+	}
+
 	ph, err := test.NewBasicTestHarness(t, cluster, addons...)
 	if err != nil {
 		return err
