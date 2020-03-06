@@ -15,7 +15,6 @@ import (
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 	"sigs.k8s.io/kind/pkg/cluster"
 
-	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
@@ -221,7 +220,7 @@ func testgroup(t *testing.T, groupname string) error {
 
 	wg := &sync.WaitGroup{}
 	stop := make(chan struct{})
-	go temp.LoggingHook(t, cluster, wg, stop)
+	go test.LoggingHook(t, cluster, wg, stop)
 
 	ph.Validate()
 	ph.Deploy()
