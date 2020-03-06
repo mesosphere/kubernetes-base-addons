@@ -29,13 +29,13 @@ spec:
         kubeaddons.mesosphere.io/name: cert-manager
   cloudProvider:
     - name: aws
-      enabled: true
+      enabled: false
     - name: azure
-      enabled: true
+      enabled: false
     - name: docker
-      enabled: true
+      enabled: false
     - name: none
-      enabled: true
+      enabled: false
   chartReference:
     chart: kommander
     repo: https://mesosphere.github.io/charts/stable
