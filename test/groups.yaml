@@ -24,7 +24,10 @@ general:
 # Addons related to backup and restore tools are tested as part of this group.
 # ------------------------------------------------------------------------------
 backups:
+    - "konvoyconfig"
     - "metallb"
+    - "traefik"
+    - "cert-manager"
     - "velero"
 
 # ------------------------------------------------------------------------------
