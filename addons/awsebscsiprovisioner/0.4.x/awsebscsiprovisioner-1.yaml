@@ -21,9 +21,9 @@ spec:
     - name: aws
       enabled: true
   chartReference:
+    version: 0.3.3
     chart: awsebscsiprovisioner
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.3.3
     values: |
       ---
       resizer:

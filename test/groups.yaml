@@ -95,6 +95,27 @@ localvolumeprovisioner:
     - "localvolumeprovisioner"
 
 # ------------------------------------------------------------------------------
+# AWS
+#
+# All AWS utility addons should be tested as a part of this group
+# ------------------------------------------------------------------------------
+aws:
+    - "defaultstorageclass-protection"
+    - "cert-manager"
+    - "awsebscsiprovisioner"
+
+# ------------------------------------------------------------------------------
+# Azure
+#
+# All Azure utility addons should be tested as a part of this group
+# ------------------------------------------------------------------------------
+azure:
+    - "defaultstorageclass-protection"
+    - "cert-manager"
+    - "azuredisk-csi-driver"
+    - "azurediskprovisioner"
+
+# ------------------------------------------------------------------------------
 # Disabled
 #
 # These are Addons which tests are currently disabled for.
@@ -102,10 +123,8 @@ localvolumeprovisioner:
 disabled:
     # these are addons which are currently filtered out of tests because we're waiting on features to be able to test them properly.
     # See: https://jira.mesosphere.com/browse/DCOS-61664
-    - "awsebscsiprovisioner"
-    - "awsebsprovisioner"
-    - "azuredisk-csi-driver"
-    - "azurediskprovisioner"
     - "nvidia"
+    - "awsebsprovisioner"
+    # TODO: Konvoy doesn't fully support GCP just yet
     - "gcpdisk-csi-driver"
     - "gcpdiskprovisioner"
