@@ -33,6 +33,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.1-2"
     values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/16d32f6c23e14cc98f4c44519cfd5382af092b04/staging/velero/values.yaml"
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<3.0.0", "strategy": "delete"}]'
 spec:
   namespace: velero
   kubernetes:
