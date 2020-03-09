@@ -31,8 +31,8 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.1-1"
-    values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/helm/charts/39524419882dcf3d1a053711ac242c280923a094/stable/velero/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.1-2"
+    values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/16d32f6c23e14cc98f4c44519cfd5382af092b04/staging/velero/values.yaml"
 spec:
   namespace: velero
   kubernetes:
@@ -46,10 +46,13 @@ spec:
       enabled: true
     - name: none
       enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: ingresscontroller
   chartReference:
     chart: velero
     repo: https://mesosphere.github.io/charts/staging
-    version: 2.2.11
+    version: 3.0.0
     values: |
       ---
       configuration:
@@ -76,4 +79,38 @@ spec:
         service:
           labels:
             servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+      initContainers:
+      - name: initialize-velero
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.5
+        args: ["velero"]
+        env:
+        - name: "VELERO_MINIO_FALLBACK_SECRET_NAME"
+          value: "velero-kubeaddons"
       minioBackend: true
+      minio:
+        mode: distributed
+        defaultBucket:
+          enabled: true
+          name: velero
+        bucketRoot: "/data"
+        existingSecret: minio-creds-secret
+        livenessProbe:
+          initialDelaySeconds: 120
+          periodSeconds: 20
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 512Mi
+            cpu: 750m
+        persistence:
+          volumeTemplatePrefix: data
+        statefulSetNameOverride: minio
+        ingress:
+          enabled: true
+          hosts:
+          - ""
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.ingress.kubernetes.io/frontend-entry-points: velero-minio
