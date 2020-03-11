@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"sync"
@@ -15,7 +16,6 @@ import (
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 	"sigs.k8s.io/kind/pkg/cluster"
 
-	"github.com/mesosphere/kubeaddons/hack/temp"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
@@ -23,6 +23,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	"github.com/mesosphere/kubeaddons/pkg/test"
 	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
+	"github.com/mesosphere/kubeaddons/pkg/test/cluster/konvoy"
 )
 
 const (
@@ -123,6 +124,18 @@ func TestLocalVolumeProvisionerGroup(t *testing.T) {
 	}
 }
 
+func TestAwsGroup(t *testing.T) {
+	if err := testgroup(t, "aws"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAzureGroup(t *testing.T) {
+	if err := testgroup(t, "azure"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
@@ -192,19 +205,37 @@ func testgroup(t *testing.T, groupname string) error {
 		}
 	}()
 
-	cluster, err := kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{
-		Nodes: []v1alpha3.Node{node},
-	}))
+	var tcluster test.Cluster
+	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
+		path, _ := os.Getwd()
+		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
+	} else {
+		tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+	}
 	if err != nil {
 		// try to clean up in case cluster was created and reference available
-		if cluster != nil {
-			_ = cluster.Cleanup()
+		if tcluster != nil {
+			_ = tcluster.Cleanup()
 		}
 		return err
 	}
-	defer cluster.Cleanup()
+	defer tcluster.Cleanup()
 
-	if err := kubectl("apply", "-f", controllerBundle); err != nil {
+	f, err := ioutil.TempFile(os.TempDir(), "konvoy-test-")
+	if err != nil {
+		return err
+	}
+
+	kubeConfig, err := tcluster.ConfigYAML()
+	if err != nil {
+		return err
+	}
+
+	if _, err := f.Write(kubeConfig); err != nil {
+		return err
+	}
+
+	if err := kubectl("--kubeconfig", f.Name(), "apply", "-f", controllerBundle); err != nil {
 		return err
 	}
 
@@ -213,7 +244,7 @@ func testgroup(t *testing.T, groupname string) error {
 		overrides(addon)
 	}
 
-	ph, err := test.NewBasicTestHarness(t, cluster, addons...)
+	ph, err := test.NewBasicTestHarness(t, tcluster, addons...)
 	if err != nil {
 		return err
 	}
@@ -221,7 +252,7 @@ func testgroup(t *testing.T, groupname string) error {
 
 	wg := &sync.WaitGroup{}
 	stop := make(chan struct{})
-	go temp.LoggingHook(t, cluster, wg, stop)
+	go test.LoggingHook(t, tcluster, wg, stop)
 
 	ph.Validate()
 	ph.Deploy()
@@ -259,18 +290,6 @@ func findUnhandled() ([]v1beta1.AddonInterface, error) {
 	}
 
 	return unhandled, nil
-}
-
-func removeLocalPathAsDefaultStorage(cluster test.Cluster, addons []v1beta1.AddonInterface) error {
-	for _, addon := range addons {
-		if addon.GetName() == "localvolumeprovisioner" {
-			if err := kubectl("patch", "storageclass", "local-path", "-p", patchStorageClass); err != nil {
-				return err
-			}
-			return nil
-		}
-	}
-	return nil
 }
 
 func kubectl(args ...string) error {
