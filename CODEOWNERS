@@ -7,4 +7,4 @@
 * @mesosphere/sig-ksphere-catalog
 
 # Prometheus
-addons/prometheus/* @gracedo
+addons/prometheus/* @mesosphere/sig-ksphere-catalog @gracedo
