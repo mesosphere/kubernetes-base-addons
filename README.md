@@ -47,9 +47,9 @@ The test suite can be exercised locally by running
 
     make test
 
+Pull Requests against this repo is tested by [Teamcity](https://teamcity.mesosphere.io/viewType.html?buildTypeId=kubeaddons_KubernetesBaseAddons) and [Dispatch](https://konvoy-staging.production.d2iq.cloud/dispatch/tekton/#/pipelineruns). 
 
-Pull Requests against this repo is tested by Teamcity and Dispatch. 
-Dispatchfile defines the config and exercises the test in the Makefile.
+[Dispatchfile](Dispatchfile) defines the config and exercises the test in the Makefile.
 
 ## Contributing
 
