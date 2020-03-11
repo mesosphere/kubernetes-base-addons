@@ -33,7 +33,7 @@ spec:
     version: 2.0.0
     values: |
       ---
-      # so that kubectl proxy works
+      #so that kubectl proxy works
       fullnameOverride: 'kubernetes-dashboard'
       enableInsecureLogin: true
       service:

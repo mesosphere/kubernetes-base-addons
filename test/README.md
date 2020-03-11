@@ -4,6 +4,14 @@ In this directory you will find [go tests](https://golang.org/pkg/testing/) whic
 
 This uses the [Kubeaddons](https://github.com/mesosphere/kubeaddons) addon testing framework, which is [documented here](https://github.com/mesosphere/kubeaddons/blob/master/docs/test/framework.md).
 
+## Developer Notes
+
+When working on the tests, you may find that some symbols in the kubeaddons package appear to be unresolvable. This is due to the use of experimental features in the kubeaddons library. To avoid these problems in `vim` and other editors, make sure your local environment is set with the `experimental` build tag:
+
+```
+export GOFLAGS="-tags=experimental"
+```
+
 ## New Addon Tests
 
 When addons are added to the repository, CI will fail on validation if tests (that  pass) are not provided for them.
