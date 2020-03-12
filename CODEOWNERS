@@ -7,4 +7,4 @@
 * @mesosphere/sig-ksphere-catalog
 
 # Prometheus
-addons/prometheus/* @mesosphere/sig-ksphere-catalog @gracedo @branden
+addons/prometheus/* @mesosphere/sig-ksphere-observability 
