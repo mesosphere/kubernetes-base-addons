@@ -1,4 +1,9 @@
 # Release Notes
+## stable-1.15-1.3.0, stable-1.16-1.3.0
+
+* [ElasticSearch, fluentbit] Create index template
+  Create ElasticSearch Index Template. Require Fluentbit to deploy only after ElasticSearch deploys.
+
 ## stable-1.15-1.2.0, stable-1.16-1.2.0
 
 * fluent-bit
