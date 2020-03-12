@@ -1,0 +1,29 @@
+#!starlark
+
+gitResource("src-git", url = "$(context.git.url)", revision = "$(context.git.commit)")
+
+def secretVar(name, key):
+    return k8s.corev1.EnvVarSource(secretKeyRef = k8s.corev1.SecretKeySelector(
+        localObjectReference = k8s.corev1.LocalObjectReference(name=name),
+        key = key))
+
+dindTask("dispatch-integration-test",
+         inputs = ["src-git"],
+         steps = [
+             v1.Container(
+                 name="fetch-master",
+                 image = "mesosphere/dispatch-dind:v0.5.2",
+                 workingDir="/workspace/src-git",
+                 args=["git", "fetch", "origin", "master"]),
+             v1.Container(
+                 name = "dispatch-integration-test",
+                 image = "mesosphere/kubeaddons-ci:dispatch",
+                 command = ["make","test"],
+                 workingDir = "/workspace/src-git",
+                 env = [k8s.corev1.EnvVar(name = "DISPATCH_CI", value = "true"),
+                        k8s.corev1.EnvVar(name = "SSH_KEY_BASE64",
+                                          valueFrom = secretVar("d2iq-dispatch-git-ssh-base64",
+                                                                "ssh-privatekey-base64"))])])
+
+action(tasks = ["dispatch-integration-test"], on = pullRequest())
+action(tasks = ["dispatch-integration-test"], on = pullRequest(chatops = ["test"]))
