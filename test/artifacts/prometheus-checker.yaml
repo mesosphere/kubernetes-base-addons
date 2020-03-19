@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prometheus-checker
+spec:
+  template:
+    spec:
+      volumes:
+      - name: prometheus-test
+        configMap:
+          name: prometheus-test
+      containers:
+      - name: checker
+        image: alpine
+        command: ["/bin/sh"]
+        args: ["/opt/prometheus/prometheus-test.sh"]
+        volumeMounts:
+        - name: prometheus-test
+          mountPath: /opt/prometheus/
+      restartPolicy: Never
+  backoffLimit: 4
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus-test
+data:
+  prometheus-test.sh: |-
+    #!/bin/sh
+    set -o nounset
+    set -o errexit
+    set -o pipefail
+
+    apk --no-cache add curl
+    curl --verbose --fail --retry 10 --retry-delay 10 --retry-connrefused prometheus-kubeaddons-prom-prometheus.kubeaddons.svc:9090

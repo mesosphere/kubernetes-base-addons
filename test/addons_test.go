@@ -44,6 +44,8 @@ var (
 	groups    map[string][]v1beta1.AddonInterface
 )
 
+type clusterTestJob func(*testing.T, test.Cluster) test.Job
+
 func init() {
 	var err error
 
@@ -103,12 +105,6 @@ func TestSsoGroup(t *testing.T) {
 
 func TestElasticsearchGroup(t *testing.T) {
 	if err := testgroup(t, "elasticsearch"); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -186,7 +182,7 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string) error {
+func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 	t.Logf("testing group %s", groupname)
 
 	version, err := semver.Parse(defaultKubernetesVersion)
@@ -266,6 +262,12 @@ func testgroup(t *testing.T, groupname string) error {
 
 	th := test.NewSimpleTestHarness(t)
 	th.Load(loadable.ValidateAddons(addons...), deployplan, defaultplan, cleanupplan)
+	for _, job := range jobs {
+		th.Load(test.Loadable{
+			Plan: test.DefaultPlan,
+			Jobs: test.Jobs{job(t, tcluster)},
+		})
+	}
 
 	defer th.Cleanup()
 	th.Validate()
