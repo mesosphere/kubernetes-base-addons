@@ -109,11 +109,11 @@ aws:
 #
 # All Azure utility addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
-azure:
-    - "defaultstorageclass-protection"
-    - "cert-manager"
-    - "azuredisk-csi-driver"
-    - "azurediskprovisioner"
+#azure:
+#    - "defaultstorageclass-protection"
+#    - "cert-manager"
+#    - "azuredisk-csi-driver"
+#    - "azurediskprovisioner"
 
 # ------------------------------------------------------------------------------
 # Disabled
@@ -125,6 +125,9 @@ disabled:
     # See: https://jira.mesosphere.com/browse/DCOS-61664
     - "nvidia"
     - "awsebsprovisioner"
+    # TODO: Azure not working in TC yet
+    - "azuredisk-csi-driver"
+    - "azurediskprovisioner"
     # TODO: Konvoy doesn't fully support GCP just yet
     - "gcpdisk-csi-driver"
     - "gcpdiskprovisioner"
