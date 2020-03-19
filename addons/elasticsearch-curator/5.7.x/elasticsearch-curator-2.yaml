@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearch-curator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "5.7.6-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.7.6-2"
     appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.7.6"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/2967c0e1590fe86bed41d2219ace376e22930cb6/stable/elasticsearch-curator/values.yaml"
 spec:
@@ -52,7 +52,7 @@ spec:
         enabled: true
 
       configMaps:
-        # Delete indices older than 30 days
+        # Delete indices older than 10 days
         action_file_yml: |-
           ---
           actions:
@@ -73,7 +73,7 @@ spec:
                 direction: older
                 timestring: '%Y.%m.%d'
                 unit: days
-                unit_count: 30
+                unit_count: 10
 
         # Having config_yaml WILL override the other config
         config_yml: |-
