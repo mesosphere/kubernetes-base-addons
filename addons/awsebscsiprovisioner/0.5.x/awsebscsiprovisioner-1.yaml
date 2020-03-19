@@ -7,9 +7,9 @@ metadata:
     kubeaddons.mesosphere.io/name: awsebscsiprovisioner
     kubeaddons.mesosphere.io/provides: storageclass
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.4.0-1"
-    appversion.kubeaddons.mesosphere.io/awsebscsiprovisioner: "0.4.0"
-    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/stable/awsebscsiprovisioner/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.5.0-1"
+    appversion.kubeaddons.mesosphere.io/awsebscsiprovisioner: "0.5.0"
+    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/b6e53ee/stable/awsebscsiprovisioner/values.yaml"
 spec:
   namespace: kube-system
   requires:
@@ -21,7 +21,7 @@ spec:
     - name: aws
       enabled: true
   chartReference:
-    version: 0.3.3
+    version: 0.3.5
     chart: awsebscsiprovisioner
     repo: https://mesosphere.github.io/charts/stable
     values: |
@@ -34,3 +34,32 @@ spec:
         enableVolumeScheduling: true
       storageclass:
         isDefault: true
+        reclaimPolicy: Delete
+        volumeBindingMode: WaitForFirstConsumer
+        type: gp2
+        fstype: ext4
+        iopsPerGB: null
+        encrypted: false
+        kmsKeyId: null
+        allowedTopologies: []
+        # - matchLabelExpressions:
+        #   - key: topology.ebs.csi.aws.com/zone
+        #     values:
+        #     - us-west-2a
+        #     - us-west-2b
+        #     - us-west-2c
+        allowVolumeExpansion: true
+      # replicas of the CSI-Controller
+      replicas: 1
+      statefulSetCSIController:
+      # if you want to use kube2iam or kiam roles define it here as podAnnotation for the CSI-Controller (statefulSet)
+        podAnnotations: {}
+      statefulSetCSISnapshotController:
+        # if you want to use kube2iam or kiam roles define it here as podAnnotation for the CSI-Snapshot-Controller (statefulSet)
+        podAnnotations: {}
+      # Extra volume tags to attach to each dynamically provisioned volume.
+      # ---
+      # extraVolumeTags:
+      #   key1: value1
+      #   key2: value2
+      extraVolumeTags: {}
