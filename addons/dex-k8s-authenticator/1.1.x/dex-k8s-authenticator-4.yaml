@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex-k8s-authenticator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.1-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.1-4"
     appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.1.1"
-    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/6c43b8ab10108fb1adba5c6dd10e800e5f1abdd0/staging/dex-k8s-authenticator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/f44c645c6bc843b254bb0f4f97d516f2cfee4707/staging/dex-k8s-authenticator/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -32,7 +32,7 @@ spec:
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.1.14
+    version: 1.1.15
     values: |
       ---
       image:
@@ -70,7 +70,7 @@ spec:
         configmap.reloader.stakater.com/reload: "dex-k8s-authenticator-kubeaddons"
       initContainers:
       - name: initialize-dka-config
-        image: mesosphere/kubeaddons-addon-initializer:v0.2.1
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.7
         args: ["dexK8sAuthenticator"]
         env:
         - name: "DKA_CONFIGMAP_NAME"
