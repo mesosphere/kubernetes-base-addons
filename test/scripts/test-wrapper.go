@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
-	"github.com/mesosphere/kubeaddons/pkg/test"
 )
 
 type addonName string
@@ -33,7 +33,7 @@ func main() {
 		panic(err)
 	}
 
-	groups, err := test.AddonsForGroupsFile("groups.yaml", c)
+	groups, err := experimental.AddonsForGroupsFile("groups.yaml", c)
 	if err != nil {
 		panic(err)
 	}
