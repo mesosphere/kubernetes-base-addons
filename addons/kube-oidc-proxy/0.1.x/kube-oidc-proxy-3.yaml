@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kube-oidc-proxy
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-3"
     appversion.kubeaddons.mesosphere.io/kube-oidc-proxy: "v0.1.1"
-    values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/fb01c5b81bb77e78d3a9ff5f5d8ec4b2703c5fb4/staging/kube-oidc-proxy/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/8f43d8c479a61863c34fdfdb5ae56b9e3f81bbce/staging/kube-oidc-proxy/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -34,7 +34,7 @@ spec:
   chartReference:
     chart: kube-oidc-proxy
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.9
+    version: 0.2.1
     values: |
       ---
       image:
@@ -56,10 +56,6 @@ spec:
         path: /konvoy/api-server
         hosts:
           - ""
-
-      # Created by init-container
-      tls:
-        secretName: kube-oidc-proxy-kubeaddons-server-tls
 
       oidc:
         clientId: kube-apiserver
