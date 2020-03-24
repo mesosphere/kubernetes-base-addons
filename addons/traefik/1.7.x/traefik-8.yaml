@@ -7,11 +7,11 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.12-7"
-    appversion.kubeaddons.mesosphere.io/traefik: "1.7.12"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-8"
+    appversion.kubeaddons.mesosphere.io/traefik: "1.7.23"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
-    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/16d32f6c23e14cc98f4c44519cfd5382af092b04/staging/traefik/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/30cff72975bec6938a9e11f3e9d9b8a49e9f0300/staging/traefik/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -21,7 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.16
+    version: 1.72.17
     values: |
       ---
       replicas: 2
