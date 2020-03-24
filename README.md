@@ -44,12 +44,23 @@ For all other non-official releases, make sure your tag and description are dist
 ### Testing
 
 The test suite can be exercised locally by running
-
+    export GITHUB_USER_TOKEN=<PROVIDE-GITHUB-TOKEN>
     make test
 
 Pull Requests against this repo is tested by [Teamcity](https://teamcity.mesosphere.io/viewType.html?buildTypeId=kubeaddons_KubernetesBaseAddons) and [Dispatch](https://konvoy-staging.production.d2iq.cloud/dispatch/tekton/#/pipelineruns). 
 
 [Dispatchfile](Dispatchfile) defines the config and exercises the test in the Makefile.
+
+#### Local Tests - Troubleshooting steps.
+
+If you encounter an error:
+
+> fatal: could not read Username for 'https://github.com':
+
+This can be resolved by running the following command.
+
+	git config url."git@github.com:".insteadOf "https://github.com/"
+
 
 ## Contributing
 
