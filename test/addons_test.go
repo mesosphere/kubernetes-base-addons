@@ -45,6 +45,8 @@ var (
 	groups    map[string][]v1beta1.AddonInterface
 )
 
+type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
+
 func init() {
 	var err error
 
@@ -187,7 +189,7 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string) error {
+func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 	t.Logf("testing group %s", groupname)
 
 	version, err := semver.Parse(defaultKubernetesVersion)
@@ -272,6 +274,12 @@ func testgroup(t *testing.T, groupname string) error {
 		addonDefaults,
 		addonCleanup,
 	)
+	for _, job := range jobs {
+		th.Load(testharness.Loadable{
+			Plan: testharness.DefaultPlan,
+			Jobs: testharness.Jobs{job(t, tcluster)},
+		})
+	}
 
 	defer th.Cleanup()
 	th.Validate()
