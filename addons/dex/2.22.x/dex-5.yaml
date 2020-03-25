@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-5"
     appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
     values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/a9307cb8667b1601bce2eda3da0be024fd317fad/stable/dex/values.yaml"
 spec:
@@ -93,6 +93,7 @@ spec:
           redirectURIs:
             - 'https://PUBLIC.URI/token/callback/kubernetes-cluster'
             - 'https://PUBLIC.URI/token/callback'
+            - 'https://PUBLIC.URI/token/async/callback'
         - id: traefik-forward-auth
           name: 'Ops Portal authenticator'
           redirectURIs:
