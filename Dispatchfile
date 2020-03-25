@@ -16,6 +16,15 @@ dindTask("dispatch-integration-test",
                  workingDir="/workspace/src-git",
                  args=["git", "fetch", "origin", "master"]),
              v1.Container(
+                 name = "dispatch-integration-test-go-version",
+                 image = "mesosphere/kubeaddons-ci:dispatch",
+                 command = ["go","version"],
+                 workingDir = "/workspace/src-git",
+                 env = [k8s.corev1.EnvVar(name = "DISPATCH_CI", value = "true"),
+                        k8s.corev1.EnvVar(name = "SSH_KEY_BASE64",
+                                          valueFrom = secretVar("d2iq-dispatch-git-ssh-base64",
+                                                                "ssh-privatekey-base64"))])])
+             v1.Container(
                  name = "dispatch-integration-test",
                  image = "mesosphere/kubeaddons-ci:dispatch",
                  command = ["make","test"],
