@@ -23,7 +23,7 @@ dindTask("dispatch-integration-test",
                  env = [k8s.corev1.EnvVar(name = "DISPATCH_CI", value = "true"),
                         k8s.corev1.EnvVar(name = "SSH_KEY_BASE64",
                                           valueFrom = secretVar("d2iq-dispatch-git-ssh-base64",
-                                                                "ssh-privatekey-base64"))])])
+                                                                "ssh-privatekey-base64"))]),
              v1.Container(
                  name = "dispatch-integration-test",
                  image = "mesosphere/kubeaddons-ci:dispatch",
