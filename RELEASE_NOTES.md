@@ -1,7 +1,12 @@
 # Release Notes
+## stable-1.15-1.4.0, stable-1.16-1.4.0
+
+* \[Dex\] Add SAML connector support in dex controller allowing users to add SAML IDP using Kubernetes API. ([#173](https://github.com/mesosphere/kubernetes-base-addons/pull/173), [@jieyu](https://github.com/jieyu))
+* \[Velero\] switch to use minio helm chart (instead of operator) for backup storage. This allow users to install their own minio operator for general purpose object storage. ([#174](https://github.com/mesosphere/kubernetes-base-addons/pull/174), [@jieyu](https://github.com/jieyu))
+
 ## stable-1.15-1.3.0, stable-1.16-1.3.0
 
-* [ElasticSearch, fluentbit] Create index template
+* \[ElasticSearch, fluentbit\] Create index template
   Create ElasticSearch Index Template. Require Fluentbit to deploy only after ElasticSearch deploys.
 
 ## stable-1.15-1.2.0, stable-1.16-1.2.0
