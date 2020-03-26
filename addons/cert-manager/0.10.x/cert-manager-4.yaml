@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: cert-manager
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.10.1-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.10.1-4"
     appversion.kubeaddons.mesosphere.io/cert-manager: "0.10.1"
     docs.kubeaddons.mesosphere.io/cert-manager: "https://docs.cert-manager.io/en/release-0.10/"
-    values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/68ababd/staging/cert-manager-setup/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/c12fac8/staging/cert-manager-setup/values.yaml"
 spec:
   namespace: cert-manager
   kubernetes:
@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: cert-manager-setup
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.9
+    version: 0.1.10
     values: |
       ---
       issuers:
@@ -41,10 +41,10 @@ spec:
           issuerRef:
             name: kubernetes-root-issuer
             kind: Issuer
-            # These are the default usages for reference
-            usages:
-              - "digital signature"
-              - "key encipherment"
+          # These are the default usages for reference
+          usages:
+            - "digital signature"
+            - "key encipherment"
           commonName: cert-manager
           duration: 87600h
           dnsNames: []
