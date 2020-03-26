@@ -26,8 +26,6 @@ general:
 backups:
     - "konvoyconfig"
     - "metallb"
-    - "traefik"
-    - "cert-manager"
     - "velero"
 
 # ------------------------------------------------------------------------------
