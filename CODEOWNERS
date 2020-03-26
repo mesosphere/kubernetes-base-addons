@@ -5,3 +5,6 @@
 # Order is important: later rules override preceding rules
 
 * @mesosphere/sig-ksphere-catalog
+
+# Prometheus
+addons/prometheus/* @mesosphere/sig-ksphere-observability 
