@@ -1,4 +1,10 @@
 # Release Notes
+
+## stable-1.15-1.4.1, stable-1.16-1.4.1
+
+* \[Velero\] revert the velero refactor in stable-1.16-1.4.0 due to a data loss issue ([#197](https://github.com/mesosphere/kubernetes-base-addons/pull/197), [@jieyu](https://github.com/jieyu))
+* \[Velero-minio\] fix a data loss issue after upgrade ([#200](https://github.com/mesosphere/kubernetes-base-addons/pull/200), [@jieyu](https://github.com/jieyu))
+
 ## stable-1.15-1.4.0, stable-1.16-1.4.0
 
 * \[Dex\] Add SAML connector support in dex controller allowing users to add SAML IDP using Kubernetes API. ([#173](https://github.com/mesosphere/kubernetes-base-addons/pull/173), [@jieyu](https://github.com/jieyu))
