@@ -8,7 +8,7 @@ metadata:
     kubeaddons.mesosphere.io/name: opsportal
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-1"
-    appversion.kubeaddons.mesosphere.io/opsportal: "1.0.0"
+    appversion.kubeaddons.mesosphere.io/opsportal: "1.1.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
     values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/4155f480571eaf82c64ddd63d3d334b1105d0591/stable/opsportal/values.yaml"
 spec:
@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.2.13
+    version: 0.3.0
     values: |
       ---
       landing:
