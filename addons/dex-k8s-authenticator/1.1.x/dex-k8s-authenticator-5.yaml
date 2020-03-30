@@ -37,7 +37,7 @@ spec:
       ---
       image:
         repository: mesosphere/dex-k8s-authenticator
-        tag: v1.1.1-cdee-d2iq
+        tag: v1.1.1-9d39-d2iq
       ingress:
         enabled: true
         annotations:
