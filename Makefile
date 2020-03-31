@@ -18,7 +18,4 @@ endif
 .PHONY: test
 test: set-git-ssh
 	cd test && git fetch; \
-	go run -tags experimental scripts/test-wrapper.go; \
-	for g in $(shell cd test && go run scripts/test-wrapper.go); do \
-		go test -timeout 30m -race -v -run $$g; \
-	done
+	./run_tests.sh
