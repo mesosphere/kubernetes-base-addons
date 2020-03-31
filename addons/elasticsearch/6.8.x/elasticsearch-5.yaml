@@ -62,6 +62,18 @@ spec:
           # Because the drain is set to false, we can take advantage here and create resources we need
           postStart: |-
             #!/bin/bash
+            set -o errexit
+            set -o nounset
+            set -o pipefail
+            
+            # Wait until client nodes accept requests.
+            # This prevents data pods from getting into a long CrashLoopBackoff.
+            echo "Waiting for client node..."
+            # Use a for loop to retry on connection failures.
+            # Elasticsearch image's curl doesn't have --retry-connrefused.
+            for i in {1..10}; do curl --fail '{{ template "elasticsearch.client.fullname" . }}:9200/_cluster/health' && s=0 && break || s=$? && sleep 5; done
+            if [ $s -ne 0 ]; then echo "client node not available. Exiting"; exit $s; fi
+            
             # Creating the index template: 'kubernetes_cluster'
             # Reduces the number of fields produced due to the indexing of the audit logs
             # if template doesnt return 200, try to create it
