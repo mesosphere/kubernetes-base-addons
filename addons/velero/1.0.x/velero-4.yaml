@@ -88,6 +88,9 @@ spec:
           value: "velero-kubeaddons"
       minioBackend: true
       minio:
+        image:
+          repository: jieyu/minio
+          tag: debug
         mode: distributed
         defaultBucket:
           enabled: true
