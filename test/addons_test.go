@@ -105,7 +105,7 @@ func TestSsoGroup(t *testing.T) {
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch"); err != nil {
+	if err := testgroup(t, "elasticsearch", elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
