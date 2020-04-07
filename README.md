@@ -4,7 +4,7 @@ This repository contains the default sets of addons needed to bootstrap [D2iQ Ku
 
 ## Overview
 
-The structure of this repository follows the [Kubeaddons Catalog Documentation](https://github.com/mesosphere/kubeaddons/blob/master/tools/catalog/README.md) in reference, and uses the [Addon Revision concept covered therein](https://github.com/mesosphere/kubeaddons/blob/master/tools/catalog/README.md#special-addonrepository-options---addon-revisions).
+The structure of this repository follows the [Kubeaddons Catalog Documentation](https://github.com/mesosphere/kommander-catalog-api/blob/master/README.md) in reference, and uses the [Addon Revision concept covered therein](https://github.com/mesosphere/kommander-catalog-api/blob/master/README.md#special-addonrepository-options---addon-revisions).
 
 You will find the following directories here:
 
