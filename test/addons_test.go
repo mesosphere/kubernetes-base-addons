@@ -411,4 +411,14 @@ data:
       cpu: 100m
       memory: 1024Mi
 `,
+	"prometheus": `
+---
+# Remove dependency on persistent volumes and Konvoy's "etcd-certs" secret.
+prometheus:
+  prometheusSpec:
+    secrets: []
+    storageSpec: null
+kubeEtcd:
+  enabled: false
+`,
 }
