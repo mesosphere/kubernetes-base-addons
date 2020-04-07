@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.3.2
+    version: 0.3.3
     values: |
       ---
       landing:
