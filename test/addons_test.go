@@ -13,17 +13,19 @@ import (
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
-	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
-	"sigs.k8s.io/kind/pkg/cluster"
-
+	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
+	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
-	"github.com/mesosphere/kubeaddons/pkg/test"
-	"github.com/mesosphere/kubeaddons/pkg/test/cluster/kind"
-	"github.com/mesosphere/kubeaddons/pkg/test/cluster/konvoy"
+	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
+	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 const (
@@ -61,7 +63,7 @@ func init() {
 		panic(err)
 	}
 
-	groups, err = test.AddonsForGroupsFile("groups.yaml", cat)
+	groups, err = experimental.AddonsForGroupsFile("groups.yaml", cat)
 	if err != nil {
 		panic(err)
 	}
@@ -205,7 +207,7 @@ func testgroup(t *testing.T, groupname string) error {
 		}
 	}()
 
-	var tcluster test.Cluster
+	var tcluster testcluster.Cluster
 	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
 		path, _ := os.Getwd()
 		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
@@ -244,18 +246,37 @@ func testgroup(t *testing.T, groupname string) error {
 		overrides(addon)
 	}
 
-	ph, err := test.NewBasicTestHarness(t, tcluster, addons...)
+	wg := &sync.WaitGroup{}
+	stop := make(chan struct{})
+	go experimental.LoggingHook(t, tcluster, wg, stop)
+
+	addonDeployment, err := addontesters.DeployAddons(t, tcluster, addons...)
 	if err != nil {
 		return err
 	}
-	defer ph.Cleanup()
 
-	wg := &sync.WaitGroup{}
-	stop := make(chan struct{})
-	go test.LoggingHook(t, tcluster, wg, stop)
+	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
+	if err != nil {
+		return err
+	}
 
-	ph.Validate()
-	ph.Deploy()
+	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, addons...)
+	if err != nil {
+		return err
+	}
+
+	th := testharness.NewSimpleTestHarness(t)
+	th.Load(
+		addontesters.ValidateAddons(addons...),
+		addonDeployment,
+		addonDefaults,
+		addonCleanup,
+	)
+
+	defer th.Cleanup()
+	th.Validate()
+	th.Deploy()
+	th.Default()
 
 	close(stop)
 	wg.Wait()
