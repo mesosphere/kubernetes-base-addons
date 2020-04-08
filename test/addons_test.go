@@ -112,7 +112,7 @@ func TestElasticsearchGroup(t *testing.T) {
 }
 
 func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus"); err != nil {
+	if err := testgroup(t, "prometheus", promChecker, alertmanagerChecker, grafanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
