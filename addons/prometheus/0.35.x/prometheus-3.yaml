@@ -10,8 +10,8 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.35.0-2"
-    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.35.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.35.1-1"
+    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.35.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.15.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
     appversion.kubeaddons.mesosphere.io/grafana: "6.4.2"
@@ -42,7 +42,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 8.8.4
+    version: 8.8.5
     values: |
       ---
       defaultRules:
