@@ -24,6 +24,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 	"sigs.k8s.io/kind/pkg/cluster"
 )
@@ -245,7 +246,9 @@ func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 
 	addons := groups[groupname]
 	for _, addon := range addons {
-		overrides(addon)
+		if err := overrides(addon); err != nil {
+			return err
+		}
 	}
 
 	wg := &sync.WaitGroup{}
@@ -334,10 +337,35 @@ func kubectl(args ...string) error {
 
 // TODO: a temporary place to put configuration overrides for addons
 // See: https://jira.mesosphere.com/browse/DCOS-62137
-func overrides(addon v1beta1.AddonInterface) {
-	if v, ok := addonOverrides[addon.GetName()]; ok {
-		addon.GetAddonSpec().ChartReference.Values = &v
+func overrides(addon v1beta1.AddonInterface) error {
+	overrideValues, ok := addonOverrides[addon.GetName()]
+	if !ok {
+		return nil
 	}
+
+	base := ""
+	if addon.GetAddonSpec().ChartReference != nil && addon.GetAddonSpec().ChartReference.Values != nil {
+		base = *addon.GetAddonSpec().ChartReference.Values
+	}
+
+	values, err := chartutil.ReadValues([]byte(base))
+	if err != nil {
+		return fmt.Errorf("error decoding values from Addon %s: %v", addon.GetName(), err)
+	}
+
+	overrides, err := chartutil.ReadValues([]byte(overrideValues))
+	if err != nil {
+		return fmt.Errorf("error decoding override values for Addon %s: %v", addon.GetName(), err)
+	}
+
+	values.MergeInto(overrides)
+	mergedValues, err := values.YAML()
+	if err != nil {
+		return fmt.Errorf("error merging override values with Addon values for %s: %v", addon.GetName(), err)
+	}
+
+	addon.GetAddonSpec().ChartReference.Values = &mergedValues
+	return nil
 }
 
 var addonOverrides = map[string]string{
@@ -350,71 +378,37 @@ configInline:
     addresses:
     - "172.17.1.200-172.17.1.250"
 `,
-	// Copied from addons/elasticsearch/6.8.x/elasticsearch-5.yaml and edited to lower resource
-	// limits so it can deploy on a kind cluster.
-	// Added and edited lines are marked with "# override".
 	"elasticsearch": `
 ---
+# Reduce resource limits so elasticsearch will deploy on a kind cluster with limited memory.
 client:
-  heapSize: 256m  # override
+  heapSize: 256m
   resources:
     limits:
-      cpu: 1000m  # override
-      memory: 512Mi  # override
+      cpu: 1000m
+      memory: 512Mi
     requests:
-      cpu: 500m  # override
-      memory: 256Mi  # override
+      cpu: 500m
+      memory: 256Mi
 master:
-  updateStrategy:
-    type: RollingUpdate
-  heapSize: 256m  # override
+  heapSize: 256m
   resources:
-    # need more cpu upon initialization, therefore burstable class
     limits:
-      cpu: 1000m  # override
-      memory: 512Mi  # override
+      cpu: 1000m
+      memory: 512Mi
     requests:
-      cpu: 100m  # override
-      memory: 256Mi  # override
+      cpu: 100m
+      memory: 256Mi
 data:
-  updateStrategy:
-    type: RollingUpdate
-  hooks:
-    drain:
-      enabled: false
-    # Because the drain is set to false, we can take advantage here and create resources we need
-    postStart: |-
-      #!/bin/bash
-      set -o errexit
-      set -o nounset
-      set -o pipefail
-      
-      # Wait until client nodes accept requests.
-      # This prevents data pods from getting into a long CrashLoopBackoff.
-      echo "Waiting for client node..."
-      # Use a for loop to retry on connection failures.
-      # Elasticsearch image's curl doesn't have --retry-connrefused.
-      for i in {1..10}; do curl --fail '{{ template "elasticsearch.client.fullname" . }}:9200/_cluster/health' && s=0 && break || s=$? && sleep 5; done
-      if [ $s -ne 0 ]; then echo "client node not available. Exiting"; exit $s; fi
-      
-      # Creating the index template: 'kubernetes_cluster'
-      # Reduces the number of fields produced due to the indexing of the audit logs
-      # if template doesnt return 200, try to create it
-      if ! curl -I -XGET '{{ template "elasticsearch.client.fullname" . }}:9200/_template/kubernetes_cluster' | grep "200" > /dev/null
-      then
-          echo "Creating the index template: 'kubernetes_cluster'"
-          curl -H 'Content-Type: application/json' -XPUT '{{ template "elasticsearch.client.fullname" . }}:9200/_template/kubernetes_cluster' -d '{"index_patterns":["kubernetes_cluster*"],"mappings":{"flb_type":{"properties":{"@ts":{"type":"date"},"requestObject":{"dynamic":false,"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"properties":{"creationTimestamp":{"type":"date"},"labels":{"properties":{"app":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/instance":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/managed-by":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/version":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"helm_sh/chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespace":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ownerReferences":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"status":{"properties":{"allowed":{"type":"boolean"},"conditions":{"properties":{"lastHeartbeatTime":{"type":"date"},"lastTransitionTime":{"type":"date"},"lastUpdateTime":{"type":"date"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"type":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"containerStatuses":{"properties":{"containerID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imageID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"lastState":{"properties":{"terminated":{"properties":{"containerID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"exitCode":{"type":"long"},"finishedAt":{"type":"date"},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"startedAt":{"type":"date"}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ready":{"type":"boolean"},"restartCount":{"type":"long"},"started":{"type":"boolean"},"state":{"properties":{"running":{"properties":{"startedAt":{"type":"date"}}},"waiting":{"properties":{"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"hostIP":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"loadBalancer":{"properties":{"ingress":{"properties":{"hostname":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"podIP":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"spec":{"properties":{"user":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"template":{"properties":{"spec":{"properties":{"containers":{"properties":{"args":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"command":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"env":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"value":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"valueFrom":{"properties":{"fieldRef":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"fieldPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imagePullPolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"livenessProbe":{"properties":{"failureThreshold":{"type":"long"},"httpGet":{"properties":{"path":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"port":{"type":"long"},"scheme":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"initialDelaySeconds":{"type":"long"},"periodSeconds":{"type":"long"},"successThreshold":{"type":"long"},"timeoutSeconds":{"type":"long"}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ports":{"properties":{"containerPort":{"type":"long"},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"protocol":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"readinessProbe":{"properties":{"failureThreshold":{"type":"long"},"httpGet":{"properties":{"path":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"port":{"type":"long"},"scheme":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"initialDelaySeconds":{"type":"long"},"periodSeconds":{"type":"long"},"successThreshold":{"type":"long"},"timeoutSeconds":{"type":"long"}}},"resources":{"properties":{"limits":{"properties":{"cpu":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"memory":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"requests":{"properties":{"cpu":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"memory":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"terminationMessagePath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"terminationMessagePolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"volumeMounts":{"properties":{"mountPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"readOnly":{"type":"boolean"}}}}},"serviceAccount":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"serviceAccountName":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"webhooks":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespaceSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"objectSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}}},"responseObject":{"dynamic":false,"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"properties":{"creationTimestamp":{"type":"date"},"labels":{"properties":{"app":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/instance":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/managed-by":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/version":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"helm_sh/chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespace":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ownerReferences":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"status":{"properties":{"allowed":{"type":"boolean"},"conditions":{"properties":{"lastTransitionTime":{"type":"date"},"lastUpdateTime":{"type":"date"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"type":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"spec":{"properties":{"template":{"properties":{"spec":{"properties":{"containers":{"properties":{"command":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imagePullPolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ports":{"properties":{"containerPort":{"type":"long"},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"protocol":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"volumeMounts":{"properties":{"mountPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"readOnly":{"type":"boolean"}}}}},"serviceAccount":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"serviceAccountName":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"user":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"webhooks":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespaceSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}}},"responseStatus":{"dynamic":false,"properties":{"code":{"type":"long"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"type":"object"},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}'
-      fi
-  persistence:  # override
-    size: 4Gi  # override
-  heapSize: 1024m  # override
+  persistence:
+    size: 4Gi
+  heapSize: 1024m
   resources:
-    # need more cpu upon initialization, therefore burstable class
     limits:
-      cpu: 1000m  # override
-      memory: 1536Mi  # override
+      cpu: 1000m
+      memory: 1536Mi
     requests:
-      cpu: 100m  # override
-      memory: 1024Mi  # override
+      cpu: 100m
+      memory: 1024Mi
 `,
 }
