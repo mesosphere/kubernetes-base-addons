@@ -2,7 +2,10 @@
 <!-- Bug, Chore, Documentation, Feature -->
 
 **What this PR does/ why we need it**:
-<!-- Explain, without going into the details, what this PR does, and what problem it solves. -->
+<!--
+Explain, without going into the details, what this PR does, and what problem it solves.
+If you are doing an addon revision and to simplify reviews, please create a first commit in your branch only copying the previous revision to the new addon file.
+-->
 
 **Which issue(s) this PR fixes**:
 <!-- Add a link to the JIRA issue. Otherwise, put "no issue." -->
