@@ -65,3 +65,5 @@ spec:
              memory: 512Mi
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
+        vaultRepo:
+          enabled: true
