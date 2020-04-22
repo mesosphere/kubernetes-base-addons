@@ -1,7 +1,11 @@
 # Release Notes
 
-## stable-1.15-1.5.0, stable-1.16-1.5.0
+## stable-1.15-1.6.0, stable-1.16-1.6.0
 
+* \[cert-manager\] `usages` is no longer definable as part of `issuerRef`, instead it is a key on its own ([#196](https://github.com/mesosphere/kubernetes-base-addons/pull/196), [@sebbrandt87](https://github.com/sebbrandt87))
+* \[elasticsearch\] Fixes an issue that may cause the elasticsearch addon to fail to deploy. ([#206](https://github.com/mesosphere/kubernetes-base-addons/pull/206), [@branden](https://github.com/branden))
+
+## stable-1.15-1.5.0, stable-1.16-1.5.0
 * \[Elasticsearch\] revert the PVC size to default (30G) for data nodes ([#203](https://github.com/mesosphere/kubernetes-base-addons/pull/203), [@jieyu](https://github.com/jieyu))
 * \[Prometheus\] Upgrade prometheus-operator chart to v8.8.4 ([#205](https://github.com/mesosphere/kubernetes-base-addons/pull/205), [@joejulian](https://github.com/joejulian))
 * \[awsebscsiprovisioner\] Upgrade awsebscsiprovisioner chart to 0.3.5 and aws-ebs-csi-driver to 0.5.0. ([#186](https://github.com/mesosphere/kubernetes-base-addons/pull/186), [@sebbrandt87](https://github.com/sebbrandt87))
