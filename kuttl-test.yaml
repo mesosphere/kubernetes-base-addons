@@ -1,0 +1,10 @@
+apiVersion: kudo.dev/v1alpha1
+kind: TestSuite
+manifestDirs:
+  - ./test/manifests/
+commands:
+  - command: kubectl apply -f https://mesosphere.github.io/kubeaddons/bundle.yaml
+testDirs:
+  - ./addons/traefik/1.7.x/
+startKIND: true
+timeout: 300
