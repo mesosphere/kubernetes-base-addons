@@ -9,8 +9,6 @@ import (
 
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
-	networkutils "github.com/mesosphere/ksphere-testing-framework/pkg/utils/networking"
-	corev1 "k8s.io/api/core/v1"
 )
 
 const (
@@ -26,19 +24,9 @@ const (
 
 func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		pod, err := findPodWithPrefix(cluster, "kubeaddons", promPodPrefix)
+		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
-			return fmt.Errorf("could not find prometheus pod: %s", err)
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("prometheus pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
-		}
-		t.Logf("INFO: checking prometheus at pod/%s port %s", pod.Name, promPort)
-
-		// Forward a local port to the prometheus API.
-		localport, stop, err := networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, promPort)
-		if err != nil {
-			return fmt.Errorf("could not set up port forward for pod/%s port %s: %s", pod.Name, promPort, err)
+			return fmt.Errorf("could not forward port to prometheus pod: %s", err)
 		}
 		defer close(stop)
 
@@ -75,19 +63,9 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 
 func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		pod, err := findPodWithPrefix(cluster, "kubeaddons", alertmanagerPodPrefix)
+		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", alertmanagerPodPrefix, alertmanagerPort)
 		if err != nil {
-			return fmt.Errorf("could not find alertmanager pod: %s", err)
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("alertmanager pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
-		}
-		t.Logf("INFO: checking alertmanager at pod/%s port %s", pod.Name, alertmanagerPort)
-
-		// Forward a local port to the alertmanager API.
-		localport, stop, err := networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, alertmanagerPort)
-		if err != nil {
-			return fmt.Errorf("could not set up port forward for pod/%s port %s: %s", pod.Name, alertmanagerPort, err)
+			return fmt.Errorf("could not forward port to alertmanager pod: %s", err)
 		}
 		defer close(stop)
 
@@ -128,19 +106,9 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 
 func grafanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		pod, err := findPodWithPrefix(cluster, "kubeaddons", grafanaPodPrefix)
+		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", grafanaPodPrefix, grafanaPort)
 		if err != nil {
-			return fmt.Errorf("could not find grafana pod: %s", err)
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("grafana pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
-		}
-		t.Logf("INFO: checking grafana at pod/%s port %s", pod.Name, grafanaPort)
-
-		// Forward a local port to the grafana API.
-		localport, stop, err := networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, grafanaPort)
-		if err != nil {
-			return fmt.Errorf("could not set up port forward for pod/%s port %s: %s", pod.Name, grafanaPort, err)
+			return fmt.Errorf("could not forward port to grafana pod: %s", err)
 		}
 		defer close(stop)
 
