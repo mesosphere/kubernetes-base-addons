@@ -2,6 +2,7 @@
 
 ## stable-1.15-1.6.0, stable-1.16-1.6.0
 
+* \[dex-k8s-authenticator\]: Now supports a kubectl credentials plugin for automatically managing identity tokens. Instructions for downloading the plugin and configuring kubectl can be found at `https://\u003ccluster-ip\u003e/token/plugin`. ([#212](https://github.com/mesosphere/kubernetes-base-addons/pull/212), [@jr0d](https://github.com/jr0d))
 * \[cert-manager\] `usages` is no longer definable as part of `issuerRef`, instead it is a key on its own ([#196](https://github.com/mesosphere/kubernetes-base-addons/pull/196), [@sebbrandt87](https://github.com/sebbrandt87))
 * \[elasticsearch\] Fixes an issue that may cause the elasticsearch addon to fail to deploy. ([#206](https://github.com/mesosphere/kubernetes-base-addons/pull/206), [@branden](https://github.com/branden))
 
