@@ -6,7 +6,6 @@ export GIT_TERMINAL_PROMPT := 1
 export ADDON_TESTS_SETUP_WAIT_DURATION := 30m
 export GOPRIVATE := github.com/mesosphere/kubeaddons
 
-
 .DEFAULT_GOAL := test
 
 .PHONY: set-git-ssh
@@ -17,7 +16,4 @@ endif
 
 .PHONY: test
 test: set-git-ssh
-	cd test && git fetch; \
-	for g in $(shell cd test && go run scripts/test-wrapper.go); do \
-		go test -timeout 30m -race -v -run $$g; \
-	done
+	./test/dispatch-ci.sh
