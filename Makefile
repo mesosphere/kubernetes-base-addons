@@ -14,6 +14,11 @@ ifdef DISPATCH_CI
 	./scripts/ci/setup_ssh.sh
 endif
 
-.PHONY: test
-test: set-git-ssh
+# Target to run restricted set of tests on Dispatch CI.
+.PHONY: dispatch-test
+dispatch-test: set-git-ssh
 	./test/dispatch-ci.sh
+
+.PHONY: test
+test:
+	./test/run-tests.sh
