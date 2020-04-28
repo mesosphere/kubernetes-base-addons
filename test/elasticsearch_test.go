@@ -6,16 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
-	networkutils "github.com/mesosphere/ksphere-testing-framework/pkg/utils/networking"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -28,19 +24,9 @@ const (
 
 func elasticsearchChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		pod, err := findPodWithPrefix(cluster, "kubeaddons", esClientPodPrefix)
+		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", esClientPodPrefix, esClientPort)
 		if err != nil {
-			return fmt.Errorf("could not find client pod: %s", err)
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("client pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
-		}
-		t.Logf("INFO: checking elasticsearch at pod/%s port %s", pod.Name, esClientPort)
-
-		// Forward a local port to the elasticsearch API.
-		localport, stop, err := networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, esClientPort)
-		if err != nil {
-			return fmt.Errorf("could not set up port forward for pod/%s port %s: %s", pod.Name, esClientPort, err)
+			return fmt.Errorf("could not forward port to elasticsearch client pod: %s", err)
 		}
 		defer close(stop)
 
@@ -58,18 +44,9 @@ func elasticsearchChecker(t *testing.T, cluster testcluster.Cluster) testharness
 
 func kibanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		pod, err := findPodWithPrefix(cluster, "kubeaddons", kibanaPodPrefix)
+		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", kibanaPodPrefix, kibanaPort)
 		if err != nil {
-			return fmt.Errorf("could not find kibana pod: %s", err)
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("kibana pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
-		}
-
-		// Forward a local port to kibana.
-		localport, stop, err := networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, kibanaPort)
-		if err != nil {
-			return fmt.Errorf("could not set up port forward for pod/%s port %s: %s", pod.Name, kibanaPort, err)
+			return fmt.Errorf("could not forward port to kibana pod: %s", err)
 		}
 		defer close(stop)
 
@@ -213,22 +190,4 @@ func checkElasticsearchCreateAndGetDoc(localport int) error {
 	}
 
 	return nil
-}
-
-func findPodWithPrefix(cluster testcluster.Cluster, ns, prefix string) (*corev1.Pod, error) {
-	pods, err := cluster.Client().CoreV1().Pods(ns).List(metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	for _, pod := range pods.Items {
-		if pod.ObjectMeta.GetDeletionTimestamp() != nil {
-			continue
-		}
-		if strings.HasPrefix(pod.Name, prefix) {
-			return &pod, nil
-		}
-	}
-
-	return nil, fmt.Errorf("pod with name prefix %s in namespace %s not found", prefix, ns)
 }
