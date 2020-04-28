@@ -9,6 +9,4 @@ fi
 
 set -euo pipefail
 
-curl --silent https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_linux.tar.bz2 -o - | tar --extract -O -jf - konvoy_${KONVOY_VERSION}/konvoy > konvoy
-
-chmod +x konvoy
+curl --silent https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_linux.tar.bz2 | tar xjv --strip=1 konvoy_${KONVOY_VERSION}/konvoy
