@@ -359,6 +359,8 @@ github.com/mesosphere/kubeaddons v0.10.2 h1:heURHF0srnA/UmNvgdMS+5+2Kh6rwMzEiapU
 github.com/mesosphere/kubeaddons v0.10.2/go.mod h1:6TEL+jD4yW324GCF+aaIXNmBBgeeaF636DAi43OJffo=
 github.com/mesosphere/kubeaddons v0.13.0 h1:Dzmw3sc+kOHHHw5buC4DYw/efchsINvbuMH3zFcErIA=
 github.com/mesosphere/kubeaddons v0.13.0/go.mod h1:oRjEgw8tm9bozJZahB6NKFdbUTm1nehkIFqMJPk8rUw=
+github.com/mesosphere/kubeaddons v0.13.1 h1:j3CEVWcg0ODXroy4dkBee1URXngkWIqDkd3ol4STQa0=
+github.com/mesosphere/kubeaddons v0.13.1/go.mod h1:oRjEgw8tm9bozJZahB6NKFdbUTm1nehkIFqMJPk8rUw=
 github.com/mitchellh/copystructure v1.0.0 h1:Laisrj+bAB6b/yJwB5Bt3ITZhGJdqmxquMKeZ+mmkFQ=
 github.com/mitchellh/copystructure v1.0.0/go.mod h1:SNtv71yrdKgLRyLFxmLdkAbkKEFWgYaq1OVrnRcwhnw=
 github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG+4E0Y=
