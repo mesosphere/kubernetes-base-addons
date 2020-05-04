@@ -15,15 +15,25 @@ dindTask("dispatch-integration-test",
                  image = "mesosphere/dispatch-dind:v0.5.2",
                  workingDir="/workspace/src-git",
                  args=["git", "fetch", "origin", "master"]),
+
              v1.Container(
                  name = "dispatch-integration-test",
-                 image = "mesosphere/kubeaddons-ci:dispatch",
-                 command = ["make","test"],
+                 image = "mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+                 command = ["make","dispatch-test"],
                  workingDir = "/workspace/src-git",
                  env = [k8s.corev1.EnvVar(name = "DISPATCH_CI", value = "true"),
+		        k8s.corev1.EnvVar(name = "AWS_REGION", value= "us-west-2"),
+                        k8s.corev1.EnvVar(name = "AWS_ACCESS_KEY_ID",
+                                          valueFrom = secretVar("d2iq-dispatch-aws-creds",
+                                                                "AWS_ACCESS_KEY_ID")),
+                        k8s.corev1.EnvVar(name = "AWS_SECRET_ACCESS_KEY",
+                                          valueFrom = secretVar("d2iq-dispatch-aws-creds",
+                                                                "AWS_SECRET_ACCESS_KEY")),
                         k8s.corev1.EnvVar(name = "SSH_KEY_BASE64",
                                           valueFrom = secretVar("d2iq-dispatch-git-ssh-base64",
-                                                                "ssh-privatekey-base64"))])])
+                                                                "ssh-privatekey-base64"))
+			])
+		])
 
 action(tasks = ["dispatch-integration-test"], on = pullRequest())
 action(tasks = ["dispatch-integration-test"], on = pullRequest(chatops = ["test"]))
