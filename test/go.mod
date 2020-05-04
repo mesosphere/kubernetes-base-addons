@@ -20,7 +20,7 @@ require (
 	k8s.io/apimachinery v0.17.4
 	k8s.io/helm v2.16.6+incompatible
 	k8s.io/utils v0.0.0-20191114200735-6ca3b61696b6 // indirect
-	sigs.k8s.io/kind v0.7.0
+	sigs.k8s.io/kind v0.8.1
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.0.0-20191016111102-bec269661e48
