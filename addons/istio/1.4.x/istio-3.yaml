@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.4.3-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.4.3-3"
     appversion.kubeaddons.mesosphere.io/istio: "1.4.3"
     appversion.kubeaddons.mesosphere.io/kiali: "1.4.3"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.4.3"
@@ -71,12 +71,17 @@ spec:
         enabled: true
 
       security:
-       selfSigned: false
-       caCert: /etc/cacerts/tls.crt
-       caKey: /etc/cacerts/tls.key
-       rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-       certChain: /etc/cacerts/tls.crt
-       enableNamespacesByDefault: false
+        selfSigned: false
+        caCert: /etc/cacerts/tls.crt
+        caKey: /etc/cacerts/tls.key
+        rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        certChain: /etc/cacerts/tls.crt
+        enableNamespacesByDefault: false
+
+      gateways:
+        istio-ingressgateway:
+          sds:
+            enabled: true
 
       global:
        podDNSSearchNamespaces:
