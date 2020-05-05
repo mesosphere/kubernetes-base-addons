@@ -1,5 +1,5 @@
 #!/bin/bash
-# NOTE: used by teamcity
+# NOTE: used by teamcity and dispatch
 
 KONVOY_VERSION="v1.4.1"
 if ! [ -z $1 ]
@@ -9,6 +9,4 @@ fi
 
 set -euo pipefail
 
-wget -q https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_linux.tar.bz2 -O - | tar --extract -O -jf - konvoy_${KONVOY_VERSION}/konvoy > konvoy
-
-chmod +x konvoy
+curl --silent https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_linux.tar.bz2 | tar xjv --strip=1 konvoy_${KONVOY_VERSION}/konvoy
