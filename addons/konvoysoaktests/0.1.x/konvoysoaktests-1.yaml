@@ -7,8 +7,8 @@
       labels:
         kubaddons.mesosphere.io/name: konvoysoaktests
       annotations:
-        catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.0-1"
-        appversion.kubeaddons.mesosphere.io/konvoysoaktests: "0.1.0"
+        catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-1"
+        appversion.kubeaddons.mesosphere.io/konvoysoaktests: "v1.5.0-beta.2"
         values.chart.helm.kubeaddons.mesosphere.io/konvoysoaktests: "https://raw.githubusercontent.com/mesosphere/charts/master/stable/konvoysoaktests/values.yaml"
     spec:
       kubernetes:
@@ -27,10 +27,10 @@
       chartReference:
         chart: konvoysoaktests
         repo: https://mesosphere.github.io/charts/stable
-        version: 0.1.0
+        version: 0.1.1
         values: |
           ---
           konvoysoakjob:
             env:
               PROVISIONER: "aws"
-              SOAK_TEST: "konvoy-soak"
+              SOAK_TEST: "autoscaler"
