@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: opsportal
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-4"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.1.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
     values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/4155f480571eaf82c64ddd63d3d334b1105d0591/stable/opsportal/values.yaml"
@@ -29,6 +29,8 @@ spec:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
     version: 0.3.11
+    valuesRemap:
+      "kommander-ui.ingress.extraAnnotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       landing:
@@ -47,3 +49,24 @@ spec:
         ## to the opsportal-admin role. This mimics the existing security policy where any authenticated and whitelisted user
         ## has full access to the opsportal. This option will be removed in the 0.3 release of this chart.
         allowAllAuthenticated: false
+      kommander-ui:
+        enabled: true
+
+        # Mode must be either production|konvoy, konvoy forcing ui in "konvoy mode"
+        mode: konvoy
+
+        displayName: Konvoy Cluster
+
+        ### This must match the serviceName set in the ingress backend below
+        service:
+          name: opsportal
+
+        ingress:
+          enabled: true
+          traefikFrontendRuleType: PathPrefixStrip
+          path: /ops/portal
+          extraAnnotations:
+            traefik.ingress.kubernetes.io/priority: "1"
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Impersonate-User,Impersonate-Group

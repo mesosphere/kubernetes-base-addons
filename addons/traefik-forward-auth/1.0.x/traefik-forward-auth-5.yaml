@@ -29,6 +29,8 @@ spec:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
     version: 0.2.13
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       replicaCount: 1

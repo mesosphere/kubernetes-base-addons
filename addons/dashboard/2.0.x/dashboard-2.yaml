@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dashboard
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.0.0-beta6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.0.0-2"
     appversion.kubeaddons.mesosphere.io/dashboard: "2.0.0-beta6"
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
@@ -31,6 +31,8 @@ spec:
     chart: kubernetes-dashboard
     repo: https://mesosphere.github.io/charts/staging
     version: 2.0.0
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       #so that kubectl proxy works
