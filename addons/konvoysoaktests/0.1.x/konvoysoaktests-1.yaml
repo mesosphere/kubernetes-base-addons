@@ -1,0 +1,36 @@
+---
+    apiVersion: kubeaddons.mesosphere.io/v1beta1
+    kind: Addon
+    metadata:
+      name: konvoysoaktests
+      namespace: kubeaddons
+      labels:
+        kubaddons.mesosphere.io/name: konvoysoaktests
+      annotations:
+        catalog.kubeaddons.mesosphere.io/addon-revision: "0.1.1-1"
+        appversion.kubeaddons.mesosphere.io/konvoysoaktests: "v1.5.0-beta.2"
+        values.chart.helm.kubeaddons.mesosphere.io/konvoysoaktests: "https://raw.githubusercontent.com/mesosphere/charts/master/stable/konvoysoaktests/values.yaml"
+    spec:
+      kubernetes:
+        minSupportedVersion: v1.15.6
+      cloudProvider:
+        - name: aws
+          enabled: true
+        - name: azure
+          enabled: false
+        - name: gcp
+          enabled: false
+        - name: docker
+          enabled: false
+        - name: none
+          enabled: false
+      chartReference:
+        chart: konvoysoaktests
+        repo: https://mesosphere.github.io/charts/stable
+        version: 0.1.1
+        values: |
+          ---
+          konvoysoakjob:
+            env:
+              PROVISIONER: "aws"
+              SOAK_TEST: "autoscaler"
