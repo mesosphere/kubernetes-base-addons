@@ -6,5 +6,5 @@ commands:
   - command: kubectl apply -f https://mesosphere.github.io/kubeaddons/bundle.yaml
 testDirs:
   - ./addons/traefik/1.7.x/
-startKIND: true
+startKIND: false
 timeout: 300

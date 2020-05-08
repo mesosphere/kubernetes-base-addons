@@ -1,12 +1,4 @@
 apiVersion: kudo.dev/v1beta1
 kind: TestStep
 commands:
-  - command: docker cp kind-control-plane:/etc/kubernetes/pki/ca.crt /tmp/ca.crt
-  - command: docker cp kind-control-plane:/etc/kubernetes/pki/ca.key /tmp/ca.key
-  - command: kubectl create namespace cert-manager
-  - command: kubectl create secret tls kubernetes-root-ca --namespace cert-manager --cert=/tmp/ca.crt --key=/tmp/ca.key
-  - command: kubectl apply -f ../../../konvoyconfig/0.0.x/konvoyconfig-1.yaml
-  - command: kubectl apply -f ../../../cert-manager/0.10.x/cert-manager-4.yaml
-  - command: ./metallb-config.sh
-  - command: kubectl apply -f ../../../metallb/0.8.x/metallb-1.yaml
   - command: kubectl apply -f ../traefik-9.yaml

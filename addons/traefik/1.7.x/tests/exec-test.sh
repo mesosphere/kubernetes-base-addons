@@ -6,4 +6,4 @@ TOKEN=$(kubectl -n default get secret "${SECRET}" -o go-template="{{.data.token 
 kubectl config set-credentials kuttl --token="${TOKEN}"
 kubectl config set-context kuttl --cluster=cluster --user=kuttl
 kubectl config use-context kuttl
-kubectl -v 9 -s https://"${SERVER}"/testpath run --stdin=true --restart=Never --image busybox proxyexec echo SUCCESS
+kubectl -v 9 -s https://"${SERVER}"/testpath exec -ti testpod -- echo SUCCESS 2>.kube/kubectl.log

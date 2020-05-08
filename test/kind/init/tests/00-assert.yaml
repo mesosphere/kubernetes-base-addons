@@ -1,0 +1,14 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: cert-manager
+status:
+  ready: true
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: metallb
+status:
+  ready: true

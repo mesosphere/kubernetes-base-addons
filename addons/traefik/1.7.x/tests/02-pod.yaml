@@ -1,0 +1,4 @@
+apiVersion: kudo.dev/v1beta1
+kind: TestStep
+commands:
+  - command: kubectl run --restart=Never --image busybox testpod -- sh -c "echo SUCCESS; echo FOO; sleep inf"
