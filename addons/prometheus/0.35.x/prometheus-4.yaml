@@ -272,6 +272,9 @@ spec:
             traefik.ingress.kubernetes.io/priority: "2"
           hosts: [""]
           path: /ops/portal/grafana
+        sidecar:
+          dashboards:
+            searchNamespace: ALL
         grafana.ini:
           server:
             protocol: http
