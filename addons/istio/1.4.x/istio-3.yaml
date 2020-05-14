@@ -96,7 +96,7 @@ spec:
       gateways:
         enabled: true
         cluster-local-gateway:
-          enabled: true
+          enabled: false
           labels:
             app: cluster-local-gateway
             istio: cluster-local-gateway
