@@ -1,0 +1,98 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: kibana
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: kibana
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-2"
+    appversion.kubeaddons.mesosphere.io/kibana: "6.8.2"
+    endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
+    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
+    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/helm/charts/09004fa332094693e2e5fcffe474622ba15491ae/stable/kibana/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: elasticsearch
+  chartReference:
+    chart: stable/kibana
+    version: 3.2.5
+    values: |
+      ---
+      image:
+        tag: "6.8.2"
+      files:
+        kibana.yml:
+          ## Default Kibana configuration from kibana-docker.
+          elasticsearch.url: http://elasticsearch-kubeaddons-client:9200
+          ## Ref: https://www.elastic.co/guide/en/kibana/current/settings.html
+          server.basePath: /ops/portal/kibana
+      serviceAccount:
+        create: true
+      service:
+        type: ClusterIP
+        externalPort: 5601
+        internalPort: 5601
+        labels:
+          servicemonitor.kubeaddons.mesosphere.io/path: "prometheus__metrics"
+      resources:
+        # need more cpu upon initialization, therefore burstable class
+        limits:
+          cpu: 1000m
+        requests:
+          cpu: 100m
+      plugins:
+        # to avoid needing to download any plugins at runtime, use a container and a shared volume
+        # do not enable the plugins here, instead rebuild the mesosphere/kibana-plugins image with the new plugins
+        enabled: false
+        values:
+          - kibana-prometheus-exporter,6.8.2,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/6.8.2/kibana-prometheus-exporter-6.8.2.zip
+      extraContainers: |
+        - name: initialize-kibana-index
+          image: mesosphere/kubeaddons-addon-initializer:v0.1.5
+          command: ["/bin/bash", "-c", "addon-initializer kibana && sleep infinity"]
+          env:
+          - name: "KIBANA_NAMESPACE"
+            value: "kubeaddons"
+          - name: "KIBANA_SERVICE_NAME"
+            value: "kibana-kubeaddons"
+      initContainers:
+        # from https://github.com/mesosphere/kubeaddons-sidecars
+        - name: kibana-plugins-install
+          image: mesosphere/kibana-plugins:v6.8.2
+          command: ["/bin/sh", "-c", "cp -a /usr/share/kibana/plugins/. /usr/share/kibana/shared-plugins/"]
+          volumeMounts:
+          - name: plugins
+            mountPath: /usr/share/kibana/shared-plugins/
+      extraVolumes:
+        - name: plugins
+          emptyDir: {}
+      extraVolumeMounts:
+        - mountPath: /usr/share/kibana/plugins/
+          name: plugins
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          traefik.frontend.rule.type: PathPrefixStrip
+          traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+          traefik.ingress.kubernetes.io/auth-type: forward
+          traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+          traefik.ingress.kubernetes.io/priority: "2"
+        hosts:
+          - "/ops/portal/kibana"
