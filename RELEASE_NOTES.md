@@ -1,5 +1,15 @@
 # Release Notes
 
+## stable-1.15-1.7.0, stable-1.16-1.7.0
+
+*  \[prometheus\]
+   * \[CHANGE\] Restrict api extension RBAC rules
+   * \[BUGFIX\] Fix statefulset crash loop on kubernetes ([#219](https://github.com/mesosphere/kubernetes-base-addons/pull/219), [@shaneutt](https://github.com/shaneutt))
+* \[dex\]: support specifying root CA for LDAP connectors in Dex controller. ([#224](https://github.com/mesosphere/kubernetes-base-addons/pull/224), [@jieyu](https://github.com/jieyu))
+* \[velero\]: bump velero to chart version 3.0.3, which includes velero-minio RELEASE.2020-04-10T03-34-42Z ([#215](https://github.com/mesosphere/kubernetes-base-addons/pull/215), [@jieyu](https://github.com/jieyu))
+* \[dex-k8s-authenticator\] added support for the konvoy credentials plugin ([#193](https://github.com/mesosphere/kubernetes-base-addons/pull/193), [@jr0d](https://github.com/jr0d))
+* \[velero\]: switch minio backend logging from plaintext to json ([#216](https://github.com/mesosphere/kubernetes-base-addons/pull/216), [@vespian](https://github.com/vespian))
+
 ## stable-1.15-1.6.0, stable-1.16-1.6.0
 
 * \[dex-k8s-authenticator\]: Now supports a kubectl credentials plugin for automatically managing identity tokens. Instructions for downloading the plugin and configuring kubectl can be found at `https://<cluster-ip>/token/plugin`. ([#212](https://github.com/mesosphere/kubernetes-base-addons/pull/212), [@jr0d](https://github.com/jr0d))

@@ -24,6 +24,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 	"sigs.k8s.io/kind/pkg/cluster"
 )
@@ -44,6 +45,8 @@ var (
 	comRepo   repositories.Repository
 	groups    map[string][]v1beta1.AddonInterface
 )
+
+type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
 
 func init() {
 	var err error
@@ -103,13 +106,13 @@ func TestSsoGroup(t *testing.T) {
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch"); err != nil {
+	if err := testgroup(t, "elasticsearch", elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus"); err != nil {
+	if err := testgroup(t, "prometheus", promChecker, alertmanagerChecker, grafanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -187,7 +190,7 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string) error {
+func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 	t.Logf("testing group %s", groupname)
 
 	version, err := semver.Parse(defaultKubernetesVersion)
@@ -243,7 +246,9 @@ func testgroup(t *testing.T, groupname string) error {
 
 	addons := groups[groupname]
 	for _, addon := range addons {
-		overrides(addon)
+		if err := overrides(addon); err != nil {
+			return err
+		}
 	}
 
 	wg := &sync.WaitGroup{}
@@ -272,6 +277,12 @@ func testgroup(t *testing.T, groupname string) error {
 		addonDefaults,
 		addonCleanup,
 	)
+	for _, job := range jobs {
+		th.Load(testharness.Loadable{
+			Plan: testharness.DefaultPlan,
+			Jobs: testharness.Jobs{job(t, tcluster)},
+		})
+	}
 
 	defer th.Cleanup()
 	th.Validate()
@@ -326,10 +337,35 @@ func kubectl(args ...string) error {
 
 // TODO: a temporary place to put configuration overrides for addons
 // See: https://jira.mesosphere.com/browse/DCOS-62137
-func overrides(addon v1beta1.AddonInterface) {
-	if v, ok := addonOverrides[addon.GetName()]; ok {
-		addon.GetAddonSpec().ChartReference.Values = &v
+func overrides(addon v1beta1.AddonInterface) error {
+	overrideValues, ok := addonOverrides[addon.GetName()]
+	if !ok {
+		return nil
 	}
+
+	base := ""
+	if addon.GetAddonSpec().ChartReference != nil && addon.GetAddonSpec().ChartReference.Values != nil {
+		base = *addon.GetAddonSpec().ChartReference.Values
+	}
+
+	values, err := chartutil.ReadValues([]byte(base))
+	if err != nil {
+		return fmt.Errorf("error decoding values from Addon %s: %v", addon.GetName(), err)
+	}
+
+	overrides, err := chartutil.ReadValues([]byte(overrideValues))
+	if err != nil {
+		return fmt.Errorf("error decoding override values for Addon %s: %v", addon.GetName(), err)
+	}
+
+	values.MergeInto(overrides)
+	mergedValues, err := values.YAML()
+	if err != nil {
+		return fmt.Errorf("error merging override values with Addon values for %s: %v", addon.GetName(), err)
+	}
+
+	addon.GetAddonSpec().ChartReference.Values = &mergedValues
+	return nil
 }
 
 var addonOverrides = map[string]string{
@@ -341,5 +377,48 @@ configInline:
     protocol: layer2
     addresses:
     - "172.17.1.200-172.17.1.250"
+`,
+	"elasticsearch": `
+---
+# Reduce resource limits so elasticsearch will deploy on a kind cluster with limited memory.
+client:
+  heapSize: 256m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+master:
+  heapSize: 256m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+data:
+  persistence:
+    size: 4Gi
+  heapSize: 1024m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1536Mi
+    requests:
+      cpu: 100m
+      memory: 1024Mi
+`,
+	"prometheus": `
+---
+# Remove dependency on persistent volumes and Konvoy's "etcd-certs" secret.
+prometheus:
+  prometheusSpec:
+    secrets: []
+    storageSpec: null
+kubeEtcd:
+  enabled: false
 `,
 }
