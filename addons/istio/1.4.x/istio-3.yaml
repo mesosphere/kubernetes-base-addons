@@ -40,17 +40,17 @@ spec:
     version: 1.4.3
     values: |
       kiali:
-       enabled: true
-       contextPath: /ops/portal/kiali
-       ingress:
-         enabled: true
-         kubernetes.io/ingress.class: traefik
-         hosts:
-           - ""
-       dashboard:
-         auth:
-           strategy: anonymous
-       prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
+        enabled: true
+        contextPath: /ops/portal/kiali
+        ingress:
+          enabled: true
+          kubernetes.io/ingress.class: traefik
+          hosts:
+            - ""
+        dashboard:
+          auth:
+            strategy: anonymous
+        prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
 
       tracing:
         enabled: true
@@ -71,24 +71,24 @@ spec:
         enabled: true
 
       security:
-       selfSigned: false
-       caCert: /etc/cacerts/tls.crt
-       caKey: /etc/cacerts/tls.key
-       rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-       certChain: /etc/cacerts/tls.crt
-       enableNamespacesByDefault: false
+        selfSigned: false
+        caCert: /etc/cacerts/tls.crt
+        caKey: /etc/cacerts/tls.key
+        rootCert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        certChain: /etc/cacerts/tls.crt
+        enableNamespacesByDefault: false
 
       global:
-       podDNSSearchNamespaces:
-       - global
-       - "{{ valueOrDefault .DeploymentMeta.Namespace \"default\" }}.global"
-       defaultPodDisruptionBudget:
-        enabled: false
+        podDNSSearchNamespaces:
+        - global
+        - "{{ valueOrDefault .DeploymentMeta.Namespace \"default\" }}.global"
+        defaultPodDisruptionBudget:
+          enabled: false
 
-       mtls:
-        enabled: true
+        mtls:
+          enabled: true
 
-       multiCluster:
-        enabled: true
+        multiCluster:
+          enabled: true
 
-       controlPlaneSecurityEnabled: true
+        controlPlaneSecurityEnabled: true
