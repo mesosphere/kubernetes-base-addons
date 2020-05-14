@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.4.3-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.4.3-3"
     appversion.kubeaddons.mesosphere.io/istio: "1.4.3"
     appversion.kubeaddons.mesosphere.io/kiali: "1.4.3"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.4.3"
@@ -92,3 +92,62 @@ spec:
           enabled: true
 
         controlPlaneSecurityEnabled: true
+
+      gateways:
+        enabled: true
+        cluster-local-gateway:
+          enabled: true
+          labels:
+            app: cluster-local-gateway
+            istio: cluster-local-gateway
+          replicaCount: 1
+          autoscaleMin: 1
+          autoscaleMax: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 2000m
+              memory: 1024Mi
+          cpu:
+            targetAverageUtilization: 60
+          loadBalancerIP: ""
+          loadBalancerSourceRanges: {}
+          externalIPs: []
+          serviceAnnotations: {}
+          podAnnotations: {}
+          type: ClusterIP
+          ports:
+          - port: 80
+            targetPort: 80
+            name: http2
+          - port: 443
+            name: https
+          - port: 31400
+            name: tcp
+          - port: 15011
+            targetPort: 15011
+            name: tcp-pilot-grpc-tls
+          - port: 8060
+            targetPort: 8060
+            name: tcp-citadel-grpc-tls
+          - port: 15029
+            targetPort: 15029
+            name: http2-kiali
+          - port: 15030
+            targetPort: 15030
+            name: http2-prometheus
+          - port: 15031
+            targetPort: 15031
+            name: http2-grafana
+          - port: 15032
+            targetPort: 15032
+            name: http2-tracing
+          secretVolumes:
+          - name: clusterlocalgateway-certs
+            secretName: istio-clusterlocalgateway-certs
+            mountPath: /etc/istio/clusterlocalgateway-certs
+          - name: clusterlocalgateway-ca-certs
+            secretName: istio-clusterlocalgateway-ca-certs
+            mountPath: /etc/istio/clusterlocalgateway-ca-certs
