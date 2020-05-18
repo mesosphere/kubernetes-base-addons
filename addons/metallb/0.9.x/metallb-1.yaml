@@ -7,8 +7,8 @@ metadata:
     kubeaddons.mesosphere.io/name: metallb
     kubeaddons.mesosphere.io/provides: loadbalancer
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.8.1-1"
-    appversion.kubeaddons.mesosphere.io/metallb: "0.8.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.3-1"
+    appversion.kubeaddons.mesosphere.io/metallb: "0.9.3"
     values.chart.helm.kubeaddons.mesosphere.io/metallb: "https://raw.githubusercontent.com/helm/charts/b0f9cb2d7af822e0031f632f2faa0cbb53167770/stable/metallb/values.yaml"
 spec:
   kubernetes:
@@ -42,14 +42,14 @@ spec:
       controller:
         image:
           repository: metallb/controller
-          tag: v0.8.3
+          tag: v0.9.3
         requests:
           cpu: 100m
           memory: 100Mi
       speaker:
         image:
           repository: metallb/speaker
-          tag: v0.8.3
+          tag: v0.9.3
         requests:
           cpu: 100m
           memory: 100Mi
