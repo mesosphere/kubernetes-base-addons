@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.35.1-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.35.1-1"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.35.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.15.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -276,6 +276,9 @@ spec:
             traefik.ingress.kubernetes.io/priority: "2"
           hosts: [""]
           path: /ops/portal/grafana
+        sidecar:
+          dashboards:
+            searchNamespace: ALL
         grafana.ini:
           server:
             protocol: http

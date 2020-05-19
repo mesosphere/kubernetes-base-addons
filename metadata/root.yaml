@@ -239,18 +239,6 @@ konvoyconfig:
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
 ---
-konvoysoaktests:
-  display_name: konvoysoaktests
-  description: konvoysoaktests
-  logo: konvoysoaktests/logo.svg
-  category: other
-  overview: konvoysoaktests/overview.md
-  resources:
-    links:
-      - type: support
-        title: Submit a Support Request
-        link: https://d2iq.com/services-and-support
----
 kube-oidc-proxy:
   display_name: kube-oidc-proxy
   description: kube-oidc-proxy
