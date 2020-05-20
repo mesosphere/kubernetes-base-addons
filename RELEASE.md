@@ -20,11 +20,9 @@ Releases should be twice monthly<sup>[1](#footnote1)</sup> on the second and for
 
 ### Kubernetes
 
-The Addons in this repo are the minimum base set of supported<sup>[2](#footnote2)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
+**The Kubernetes versions supported by this repo are 1.15, 1.16, and 1.17.**
 
-Kubernetes support must be maintained for the latest general release of Kubernetes and the two prior minor releases.
-At the time of this writing, the latest Kubernetes release is 1.17.2.
-Support from this repo, at this time, should cover 1.15.x, 1.16.x, and 1.17.x.
+The Addons in this repo are the minimum base set of supported<sup>[2](#footnote2)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
 
 ### Branches and Tags
 
