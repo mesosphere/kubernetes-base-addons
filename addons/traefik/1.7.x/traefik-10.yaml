@@ -7,11 +7,11 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-10"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.23"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
-    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/984fef43d4e65aa4c48753d2dbf2420789c7d1a7/staging/traefik/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/00b019ef3610ca8221a8cf283b4d7046a50702c4/staging/traefik/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -21,7 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.18
+    version: 1.72.19
     values: |
       ---
       replicas: 2
@@ -100,10 +100,6 @@ spec:
           port: 9000
           protocol: TCP
           targetPort: 9000
-      extraConfigEntrypoints: |
-        [entryPoints.velero-minio]
-        address = ":9000"
-          [entryPoints.velero-minio.tls]
-          [entryPoints.velero-minio.tls.defaultCertificate]
-          certFile = "/ssl/tls.crt"
-          keyFile = "/ssl/tls.key"
+      extraSSLEntrypoints:
+        velero-minio:
+          address: ":9000"
