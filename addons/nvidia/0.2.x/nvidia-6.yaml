@@ -42,6 +42,8 @@ spec:
           command: ['sh', '-c', 'sleep 200']
       nvidia-device-plugin:
         enabled: true
+        image:
+          tag: "1.0.0-beta6"
         resources:
           limits:
              cpu: 200m
