@@ -1,6 +1,6 @@
 SHELL := /bin/bash -euo pipefail
-RELEASE_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//')
-SOAK_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."($2+1)"."$3}')
+RELEASE_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."$2".0"}')
+SOAK_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."($2+1)".0"}')
 
 export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
