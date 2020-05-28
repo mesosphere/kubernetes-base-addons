@@ -1,6 +1,6 @@
 SHELL := /bin/bash -euo pipefail
-RELEASE_VER := $(shell git describe --tags --always)
 RELEASE_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//')
+SOAK_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."($2+1)"."$3}')
 
 export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
@@ -30,7 +30,7 @@ release:
 	if [ -z '${GITHUB_TOKEN}' ]; then echo 'Environment variable GITHUB_TOKEN not set' && exit 1; fi
 	git checkout stable
 	git fetch --all
-	git pull --ff-only origin stable
+	git reset --hard origin stable
 	git checkout -b stable-$(RELEASE_NEXT_VER)
 	git merge -s recursive -X theirs origin/testing
 	rm /tmp/rn || true
@@ -46,3 +46,14 @@ release:
 	curl -u x:${GITHUB_TOKEN} -X POST \
 		--data '{"title": "release: stable-$(RELEASE_NEXT_VER)", "head": "stable-$(RELEASE_NEXT_VER)", "base": "stable", "body": "Release of stable-$(RELEASE_NEXT_VER)"}' \
 		"https://api.github.com/repos/mesosphere/kubernetes-base-addons/pulls"
+
+.PHONY: testing-branch
+testing-branch:
+	if [ -z '${GITHUB_TOKEN}' ]; then echo 'Environment variable GITHUB_TOKEN not set' && exit 1; fi
+	if ! git merge-base --is-ancestor $$(git rev-parse origin/stable) origin/master; then echo 'stable must be merged into master before creating a testing branch' && exit 1; fi 
+	git checkout testing
+	git fetch --all
+	git reset --hard origin testing
+	git merge -s recursive -X theirs origin/master
+	git tag testing-$(SOAK_NEXT_VER)
+	git push -u origin testing
