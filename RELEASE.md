@@ -45,15 +45,12 @@ On the second and forth _**Thursday**_, this repository should be branched for S
 
 On the second and forth _**Wednesday**_:
 
-- Using automation, parse the PR logs in the `testing` branch for release notes and generate and commit a Changelog.md
-- One _**tag**_ is made for the each supported version of Kubernetes with a consistent semver suffix
-- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-1.2.x`, the new SOAK tag will be `release-1.17-1.3.0`
-- The same semver portion of the tag `1.3.0` is used for each supported kubernetes version, the new tags being `release-1.16-1.3.0`, and `release-1.15-1.3.0`
-- These tag versions, in the form of `release-<major>.<minor>-<semver>`, only the `<major>.<minor>` refer to the kubernetes version.
-  The api within a minor version should not be changing so there should never be a need to refer to the kubernetes patch version.
-- As a standing agenda item in sig-ksphere-catalog, vote go/no-go on the release of the Addons that have been SOAK tested.
-- Merge the `testing` branch into the `stable` branch<sup>[3](#footnote3)</sup>
+- `make release`
+  - This creates a PR with the merge and the release notes.
+- Get reviews and merge the PR
 - Announce the release.
+- Open PR to _merge_ `stable` back in to `master`
+- Get reviews and merge the PR
 
 <a name="footnote1">1</a>: Based on a two-week soak cycle. If we can have overlapping soak clusters, we can accelerate this.
 
