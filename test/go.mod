@@ -7,6 +7,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20190916154449-92cc603036dd
 	github.com/google/uuid v1.1.1
 	github.com/imdario/mergo v0.3.8 // indirect
+	github.com/kudobuilder/kudo v0.13.0 // indirect
 	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200415202108-3c10d515fc8b
 	github.com/mesosphere/kubeaddons v0.14.1
 	go.uber.org/atomic v1.5.1 // indirect
