@@ -9,7 +9,7 @@ require (
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/kudobuilder/kudo v0.13.0 // indirect
 	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200415202108-3c10d515fc8b
-	github.com/mesosphere/kubeaddons v0.14.1
+	github.com/mesosphere/kubeaddons v0.15.0
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.13.0 // indirect
@@ -19,7 +19,7 @@ require (
 	google.golang.org/genproto v0.0.0-20190916214212-f660b8655731 // indirect
 	k8s.io/api v0.17.4
 	k8s.io/apimachinery v0.17.4
-	k8s.io/helm v2.16.6+incompatible
+	k8s.io/helm v2.16.7+incompatible
 	k8s.io/utils v0.0.0-20191114200735-6ca3b61696b6 // indirect
 	sigs.k8s.io/kind v0.7.0
 )
