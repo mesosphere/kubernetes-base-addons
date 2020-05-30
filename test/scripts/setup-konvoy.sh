@@ -1,7 +1,7 @@
 #!/bin/bash
 # NOTE: used by teamcity and dispatch
 
-KONVOY_VERSION="v1.4.1"
+KONVOY_VERSION="v1.5.0-beta.4"
 if ! [ -z $1 ]
 then
     KONVOY_VERSION=$1
