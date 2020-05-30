@@ -1,6 +1,6 @@
 SHELL := /bin/bash -euo pipefail
-RELEASE_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."$2".0"}')
-SOAK_NEXT_VER := $(shell git describe --tags --always origin/testing | sed 's/testing-//' | awk -F. '{print $1"."($2+1)".0"}')
+RELEASE_NEXT_VER ?= $(shell git describe --tags --always origin/testing | sed 's/[^-]\+-//' | awk -F. '{print $$1"."$$2".0"}')
+SOAK_NEXT_VER ?= $(shell git describe --tags --always origin/testing | sed 's/[^-]\+-//' | awk -F. '{print $$1"."($$2+1)".0"}')
 
 export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
@@ -35,10 +35,11 @@ release:
 	git merge -s recursive -X theirs origin/testing
 	rm /tmp/rn || true
 	release-notes --start-sha $$(git rev-parse stable) --end-sha $$(git rev-parse HEAD) --github-org mesosphere --github-repo kubernetes-base-addons --required-author "" --format json --output /tmp/rn
-	cat <(echo -e "## stable-1.15-$(RELEASE_NEXT_VER), stable-1.16-$(RELEASE_NEXT_VER)\n") \
+	cat <(echo -e "# Release Notes\n") \
+		<(echo -e "## stable-1.15-$(RELEASE_NEXT_VER), stable-1.16-$(RELEASE_NEXT_VER), stable-1.17-$(RELEASE_NEXT_VER)\\n") \
 		<(jq -r '"* " + .[].markdown' /tmp/rn) \
 		<(echo) \
-		<(cat RELEASE_NOTES.md) > RELEASE_NOTES.tmp
+		<(tail -n +3 RELEASE_NOTES.md) > RELEASE_NOTES.tmp
 	mv RELEASE_NOTES.tmp RELEASE_NOTES.md
 	git add RELEASE_NOTES.md
 	git commit -m "docs: add release notes for stable-$(RELEASE_NEXT_VER)"
