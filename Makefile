@@ -30,7 +30,7 @@ release:
 	if [ -z '${GITHUB_TOKEN}' ]; then echo 'Environment variable GITHUB_TOKEN not set' && exit 1; fi
 	git checkout stable
 	git fetch --all
-	git reset --hard origin stable
+	git reset --hard origin/stable
 	git checkout -b stable-$(RELEASE_NEXT_VER)
 	git merge -s recursive -X theirs origin/testing
 	rm /tmp/rn || true
@@ -53,7 +53,7 @@ testing-branch:
 	if ! git merge-base --is-ancestor $$(git rev-parse origin/stable) origin/master; then echo 'stable must be merged into master before creating a testing branch' && exit 1; fi 
 	git checkout testing
 	git fetch --all
-	git reset --hard origin testing
+	git reset --hard origin/testing
 	git merge -s recursive -X theirs origin/master
 	git tag testing-$(SOAK_NEXT_VER)
 	git push -u origin testing
