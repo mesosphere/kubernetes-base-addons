@@ -1,0 +1,26 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: gcpdisk-csi-driver
+  labels:
+    kubeaddons.mesosphere.io/name: gcpdisk-csi-driver
+    kubeaddons.mesosphere.io/provides: csi-driver
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.1-1"
+    appversion.kubeaddons.mesosphere.io/gcpdisk-csi-driver: "0.7.1"
+    values.chart.helm.kubeaddons.mesosphere.io/gcpdisk-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/e131e22/stable/gcpdisk-csi-driver/values.yaml"
+spec:
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: defaultstorageclass-protection
+  kubernetes:
+    minSupportedVersion: v1.15.0
+  namespace: kube-system
+  cloudProvider:
+    - name: gcp
+      enabled: true
+  chartReference:
+    chart: gcpdisk-csi-driver
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.7.1
