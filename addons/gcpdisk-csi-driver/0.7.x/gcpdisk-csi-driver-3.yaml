@@ -7,9 +7,9 @@ metadata:
     kubeaddons.mesosphere.io/name: gcpdisk-csi-driver
     kubeaddons.mesosphere.io/provides: csi-driver
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.1-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.1-2"
     appversion.kubeaddons.mesosphere.io/gcpdisk-csi-driver: "0.7.1"
-    values.chart.helm.kubeaddons.mesosphere.io/gcpdisk-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/e131e22/stable/gcpdisk-csi-driver/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/gcpdisk-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/c77ea20ce5900b001c0f5934c644594e8a748acd/stable/gcpdisk-csi-driver/values.yaml"
 spec:
   requires:
     - matchLabels:
@@ -23,4 +23,4 @@ spec:
   chartReference:
     chart: gcpdisk-csi-driver
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.7.1
+    version: 0.7.2
