@@ -1,0 +1,23 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: azuredisk-csi-driver
+  labels:
+    kubeaddons.mesosphere.io/name: azuredisk-csi-driver
+    kubeaddons.mesosphere.io/provides: csi-driver
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.1-1"
+    appversion.kubeaddons.mesosphere.io/azuredisk-csi-driver: "0.7.1"
+    values.chart.helm.kubeaddons.mesosphere.io/azuredisk-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/98d5bee/stable/azuredisk-csi-driver/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  namespace: kube-system
+  cloudProvider:
+    - name: azure
+      enabled: true
+  chartReference:
+    chart: azuredisk-csi-driver
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.7.1
