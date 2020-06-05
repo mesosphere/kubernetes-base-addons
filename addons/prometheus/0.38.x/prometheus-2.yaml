@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-2"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.17.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -22,9 +22,10 @@ metadata:
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
     values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/81ca01f13e88fc05bf195c95356a9cfd8902ed86/staging/prometheus-operator/values.yaml"
-    # The prometheus-operator chart from prior Konvoy releases can't be upgraded to this chart version.
-    # See https://jira.d2iq.com/browse/DCOS-62924.
-    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=5.19.7", "strategy": "delete"}]'
+    # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
+    # See https://github.com/helm/charts/issues/21200.
+    # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
