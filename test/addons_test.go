@@ -215,14 +215,30 @@ func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 		path, _ := os.Getwd()
 		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
 	} else {
-		tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
-	}
-	if err != nil {
-		// try to clean up in case cluster was created and reference available
-		if tcluster != nil {
-			_ = tcluster.Cleanup()
+		if path, ok := os.LookupEnv("KUBECONFIG"); !ok {
+			t.Logf("No Kubeconfig specified. Creating Kind cluster")
+			tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+
+			if err != nil {
+				// try to clean up in case cluster was created and reference available
+				if tcluster != nil {
+					_ = tcluster.Cleanup()
+				}
+				return err
+			}
+		} else {
+			t.Log("using kubeconfig at", path)
+			// load the file from kubeconfig
+			kubeConfig, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			tcluster, err = testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
+			if err != nil {
+				return err
+			}
 		}
-		return err
+
 	}
 	defer tcluster.Cleanup()
 

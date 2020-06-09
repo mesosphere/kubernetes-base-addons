@@ -1,21 +1,27 @@
-#!starlark
+#!mesosphere/dispatch-starlark:v0.5-beta2
+# vi:syntax=python
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.4", "gitResource", "pullRequest", "push", "secretVar", "clean", "imageResource", "volume")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.3", "dindTask")
+load("github.com/mesosphere/cluster-claim-controller/starlark/claim", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
 
-gitResource("src-git", url = "$(context.git.url)", revision = "$(context.git.commit)")
+git = "src-git"
 
-def secretVar(name, key):
-    return k8s.corev1.EnvVarSource(secretKeyRef = k8s.corev1.SecretKeySelector(
-        localObjectReference = k8s.corev1.LocalObjectReference(name=name),
-        key = key))
+gitResource(git, url = "$(context.git.url)", revision = "$(context.git.commit)")
+
+cluster_name = "test-cluster"
+kind_cluster=make_kind_cluster(cluster_name, git)
 
 dindTask("dispatch-integration-test",
-         inputs = ["src-git"],
+         inputs = [git],
+         deps=[kind_cluster],
+
          steps = [
              v1.Container(
                  name="fetch-master",
                  image = "mesosphere/dispatch-dind:v0.5.2",
-                 workingDir="/workspace/src-git",
+                 workingDir = "/workspace/{}/".format(git),
                  args=["git", "fetch", "origin", "master"]),
-
+             fetch_kubeconfig(cluster_name, git),
              v1.Container(
                  name = "dispatch-integration-test",
                  image = "mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
@@ -35,5 +41,7 @@ dindTask("dispatch-integration-test",
 			])
 		])
 
-action(tasks = ["dispatch-integration-test"], on = pullRequest())
-action(tasks = ["dispatch-integration-test"], on = pullRequest(chatops = ["test"]))
+clean_kind=cleanup(kind_cluster, "dispatch-integration-test", git)
+
+action(tasks = ["dispatch-integration-test", clean_kind], on = pullRequest())
+action(tasks = ["dispatch-integration-test", clean_kind], on = pullRequest(chatops = ["test"]))
