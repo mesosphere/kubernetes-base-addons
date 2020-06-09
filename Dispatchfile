@@ -1,7 +1,7 @@
 #!mesosphere/dispatch-starlark:v0.5-beta2
 # vi:syntax=python
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.4", "gitResource", "pullRequest", "push", "secretVar", "clean", "imageResource", "volume")
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.3", "dindTask")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.5", "dind_task")
 load("github.com/mesosphere/cluster-claim-controller/starlark/claim", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
 
 git = "src-git"
@@ -11,21 +11,19 @@ gitResource(git, url = "$(context.git.url)", revision = "$(context.git.commit)")
 cluster_name = "test-cluster"
 kind_cluster=make_kind_cluster(cluster_name, git)
 
-dindTask("dispatch-integration-test",
+dind_task("dispatch-integration-test",
          inputs = [git],
          deps=[kind_cluster],
 
          steps = [
              v1.Container(
                  name="fetch-master",
-                 image = "mesosphere/dispatch-dind:v0.5.2",
                  workingDir = "/workspace/{}/".format(git),
                  args=["git", "fetch", "origin", "master"]),
              fetch_kubeconfig(cluster_name, git),
              v1.Container(
                  name = "dispatch-integration-test",
-                 image = "mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 command = ["make","dispatch-test"],
+                 args = ["make","dispatch-test"],
                  workingDir = "/workspace/src-git",
                  env = [k8s.corev1.EnvVar(name = "DISPATCH_CI", value = "true"),
 		        k8s.corev1.EnvVar(name = "AWS_REGION", value= "us-west-2"),
