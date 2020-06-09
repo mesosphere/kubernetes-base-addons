@@ -14,7 +14,9 @@ echo "git fetch branches."
 git fetch
 
 echo "INFO: Exercise TestAwsGroup "
-go test -tags experimental -timeout 60m -race -v -run TestAwsGroup
+#go test -tags experimental -timeout 60m -race -v -run TestAwsGroup
+env
+go test -tags experimental -timeout 60m -race -v -run TestPrometheusGroup
 
 # Fix kind cluster issues on Dispatch CI before enabling complete test-suite.
 
@@ -24,10 +26,10 @@ go test -tags experimental -timeout 60m -race -v -run TestAwsGroup
 # TODO: (D2IQ-66356) - Fix the kind cluster issues on dispatch
 #
 
-echo "INFO: the following test groups will be run:"
-go run -tags experimental scripts/test-wrapper.go
-
-for g in $(go run -tags experimental scripts/test-wrapper.go)
-do
-    go test -tags experimental -timeout 60m -race -v -run $g
-done
+#echo "INFO: the following test groups will be run:"
+#go run -tags experimental scripts/test-wrapper.go
+#
+#for g in $(go run -tags experimental scripts/test-wrapper.go)
+#do
+#    go test -tags experimental -timeout 60m -race -v -run $g
+#done
