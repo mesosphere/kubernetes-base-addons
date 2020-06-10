@@ -17,8 +17,8 @@ endif
 # Target to run restricted set of tests on Dispatch CI.
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
-	export KUBECONFIG=$(pwd)/kubeconfig
-	./test/dispatch-ci.sh
+	ls /workspace/src-git
+	KUBECONFIG=/workspace/src-git/kubeconfig ./test/dispatch-ci.sh
 
 .PHONY: test
 test:
