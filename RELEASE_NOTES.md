@@ -2,15 +2,17 @@
 
 ## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
 
+* \[traefik\] fix the velero-minio entrypoint to inherit global ssl and proxy protocol configurations ([#259](https://github.com/mesosphere/kubernetes-base-addons/pull/259), [@jieyu](https://github.com/jieyu))
+* \[opsportal\] bump opsportal chart to 0.3.13 ([#261](https://github.com/mesosphere/kubernetes-base-addons/pull/261), [@juliangieseke](https://github.com/juliangieseke))
 * \[awsebscsiprovisioner\], \[gcpdisk-csi-driver\], \[azuredisk-csi-driver\] 
   * For all three charts, the manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 are no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#273](https://github.com/mesosphere/kubernetes-base-addons/pull/273), [@sebbrandt87](https://github.com/sebbrandt87)) and ([#279](https://github.com/mesosphere/kubernetes-base-addons/pull/279), [@jieyu](https://github.com/jieyu))
 * \[prometheus-operator\] Upgrade to version [0.38.1](https://github.com/coreos/prometheus-operator/releases/tag/v0.38.1)
-    - \[prometheus\] Upgrade to version [2.17.2](https://github.com/prometheus/prometheus/releases/tag/v2.17.2)
-    - \[grafana\] Upgrade to version [6.7.3](https://github.com/grafana/grafana/releases/tag/v6.7.3) ([#281](https://github.com/mesosphere/kubernetes-base-addons/pull/281), [@branden](https://github.com/branden))
+  * \[prometheus\] Upgrade to version [2.17.2](https://github.com/prometheus/prometheus/releases/tag/v2.17.2)
+  * \[grafana\] Upgrade to version [6.7.3](https://github.com/grafana/grafana/releases/tag/v6.7.3) ([#281](https://github.com/mesosphere/kubernetes-base-addons/pull/281), [@branden](https://github.com/branden))
+
+## stable-1.15-1.8.0, stable-1.16-1.8.0
 
 * \[kibana\]: Fixes an issue causing an outdated version of Kibana to be deployed to GCP. ([#249](https://github.com/mesosphere/kubernetes-base-addons/pull/249), [@branden](https://github.com/branden))
-
-# Release Notes
 
 ## stable-1.15-1.7.0, stable-1.16-1.7.0
 
