@@ -2,6 +2,8 @@
 
 ## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
 
+**Breaking Change**: Istio is unable to upgrade from 1.8.0. If using istio, set `enabled: false` and deploy addons before upgrading and re-enabling istio.
+
 * \[traefik\] fix the velero-minio entrypoint to inherit global ssl and proxy protocol configurations ([#259](https://github.com/mesosphere/kubernetes-base-addons/pull/259), [@jieyu](https://github.com/jieyu))
 * \[opsportal\] bump opsportal chart to 0.3.13 ([#261](https://github.com/mesosphere/kubernetes-base-addons/pull/261), [@juliangieseke](https://github.com/juliangieseke))
 * \[awsebscsiprovisioner\], \[gcpdisk-csi-driver\], \[azuredisk-csi-driver\] 
