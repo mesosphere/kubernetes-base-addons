@@ -24,7 +24,32 @@ spec:
     version: 1.72.19
     values: |
       ---
+      # Configure Traefik for HA.
       replicas: 2
+      podDisruptionBudget:
+        minAvailable: 1
+      # Distribute pods to tolerate node or zone failure.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: release
+                  operator: In
+                  values:
+                  - traefik-kubeaddons
+              topologyKey: kubernetes.io/hostname
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: release
+                  operator: In
+                  values:
+                  - traefik-kubeaddons
+              topologyKey: topology.kubernetes.io/zone
       service:
         labels:
           servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
