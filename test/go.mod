@@ -16,7 +16,7 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	k8s.io/api v0.18.3
 	k8s.io/apimachinery v0.18.3
-	k8s.io/helm v2.16.7+incompatible
+	k8s.io/helm v2.16.8+incompatible
 	sigs.k8s.io/kind v0.7.0
 )
 
