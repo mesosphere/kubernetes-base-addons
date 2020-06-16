@@ -410,6 +410,7 @@ github.com/mesosphere/ksphere-testing-framework v0.0.0-20200320191913-4ed3ad40a3
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200409132906-872edbff4e7a/go.mod h1:0i/HsNkjOp9ic69XWXsuQtJjiJrx8Vwu7hFljyCcfHk=
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200530001136-9d1c380ca073 h1:KDL76y9TdRVLJBrgMXkEr/kx8c2oHoGqq+i0TVWqg1U=
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200530001136-9d1c380ca073/go.mod h1:gDb4mP+7w/pvY3IEdMrRmAsirHaTOpSp7TH6KT0ou48=
+github.com/mesosphere/ksphere-testing-framework v0.0.0-20200616160547-ae8c293f3982 h1:i0CebXeYve8rLQcWF9wPlDwk9Vfo527EPB064hVIc4w=
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200616160547-ae8c293f3982/go.mod h1:DwJ37ojvOmTm72U2zPPSHFxr8Ask4YHCHmQqVLV5V6I=
 github.com/mesosphere/kubeaddons v0.10.2/go.mod h1:6TEL+jD4yW324GCF+aaIXNmBBgeeaF636DAi43OJffo=
 github.com/mesosphere/kubeaddons v0.11.0/go.mod h1:vUibt0jKmrxwRi2nDS7Os+Lz1PMqGVDG6HpdI0HUWGQ=
@@ -714,6 +715,7 @@ golang.org/x/sys v0.0.0-20200113162924-86b910548bc1/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b h1:h03Ur1RlPrGTjua4koYdpGl8W0eYo8p1uI9w7RPlkdk=
 golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200519105757-fe76b779f299 h1:DYfZAGf2WMFjMxbgTjaC+2HC7NkNAQs+6Q8b9WEB/F4=
 golang.org/x/sys v0.0.0-20200519105757-fe76b779f299/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.0.0-20160726164857-2910a502d2bf/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
