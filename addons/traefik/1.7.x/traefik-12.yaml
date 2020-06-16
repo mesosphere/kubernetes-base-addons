@@ -36,20 +36,23 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: release
+                - key: kubeaddons.mesosphere.io/name
                   operator: In
                   values:
-                  - traefik-kubeaddons
+                  - traefik
               topologyKey: kubernetes.io/hostname
           - weight: 1
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: release
+                - key: kubeaddons.mesosphere.io/name
                   operator: In
                   values:
-                  - traefik-kubeaddons
+                  - traefik
               topologyKey: failure-domain.beta.kubernetes.io/zone
+      deployment:
+        podLabels:
+          kubeaddons.mesosphere.io/name: traefik
       service:
         labels:
           servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
