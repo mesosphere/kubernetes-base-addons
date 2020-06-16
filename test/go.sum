@@ -410,6 +410,7 @@ github.com/mesosphere/ksphere-testing-framework v0.0.0-20200320191913-4ed3ad40a3
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200409132906-872edbff4e7a/go.mod h1:0i/HsNkjOp9ic69XWXsuQtJjiJrx8Vwu7hFljyCcfHk=
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200530001136-9d1c380ca073 h1:KDL76y9TdRVLJBrgMXkEr/kx8c2oHoGqq+i0TVWqg1U=
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200530001136-9d1c380ca073/go.mod h1:gDb4mP+7w/pvY3IEdMrRmAsirHaTOpSp7TH6KT0ou48=
+github.com/mesosphere/ksphere-testing-framework v0.0.0-20200616160547-ae8c293f3982/go.mod h1:DwJ37ojvOmTm72U2zPPSHFxr8Ask4YHCHmQqVLV5V6I=
 github.com/mesosphere/kubeaddons v0.10.2/go.mod h1:6TEL+jD4yW324GCF+aaIXNmBBgeeaF636DAi43OJffo=
 github.com/mesosphere/kubeaddons v0.11.0/go.mod h1:vUibt0jKmrxwRi2nDS7Os+Lz1PMqGVDG6HpdI0HUWGQ=
 github.com/mesosphere/kubeaddons v0.15.0/go.mod h1:s3eKj55R9SRhIwHLvY0xq4i2AyDm8PCl9XLs4/GI1so=
