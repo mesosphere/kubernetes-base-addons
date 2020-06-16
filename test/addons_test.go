@@ -18,7 +18,7 @@ import (
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
-	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
+	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
@@ -43,7 +43,7 @@ var (
 	cat       catalog.Catalog
 	localRepo repositories.Repository
 	comRepo   repositories.Repository
-	groups    map[string][]v1beta1.AddonInterface
+	groups    map[string][]v1beta2.AddonInterface
 )
 
 type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
@@ -295,8 +295,8 @@ func testgroup(t *testing.T, groupname string, kubernetesVersion string, jobs ..
 	return nil
 }
 
-func findUnhandled() ([]v1beta1.AddonInterface, error) {
-	var unhandled []v1beta1.AddonInterface
+func findUnhandled() ([]v1beta2.AddonInterface, error) {
+	var unhandled []v1beta2.AddonInterface
 	repo, err := local.NewRepository("base", "../addons")
 	if err != nil {
 		return unhandled, err
@@ -337,7 +337,7 @@ func kubectl(args ...string) error {
 
 // TODO: a temporary place to put configuration overrides for addons
 // See: https://jira.mesosphere.com/browse/DCOS-62137
-func overrides(addon v1beta1.AddonInterface) error {
+func overrides(addon v1beta2.AddonInterface) error {
 	overrideValues, ok := addonOverrides[addon.GetName()]
 	if !ok {
 		return nil
