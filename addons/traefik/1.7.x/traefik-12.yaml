@@ -7,7 +7,7 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-11"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-12"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.23"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
@@ -24,7 +24,35 @@ spec:
     version: 1.72.19
     values: |
       ---
+      # Configure Traefik for HA.
       replicas: 2
+      podDisruptionBudget:
+        minAvailable: 1
+      # Distribute pods to tolerate node or zone failure.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: kubeaddons.mesosphere.io/name
+                  operator: In
+                  values:
+                  - traefik
+              topologyKey: kubernetes.io/hostname
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: kubeaddons.mesosphere.io/name
+                  operator: In
+                  values:
+                  - traefik
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+      deployment:
+        podLabels:
+          kubeaddons.mesosphere.io/name: traefik
       service:
         labels:
           servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
