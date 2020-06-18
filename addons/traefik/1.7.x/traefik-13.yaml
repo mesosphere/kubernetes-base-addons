@@ -7,7 +7,7 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-12"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.23-13"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.23"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
@@ -21,7 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.72.19
+    version: 1.72.20
     values: |
       ---
       # Configure Traefik for HA.
