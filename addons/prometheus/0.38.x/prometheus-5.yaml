@@ -235,11 +235,11 @@ spec:
                     storage: 50Gi
           resources:
             limits:
-              cpu: 1000m
-              memory: 2500Mi
+              cpu: 2000m
+              memory: 5000Mi
             requests:
-              cpu: 300m
-              memory: 1500Mi
+              cpu: 500m
+              memory: 2000Mi
       alertmanager:
         ingress:
           enabled: true
