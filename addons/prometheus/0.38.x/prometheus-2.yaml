@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-3"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.17.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -255,8 +255,8 @@ spec:
         alertmanagerSpec:
           resources:
             limits:
-              cpu: 100m
-              memory: 50Mi
+              cpu: 200m
+              memory: 250Mi
             requests:
               cpu: 10m
               memory: 50Mi
