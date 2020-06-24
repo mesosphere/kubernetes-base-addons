@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200616160547-ae8c293f3982
-	github.com/mesosphere/kubeaddons v0.16.0
+	github.com/mesosphere/kubeaddons v0.16.1
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.13.0 // indirect
