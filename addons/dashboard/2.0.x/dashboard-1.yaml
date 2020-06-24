@@ -1,5 +1,5 @@
 ---
-apiVersion: kubeaddons.mesosphere.io/v1beta1
+apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: ClusterAddon
 metadata:
   name: dashboard
@@ -31,6 +31,8 @@ spec:
     chart: kubernetes-dashboard
     repo: https://mesosphere.github.io/charts/staging
     version: 2.0.0
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       #so that kubectl proxy works
