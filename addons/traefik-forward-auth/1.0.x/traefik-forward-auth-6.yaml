@@ -1,11 +1,11 @@
 ---
-apiVersion: kubeaddons.mesosphere.io/v1beta1
+apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: Addon
 metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-5"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-6"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -28,6 +28,8 @@ spec:
   chartReference:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     version: 0.2.13
     values: |
       ---

@@ -1,5 +1,5 @@
 ---
-apiVersion: kubeaddons.mesosphere.io/v1beta1
+apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: Addon
 metadata:
   name: kibana
@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-4"
     appversion.kubeaddons.mesosphere.io/kibana: "6.8.2"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
@@ -32,6 +32,8 @@ spec:
   chartReference:
     chart: stable/kibana
     version: 3.2.5
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       image:
