@@ -7,8 +7,8 @@ metadata:
   labels:
     kubaddons.mesosphere.io/name: konvoyconfig
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.2-1"
-    appversion.kubeaddons.mesosphere.io/konvoyconfig: "0.0.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-1"
+    appversion.kubeaddons.mesosphere.io/konvoyconfig: "0.0.4"
     values.chart.helm.kubeaddons.mesosphere.io/konvoyconfig: "https://raw.githubusercontent.com/mesosphere/charts/173f2200647defaf67e96b32cfdbb5b6932f1fa5/staging/konvoyconfig/values.yaml"
 spec:
   kubernetes:
@@ -27,7 +27,7 @@ spec:
   chartReference:
     chart: konvoyconfig
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.0.2
+    version: 0.0.4
     values: |
       ---
       config:
