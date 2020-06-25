@@ -21,6 +21,7 @@ Releases should be twice monthly<sup>[1](#footnote1)</sup> on the second and for
 ### Kubernetes
 
 **The Kubernetes versions supported by this repo are 1.15, 1.16, and 1.17.**
+Support should be maintained for the latest general release of Kubernetes and the two prior minor releases.
 
 The Addons in this repo are the minimum base set of supported<sup>[2](#footnote2)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
 
