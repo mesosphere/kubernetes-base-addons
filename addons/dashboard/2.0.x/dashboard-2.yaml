@@ -29,13 +29,13 @@ spec:
       enabled: true
   chartReference:
     chart: kubernetes-dashboard
-    repo: https://mesosphere.github.io/charts/staging
-    version: 2.0.0
+    repo: https://kubernetes.github.io/dashboard/
+    version: 2.0.3
     values: |
       ---
       #so that kubectl proxy works
       fullnameOverride: 'kubernetes-dashboard'
-      enableInsecureLogin: true
+      protocolHttp: true
       service:
         externalPort: 9090
       resources:
@@ -46,11 +46,10 @@ spec:
           cpu: 250m
           memory: 300Mi
       image:
-        repository: kubernetesui/dashboard
         pullPolicy: Always
-        tag: v2.0.0-beta6
       extraArgs:
         - --namespace=kubeaddons
+        - --enable-insecure-login
       ingress:
         enabled: true
         annotations:
