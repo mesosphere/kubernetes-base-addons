@@ -36,6 +36,8 @@ spec:
       #so that kubectl proxy works
       fullnameOverride: 'kubernetes-dashboard'
       protocolHttp: true
+      metricsScraper:
+        enabled: true
       service:
         externalPort: 9090
       resources:
