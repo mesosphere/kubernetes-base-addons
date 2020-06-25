@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.3.2-3"
-    appversion.kubeaddons.mesosphere.io/fluentbit: "1.3.2"
-    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/helm/charts/f9efc8de7dcd6f93ebacc4b321d01a5aa819cdaa/stable/fluent-bit/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.3.7-1"
+    appversion.kubeaddons.mesosphere.io/fluentbit: "1.3.7"
+    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/helm/charts/d407562/stable/fluent-bit/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -31,9 +31,8 @@ spec:
       enabled: true
   chartReference:
     chart: stable/fluent-bit
-    version: 2.8.4
+    version: 2.8.17
     values: |
-      ---
       audit:
         enable: true
         input:
@@ -42,7 +41,7 @@ spec:
           path: /var/log/kubernetes/audit/*.log
           bufferChunkSize: 5MB
           bufferMaxSize: 20MB
-          skipLongLines: off
+          skipLongLines: Off
           key: kubernetes-audit
       backend:
         es:
@@ -58,6 +57,7 @@ spec:
           enabled: true
           filters:
             systemdUnit: []
+          stripUnderscores: true
       metrics:
         enabled: true
         service:
@@ -66,9 +66,6 @@ spec:
       tolerations:
         - effect: NoSchedule
           operator: Exists
-      extraEntries:
-        input: |-
-         Strip_Underscores true
       resources:
         limits:
           memory: 750Mi
