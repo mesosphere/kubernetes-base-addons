@@ -1,0 +1,69 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: dashboard
+  labels:
+    kubeaddons.mesosphere.io/name: dashboard
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.0.3-3"
+    appversion.kubeaddons.mesosphere.io/dashboard: "2.0.3"
+    endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
+    docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
+    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/5e7b6640dd6b566bb136fffaca1b54da392d3074/stable/kubernetes-dashboard/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  namespace: kubeaddons
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: kubernetes-dashboard
+    repo: https://kubernetes.github.io/dashboard/
+    version: 2.0.3
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
+    values: |
+      ---
+      #so that kubectl proxy works
+      fullnameOverride: 'kubernetes-dashboard'
+      protocolHttp: true
+      metricsScraper:
+        enabled: true
+      service:
+        externalPort: 9090
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1000Mi
+        requests:
+          cpu: 250m
+          memory: 300Mi
+      image:
+        pullPolicy: Always
+      extraArgs:
+        - --namespace=kubeaddons
+        - --enable-insecure-login
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          traefik.frontend.rule.type: PathPrefixStrip
+          traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+          traefik.ingress.kubernetes.io/auth-type: forward
+          traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+          traefik.ingress.kubernetes.io/priority: "2"
+        paths:
+          - /ops/portal/kubernetes
+        hosts:
+          - ""
