@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: opsportal
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-10"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-11"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.1.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
     values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/132c1662f1/stable/opsportal/values.yaml"
