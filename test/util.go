@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -22,7 +23,7 @@ func portForwardPodWithPrefix(cluster testcluster.Cluster, ns, prefix, port stri
 }
 
 func findPodWithPrefix(cluster testcluster.Cluster, ns, prefix string) (*corev1.Pod, error) {
-	pods, err := cluster.Client().CoreV1().Pods(ns).List(metav1.ListOptions{})
+	pods, err := cluster.Client().CoreV1().Pods(ns).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}

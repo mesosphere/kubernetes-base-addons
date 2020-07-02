@@ -7,7 +7,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20190916154449-92cc603036dd
 	github.com/google/uuid v1.1.1
 	github.com/imdario/mergo v0.3.8 // indirect
-	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200616160547-ae8c293f3982
+	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200624200651-6b661edc6888
 	github.com/mesosphere/kubeaddons v0.16.1
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
@@ -16,14 +16,8 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	k8s.io/api v0.18.4
 	k8s.io/apimachinery v0.18.4
-	k8s.io/helm v2.16.8+incompatible
+	k8s.io/helm v2.16.9+incompatible
 	sigs.k8s.io/kind v0.7.0
 )
 
-replace (
-	k8s.io/apimachinery => k8s.io/apimachinery v0.17.4
-	k8s.io/apiserver => k8s.io/apiserver v0.17.4
-	k8s.io/client-go => k8s.io/client-go v0.17.4
-	k8s.io/kubectl => k8s.io/kubectl v0.17.4
-	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.5.2
-)
+replace k8s.io/client-go => k8s.io/client-go v0.18.4 // this is needed as long as kubeaddons uses an pre-1.18 version
