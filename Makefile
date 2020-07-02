@@ -4,7 +4,7 @@ export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
 export GIT_TERMINAL_PROMPT := 1
 export ADDON_TESTS_SETUP_WAIT_DURATION := 30m
-export GOPRIVATE := github.com/mesosphere/kubeaddons
+export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
 
 .DEFAULT_GOAL := test
 

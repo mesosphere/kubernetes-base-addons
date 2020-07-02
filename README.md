@@ -1,5 +1,7 @@
 # Kubernetes Base Addons
 
+![build status label](https://teamcity.mesosphere.io/app/rest/builds/buildType:(id:kubeaddons_KubernetesBaseAddons),branch:(default:true)/statusIcon)
+
 This repository contains the default sets of addons needed to bootstrap [D2iQ Kubernetes](https://d2iq.com/solutions/ksphere).
 
 ## Overview

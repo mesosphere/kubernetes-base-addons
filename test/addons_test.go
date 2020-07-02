@@ -18,7 +18,7 @@ import (
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
-	"github.com/mesosphere/kubeaddons/pkg/api/v1beta1"
+	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
@@ -43,7 +43,7 @@ var (
 	cat       catalog.Catalog
 	localRepo repositories.Repository
 	comRepo   repositories.Repository
-	groups    map[string][]v1beta1.AddonInterface
+	groups    map[string][]v1beta2.AddonInterface
 )
 
 type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
@@ -88,55 +88,55 @@ func TestValidateUnhandledAddons(t *testing.T) {
 }
 
 func TestGeneralGroup(t *testing.T) {
-	if err := testgroup(t, "general"); err != nil {
+	if err := testgroup(t, "general", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBackupsGroup(t *testing.T) {
-	if err := testgroup(t, "backups"); err != nil {
+	if err := testgroup(t, "backups", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestSsoGroup(t *testing.T) {
-	if err := testgroup(t, "sso"); err != nil {
+	if err := testgroup(t, "sso", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch", elasticsearchChecker, kibanaChecker); err != nil {
+	if err := testgroup(t, "elasticsearch", defaultKubernetesVersion, elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus", promChecker, alertmanagerChecker, grafanaChecker); err != nil {
+	if err := testgroup(t, "prometheus", defaultKubernetesVersion, promChecker, alertmanagerChecker, grafanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestIstioGroup(t *testing.T) {
-	if err := testgroup(t, "istio"); err != nil {
+	if err := testgroup(t, "istio", "1.16.9"); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestLocalVolumeProvisionerGroup(t *testing.T) {
-	if err := testgroup(t, "localvolumeprovisioner"); err != nil {
+	if err := testgroup(t, "localvolumeprovisioner", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAwsGroup(t *testing.T) {
-	if err := testgroup(t, "aws"); err != nil {
+	if err := testgroup(t, "aws", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAzureGroup(t *testing.T) {
-	if err := testgroup(t, "azure"); err != nil {
+	if err := testgroup(t, "azure", defaultKubernetesVersion); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -190,10 +190,10 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
+func testgroup(t *testing.T, groupname string, kubernetesVersion string, jobs ...clusterTestJob) error {
 	t.Logf("testing group %s", groupname)
 
-	version, err := semver.Parse(defaultKubernetesVersion)
+	version, err := semver.Parse(kubernetesVersion)
 	if err != nil {
 		return err
 	}
@@ -295,8 +295,8 @@ func testgroup(t *testing.T, groupname string, jobs ...clusterTestJob) error {
 	return nil
 }
 
-func findUnhandled() ([]v1beta1.AddonInterface, error) {
-	var unhandled []v1beta1.AddonInterface
+func findUnhandled() ([]v1beta2.AddonInterface, error) {
+	var unhandled []v1beta2.AddonInterface
 	repo, err := local.NewRepository("base", "../addons")
 	if err != nil {
 		return unhandled, err
@@ -337,7 +337,7 @@ func kubectl(args ...string) error {
 
 // TODO: a temporary place to put configuration overrides for addons
 // See: https://jira.mesosphere.com/browse/DCOS-62137
-func overrides(addon v1beta1.AddonInterface) error {
+func overrides(addon v1beta2.AddonInterface) error {
 	overrideValues, ok := addonOverrides[addon.GetName()]
 	if !ok {
 		return nil
