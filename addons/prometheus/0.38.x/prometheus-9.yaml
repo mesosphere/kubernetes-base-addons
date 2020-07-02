@@ -243,10 +243,10 @@ spec:
           resources:
             limits:
               cpu: 2000m
-              memory: 5000Mi
+              memory: 8192Mi
             requests:
-              cpu: 500m
-              memory: 2000Mi
+              cpu: 1000m
+              memory: 4000Mi
       alertmanager:
         ingress:
           enabled: true
@@ -262,11 +262,11 @@ spec:
         alertmanagerSpec:
           resources:
             limits:
-              cpu: 2
-              memory: 8Gi
+              cpu: 200m
+              memory: 250Mi
             requests:
-              cpu: 1
-              memory: 4Gi
+              cpu: 10m
+              memory: 50Mi
       grafana:
         ingress:
           enabled: true
