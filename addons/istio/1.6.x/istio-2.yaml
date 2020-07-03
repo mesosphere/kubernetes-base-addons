@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.3-1"
-    appversion.kubeaddons.mesosphere.io/istio: "1.6.3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-2"
+    appversion.kubeaddons.mesosphere.io/istio: "1.6.4"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
     stage.kubeaddons.mesosphere.io/kiali: Preview
@@ -17,7 +17,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
     docs.kubeaddons.mesosphere.io/kiali: "https://istio.io/docs/tasks/telemetry/kiali/"
     docs.kubeaddons.mesosphere.io/jaeger: "https://istio.io/docs/tasks/telemetry/distributed-tracing/jaeger/"
-    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/63bbc17eda76f2136f6ab4f6d6eef7e764e5f0a5/staging/istio/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/a8106505cb3fb5ed42e41ceadffae9e78bb226a9/staging/istio/values.yaml"
 spec:
   namespace: istio-system
   requires:
@@ -30,6 +30,8 @@ spec:
       enabled: false
     - name: azure
       enabled: false
+    - name: gcp
+      enabled: false
     - name: docker
       enabled: false
     - name: none
@@ -37,9 +39,12 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.6.4
+    version: 1.6.5
     values: |
       istioOperator:
+        hub: docker.io/istio
+        tag: 1.6.4
+
         addonComponents:
           kiali:
             enabled: true
