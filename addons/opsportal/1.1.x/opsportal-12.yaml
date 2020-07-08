@@ -10,7 +10,7 @@ metadata:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-12"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.1.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
-    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/132c1662f1/stable/opsportal/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/6c5e399d3ac34a9fdf65cc26c577d5ab54c39be3/stable/opsportal/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
