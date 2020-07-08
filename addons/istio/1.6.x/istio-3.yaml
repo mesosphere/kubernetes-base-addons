@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-3"
     appversion.kubeaddons.mesosphere.io/istio: "1.6.4"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
@@ -51,11 +51,19 @@ spec:
           tracing:
             enabled: true 
 
-        values:
-          global:
-            defaultPodDisruptionBudget:
-              enabled: false
+        components:
+          ingressGateways:
+          - enabled: true
+            k8s:
+              hpaSpec:
+                minReplicas: 2
+            name: istio-ingressgateway
+          pilot:
+            k8s:
+              hpaSpec:
+                minReplicas: 2
 
+        values:
           kiali:
             contextPath: /ops/portal/kiali
             dashboard:
