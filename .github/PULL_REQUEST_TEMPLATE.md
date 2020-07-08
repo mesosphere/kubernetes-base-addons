@@ -18,7 +18,7 @@
 **Which issue(s) this PR fixes**:
 <!-- Add a link to the JIRA issue. Otherwise, put "no issue." -->
 ```
-jql=key in (D2IQ-12345)
+jql=key in (D2IQ-<NUMBER>)
 ```
 
 **Special notes for your reviewer**:
