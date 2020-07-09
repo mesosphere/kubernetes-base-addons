@@ -1,8 +1,44 @@
+# Release Notes
+
+## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
+
+* \[awsebscsiprovisioner\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#273](https://github.com/mesosphere/kubernetes-base-addons/pull/273), [@sebbrandt87](https://github.com/sebbrandt87))
+* \[gcpdisk-csi-driver\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`.
+  \[azuredisk-csi-driver\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `snapshot.cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#279](https://github.com/mesosphere/kubernetes-base-addons/pull/279), [@jieyu](https://github.com/jieyu))
+* \[prometheus-operator\] Upgrade to version [0.38.1](https://github.com/coreos/prometheus-operator/releases/tag/v0.38.1)
+    - \[prometheus\] Upgrade to version [2.17.2](https://github.com/prometheus/prometheus/releases/tag/v2.17.2)
+    - \[grafana\] Upgrade to version [6.7.3](https://github.com/grafana/grafana/releases/tag/v6.7.3) ([#281](https://github.com/mesosphere/kubernetes-base-addons/pull/281), [@branden](https://github.com/branden))
+* \[traefik\] fix an issue where `clusterhostname` can now be an ipaddress as well ([#286](https://github.com/mesosphere/kubernetes-base-addons/pull/286), [@GoelDeepak](https://github.com/GoelDeepak))
+* [dex-k8s-authenticator] Fix bug in init container that could remove custom CA certificate from main cluster login instructions ([#291](https://github.com/mesosphere/kubernetes-base-addons/pull/291), [@mhrabovcin](https://github.com/mhrabovcin))
+* \[traefik\] Distribute pods across nodes and zones when possible.
+  \[traefik\] Set a PodDisruptionBudget to ensure at least 1 pod is running at all times. ([#292](https://github.com/mesosphere/kubernetes-base-addons/pull/292), [@branden](https://github.com/branden))
+* Prometheus-alert-manager: increase memory and cpu limits due to OOM errors ([#298](https://github.com/mesosphere/kubernetes-base-addons/pull/298), [@hectorj2f](https://github.com/hectorj2f))
+* Traefik is now upgradeable again when the `initCertJobImage` field is modified. ([#302](https://github.com/mesosphere/kubernetes-base-addons/pull/302), [@makkes](https://github.com/makkes))
+* \[traefik\]:
+  - upgrade to 1.7.24 
+  - mTLS available
+  - accessLogs.filters setable
+  - caServer setable for acme challenge ([#304](https://github.com/mesosphere/kubernetes-base-addons/pull/304), [@sebbrandt87](https://github.com/sebbrandt87))
+* Traefik: access log is enabled by default ([#305](https://github.com/mesosphere/kubernetes-base-addons/pull/305), [@mhrabovcin](https://github.com/mhrabovcin))
+* Opsportal: fix a typo in 'lables' that caused issues during upgrades. ([#307](https://github.com/mesosphere/kubernetes-base-addons/pull/307), [@dkoshkin](https://github.com/dkoshkin))
+* \[prometheus\]: Update prometheus-operator chart, which adds a grafana dashboard for monitoring autoscaler ([#308](https://github.com/mesosphere/kubernetes-base-addons/pull/308), [@gracedo](https://github.com/gracedo))
+* \[dex-k8s-authenticator\]:
+  - fix: render configure kubectl instructions with the cluster hostname. 
+  - fix: add clippy js for clipboard support ([#309](https://github.com/mesosphere/kubernetes-base-addons/pull/309), [@samvantran](https://github.com/samvantran))
+* \[prometheus\] Increases default Prometheus server resources. ([#310](https://github.com/mesosphere/kubernetes-base-addons/pull/310), [@branden](https://github.com/branden))
+* ValuesRemap has been added for rewriting the forward authentication url in multiple addons. ([#315](https://github.com/mesosphere/kubernetes-base-addons/pull/315), [@jr0d](https://github.com/jr0d))
+* Konvoyconfig has a new field `caCertificate` to support custom certificate in managed cluster ([#316](https://github.com/mesosphere/kubernetes-base-addons/pull/316), [@GoelDeepak](https://github.com/GoelDeepak))
+* Istio addon upgraded to 1.6.3 ([#317](https://github.com/mesosphere/kubernetes-base-addons/pull/317), [@GoelDeepak](https://github.com/GoelDeepak))
+* Opsportal: allow landing page deployment replica count to be configured ([#319](https://github.com/mesosphere/kubernetes-base-addons/pull/319), [@jieyu](https://github.com/jieyu))
+* \[dashboard\] Upgrades the Kubernetes dashboard to 2.0.3.
+  \[dashboard\] Adds metrics visualizations to the Kubernetes dashboard UI. ([#320](https://github.com/mesosphere/kubernetes-base-addons/pull/320), [@branden](https://github.com/branden))
+* Traefik: revert changes to the service ports that broke Velero functionality. ([#328](https://github.com/mesosphere/kubernetes-base-addons/pull/328), [@dkoshkin](https://github.com/dkoshkin))
+* Traefik-foward-auth: fix a bug that might cause /_oauth callback to be redirected to other services ([#334](https://github.com/mesosphere/kubernetes-base-addons/pull/334), [@jieyu](https://github.com/jieyu))
+* Adds the Conductor service card to the cluster detail page of the UI. ([#344](https://github.com/mesosphere/kubernetes-base-addons/pull/344), [@natmegs](https://github.com/natmegs))
+
 ## stable-1.15-1.8.0, stable-1.16-1.8.0
 
 * \[kibana\]: Fixes an issue causing an outdated version of Kibana to be deployed to GCP. ([#249](https://github.com/mesosphere/kubernetes-base-addons/pull/249), [@branden](https://github.com/branden))
-
-# Release Notes
 
 ## stable-1.15-1.7.0, stable-1.16-1.7.0
 
