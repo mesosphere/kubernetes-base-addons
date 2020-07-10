@@ -14,7 +14,7 @@ require (
 	go.uber.org/zap v1.13.0 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
-	k8s.io/api v0.18.4
+	k8s.io/api v0.18.5
 	k8s.io/apimachinery v0.18.5
 	k8s.io/helm v2.16.9+incompatible
 	sigs.k8s.io/kind v0.7.0
