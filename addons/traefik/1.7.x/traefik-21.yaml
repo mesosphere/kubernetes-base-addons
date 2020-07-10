@@ -70,6 +70,14 @@ spec:
       metrics:
         prometheus:
           enabled: true
+        serviceMonitor:
+          # When set true and if Prometheus Operator is installed then use a ServiceMonitor to configure scraping
+          enabled: true
+          # Set the namespace the ServiceMonitor should be deployed
+          namespace: kubeaddons
+          # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
+          labels:
+            release: prometheus-kubeaddons
       dashboard:
         enabled: true
         domain: ""
