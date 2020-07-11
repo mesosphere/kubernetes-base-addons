@@ -55,6 +55,12 @@ spec:
       deployment:
         podLabels:
           kubeaddons.mesosphere.io/name: traefik
+        annotations:
+          # Watching this CM will trigger traefik init container that updates certificate
+          # object with new DNS names. That will cascade secret update which will trigger
+          # another reload.
+          configmap.reloader.stakater.com/reload: konvoyconfig-kubeaddons
+          secret.reloader.stakater.com/reload: traefik-kubeaddons-certificate
       service:
         labels:
           servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
@@ -107,12 +113,6 @@ spec:
         # We use cert-manager to automate certificate management thus we
         # do not need the default cert secret.
         useCertManager: true
-      deploymentAnnotations:
-        # Watching this CM will trigger traefik init container that updates certificate
-        # object with new DNS names. That will cascade secret update which will trigger
-        # another reload.
-        configmap.reloader.stakater.com/reload: konvoyconfig-kubeaddons
-        secret.reloader.stakater.com/reload: traefik-kubeaddons-certificate
 
       initContainers:
       - name: initialize-traefik-certificate
