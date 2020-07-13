@@ -11,7 +11,7 @@ metadata:
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.24"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
-    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/66e8f51/staging/traefik/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/2525b57/staging/traefik/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
