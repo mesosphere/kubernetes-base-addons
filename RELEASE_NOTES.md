@@ -1,8 +1,12 @@
+# Release Notes
+
+## stable-1.15-1.9.0, stable-1.16-1.9.0
+
+* Traefik: fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+
 ## stable-1.15-1.8.0, stable-1.16-1.8.0
 
 * \[kibana\]: Fixes an issue causing an outdated version of Kibana to be deployed to GCP. ([#249](https://github.com/mesosphere/kubernetes-base-addons/pull/249), [@branden](https://github.com/branden))
-
-# Release Notes
 
 ## stable-1.15-1.7.0, stable-1.16-1.7.0
 
