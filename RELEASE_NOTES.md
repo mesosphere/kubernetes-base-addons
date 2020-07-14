@@ -1,5 +1,10 @@
 # Release Notes
 
+## stable-1.15-2.0.1, stable-1.16-2.0.1, stable-1.17-2.0.1
+
+- Traefik: fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+- Prometheus: Improve Grafana dashboard names and tags for dashboards tied to addons ([#352](https://github.com/mesosphere/kubernetes-base-addons/pull/352), [@gracedo](https://github.com/gracedo))
+
 ## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
 
 * \[awsebscsiprovisioner\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#273](https://github.com/mesosphere/kubernetes-base-addons/pull/273), [@sebbrandt87](https://github.com/sebbrandt87))
