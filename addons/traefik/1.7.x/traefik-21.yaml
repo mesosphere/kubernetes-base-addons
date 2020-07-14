@@ -1,5 +1,5 @@
 ---
-apiVersion: kubeaddons.mesosphere.io/v1beta2
+apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
   name: traefik
@@ -22,8 +22,6 @@ spec:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
     version: 1.87.2
-    valuesRemap:
-      "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       # Configure Traefik for HA.
