@@ -1,0 +1,140 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: traefik
+  labels:
+    kubeaddons.mesosphere.io/name: traefik
+    kubeaddons.mesosphere.io/provides: ingresscontroller
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-22"
+    appversion.kubeaddons.mesosphere.io/traefik: "1.7.24"
+    endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
+    docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
+    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/2525b57/staging/traefik/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: cert-manager
+  chartReference:
+    chart: traefik
+    repo: https://mesosphere.github.io/charts/staging
+    version: 1.87.4
+    valuesRemap:
+      "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
+    values: |
+      ---
+      # Configure Traefik for HA.
+      replicas: 2
+      podDisruptionBudget:
+        minAvailable: 1
+      # Distribute pods to tolerate node or zone failure.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: kubeaddons.mesosphere.io/name
+                  operator: In
+                  values:
+                  - traefik
+              topologyKey: kubernetes.io/hostname
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: kubeaddons.mesosphere.io/name
+                  operator: In
+                  values:
+                  - traefik
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+      deployment:
+        podLabels:
+          kubeaddons.mesosphere.io/name: traefik
+        annotations:
+          # Watching this CM will trigger traefik init container that updates certificate
+          # object with new DNS names. That will cascade secret update which will trigger
+          # another reload.
+          configmap.reloader.stakater.com/reload: konvoyconfig-kubeaddons
+          secret.reloader.stakater.com/reload: traefik-kubeaddons-certificate
+      resources:
+        limits:
+          cpu: 1000m
+        requests:
+          cpu: 500m
+      accessLogs:
+        enabled: true
+      rbac:
+        enabled: true
+      metrics:
+        prometheus:
+          enabled: true
+          service:
+            labels:
+              servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+        serviceMonitor:
+          # When set true and if Prometheus Operator is installed then use a ServiceMonitor to configure scraping
+          enabled: false
+      dashboard:
+        enabled: true
+        domain: ""
+        serviceType: ClusterIP
+        ingress:
+          path: /ops/portal/traefik
+          annotations:
+            kubernetes.io/ingress.class: traefik
+            traefik.frontend.rule.type: PathPrefixStrip
+            traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+            traefik.ingress.kubernetes.io/auth-type: forward
+            traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            traefik.ingress.kubernetes.io/priority: "2"
+      kubernetes:
+        ingressEndpoint:
+          publishedService: "kubeaddons/traefik-kubeaddons"
+      ssl:
+        enabled: true
+        enforced: true
+        # TODO: This comment is no longer true.
+        # dex service is exposed with TLS certificate signed by self signed root
+        # Dex CA certificate. It is not clear if traefik supports configuring
+        # trusted certificates per backend. This should be investiaged in a
+        # separate issue.
+        # See: https://jira.mesosphere.com/browse/DCOS-56033
+        insecureSkipVerify: true
+        # We use cert-manager to automate certificate management thus we
+        # do not need the default cert secret.
+        useCertManager: true
+
+      initContainers:
+      - name: initialize-traefik-certificate
+        image: mesosphere/kubeaddons-addon-initializer:v0.2.10
+        args: ["traefik"]
+        env:
+        - name: "TRAEFIK_INGRESS_NAMESPACE"
+          value: "kubeaddons"
+        - name: "TRAEFIK_INGRESS_SERVICE_NAME"
+          value: "traefik-kubeaddons"
+        - name: "TRAEFIK_INGRESS_CERTIFICATE_NAME"
+          value: "traefik-kubeaddons"
+        - name: "TRAEFIK_INGRESS_CERTIFICATE_ISSUER"
+          value: "kubernetes-ca"
+        - name: "TRAEFIK_INGRESS_CERTIFICATE_SECRET_NAME"
+          value: "traefik-kubeaddons-certificate"
+        - name: "TRAEFIK_KONVOY_ADDONS_CONFIG_MAP"
+          value: "konvoyconfig-kubeaddons"
+        - name: "TRAEFIK_CLUSTER_HOSTNAME_KEY"
+          value: "clusterHostname"
+
+      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.2.10
+      extraServicePorts:
+        - name: velero-minio
+          port: 9000
+          protocol: TCP
+          targetPort: 9000
+      extraSSLEntrypoints:
+        velero-minio:
+          address: ":9000"
