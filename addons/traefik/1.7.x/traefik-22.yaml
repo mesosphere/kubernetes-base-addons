@@ -73,9 +73,9 @@ spec:
       metrics:
         prometheus:
           enabled: true
-        service:
-          labels:
-            servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+          service:
+            labels:
+              servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
         serviceMonitor:
           # When set true and if Prometheus Operator is installed then use a ServiceMonitor to configure scraping
           enabled: false
