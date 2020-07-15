@@ -24,7 +24,6 @@ general:
 # Addons related to backup and restore tools are tested as part of this group.
 # ------------------------------------------------------------------------------
 backups:
-    - "prometheus"
     - "konvoyconfig"
     - "metallb"
     - "traefik"
@@ -37,7 +36,6 @@ backups:
 # Addons related to our single sign-on stack are tested as part of this group
 # ------------------------------------------------------------------------------
 sso:
-    - "prometheus"
     - "konvoyconfig"
     - "external-dns"
     - "metallb"
