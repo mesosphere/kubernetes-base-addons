@@ -16,7 +16,10 @@
 <!-- Explain, without going into the details, what this PR does, and what problem it solves. -->
 
 **Which issue(s) this PR fixes**:
-<!-- Add a link to the JIRA issue. Otherwise, put "no issue." -->
+<!-- Add a link to the JIRA issue. Otherwise, put "no issue."
+* jql=key in (D2IQ-<NUMBER>)
+* https://jira.d2iq.com/browse/D2iQ-<NUMBER>
+-->
 
 **Special notes for your reviewer**:
 
