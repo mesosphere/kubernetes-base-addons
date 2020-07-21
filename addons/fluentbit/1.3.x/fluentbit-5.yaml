@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.3.7-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.3.7-2"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.3.7"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/helm/charts/d407562/stable/fluent-bit/values.yaml"
 spec:
@@ -36,7 +36,7 @@ spec:
       audit:
         enable: true
         input:
-          memBufLimit: 35MB
+          memBufLimit: 135MB
           parser: kubernetes-audit
           path: /var/log/kubernetes/audit/*.log
           bufferChunkSize: 5MB
