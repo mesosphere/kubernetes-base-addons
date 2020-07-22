@@ -1,5 +1,14 @@
 # Release Notes
 
+## stable-1.15-2.1.0, stable-1.16-2.1.0, stable-1.17-2.1.0
+
+* traefik
+  * fix the velero-minio entrypoint to inherit global ssl and proxy protocol configurations ([#259](https://github.com/mesosphere/kubernetes-base-addons/pull/259), [@jieyu](https://github.com/jieyu))
+* elasticsearch
+  * default data nodes has been increased to 4 ([#327](https://github.com/mesosphere/kubernetes-base-addons/pull/327), [@alejandroEsc](https://github.com/alejandroEsc))
+* external-dns
+  * disable by default ([#335](https://github.com/mesosphere/kubernetes-base-addons/pull/335), [@GoelDeepak](https://github.com/GoelDeepak))
+
 ## stable-1.15-2.0.1, stable-1.16-2.0.1, stable-1.17-2.0.1
 
 - Traefik: fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
