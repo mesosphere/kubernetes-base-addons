@@ -7,8 +7,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex-k8s-authenticator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.1-1"
-    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.2-1"
+    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.2"
     values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/f44c645c6bc843b254bb0f4f97d516f2cfee4707/staging/dex-k8s-authenticator/values.yaml"
 spec:
   kubernetes:
@@ -32,12 +32,12 @@ spec:
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.2.4
+    version: 1.2.5
     values: |
       ---
       image:
         repository: mesosphere/dex-k8s-authenticator
-        tag: v1.2.1-d2iq
+        tag: v1.2.2-d2iq
       ingress:
         enabled: true
         annotations:
@@ -49,7 +49,7 @@ spec:
         #logoUrl: http://<path-to-your-logo.png>
         #tlsCert: /path/to/dex-client.crt
         #tlsKey: /path/to/dex-client.key
-        pluginVersion: "v0.1.1"
+        pluginVersion: "v0.1.3"
         useClusterHostnameForClusterName: true
         clusters:
         - name: kubernetes-cluster
