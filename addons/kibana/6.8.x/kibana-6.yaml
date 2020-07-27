@@ -1,0 +1,125 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: Addon
+metadata:
+  name: kibana
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: kibana
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-1"
+    appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
+    endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
+    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
+    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/helm/charts/09004fa332094693e2e5fcffe474622ba15491ae/stable/kibana/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: elasticsearch
+  chartReference:
+    chart: stable/kibana
+    version: 3.2.5
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
+    values: |
+      ---
+      image:
+        tag: 6.8.10
+      files:
+        kibana.yml:
+          ## Default Kibana configuration from kibana-docker.
+          elasticsearch.url: http://elasticsearch-kubeaddons-client:9200
+          ## Ref: https://www.elastic.co/guide/en/kibana/current/settings.html
+          server.basePath: /ops/portal/kibana
+      serviceAccount:
+        create: true
+      service:
+        type: ClusterIP
+        externalPort: 5601
+        internalPort: 5601
+        labels:
+          servicemonitor.kubeaddons.mesosphere.io/path: "prometheus__metrics"
+      resources:
+        # need more cpu upon initialization, therefore burstable class
+        limits:
+          cpu: 1000m
+        requests:
+          cpu: 100m
+      plugins:
+        # to avoid needing to download any plugins at runtime, use a container and a shared volume
+        # do not enable the plugins here, instead rebuild the mesosphere/kibana-plugins image with the new plugins
+        enabled: false
+        values:
+          - kibana-prometheus-exporter,6.8.10,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/6.8.10/kibana-prometheus-exporter-6.8.10.zip
+      extraContainers: |
+        - name: initialize-kibana-index
+          image: mesosphere/kubeaddons-addon-initializer:v0.1.5
+          command: ["/bin/bash", "-c", "addon-initializer kibana && sleep infinity"]
+          env:
+          - name: "KIBANA_NAMESPACE"
+            value: "kubeaddons"
+          - name: "KIBANA_SERVICE_NAME"
+            value: "kibana-kubeaddons"
+        - name: extra-index-patterns
+          image: curlimages/curl
+          command:
+            - sh
+            - -c
+            - |
+              #!/bin/sh
+              KB_URL=http://localhost:5601
+              while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/status)" != "200" ]]; do sleep 1; done
+              # Create index patterns
+              if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/saved_objects/index-pattern/kubernetes_audit)" != "200" ]]; then
+                curl -XPOST "$KB_URL/api/saved_objects/index-pattern/kubernetes_audit" \
+                  -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
+                  -d '{"attributes":{"title":"kubernetes_audit-*","timeFieldName":"@ts","fields":"[]"}}'
+              fi
+              if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/saved_objects/index-pattern/kubernetes_host)" != "200" ]]; then
+                curl -XPOST "$KB_URL/api/saved_objects/index-pattern/kubernetes_host" \
+                  -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
+                  -d '{"attributes":{"title":"kubernetes_host-*","timeFieldName":"@ts","fields":"[]"}}'
+              fi
+              sleep infinity
+      initContainers:
+        # from https://github.com/mesosphere/kubeaddons-sidecars
+        - name: kibana-plugins-install
+          image: mesosphere/kibana-plugins:v6.8.2
+          command: ["/bin/sh", "-c", "cp -a /usr/share/kibana/plugins/. /usr/share/kibana/shared-plugins/"]
+          volumeMounts:
+          - name: plugins
+            mountPath: /usr/share/kibana/shared-plugins/
+      extraVolumes:
+        - name: plugins
+          emptyDir: {}
+      extraVolumeMounts:
+        - mountPath: /usr/share/kibana/plugins/
+          name: plugins
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          traefik.frontend.rule.type: PathPrefixStrip
+          traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+          traefik.ingress.kubernetes.io/auth-type: forward
+          traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+          traefik.ingress.kubernetes.io/priority: "2"
+        hosts:
+          - "/ops/portal/kibana"
+      dashboardImport:
+        enabled: true
+        dashboards:
+          audit-logs-dashboards: '{"objects":[{"id":"19422f60-93e2-11e8-83ef-b5593250e6b7","type":"dashboard","attributes":{"title":"Audit-Dashboard","hits":0,"description":"Dashboard for Audit-Logs","panelsJSON":"[{\"embeddableConfig\":{\"columns\":[\"objectRef.namespace\",\"user.username\",\"sourceIPs\",\"verb\",\"objectRef.resource\",\"requestURI\"]},\"gridData\":{\"x\":13,\"y\":0,\"w\":35,\"h\":74,\"i\":\"1\"},\"id\":\"bb4f4e80-93e9-11e8-83ef-b5593250e6b7\",\"panelIndex\":\"1\",\"type\":\"search\",\"version\":\"6.8.2\"},{\"embeddableConfig\":{\"spy\":null,\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":0,\"w\":13,\"h\":14,\"i\":\"2\"},\"id\":\"07098510-93cb-11ea-a17b-e52b18339f68\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.8.2\"},{\"embeddableConfig\":{\"spy\":null,\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":14,\"w\":13,\"h\":24,\"i\":\"3\"},\"id\":\"324f3710-93eb-11e8-83ef-b5593250e6b7\",\"panelIndex\":\"3\",\"type\":\"visualization\",\"version\":\"6.8.2\"},{\"gridData\":{\"x\":0,\"y\":38,\"w\":13,\"h\":14,\"i\":\"4\"},\"id\":\"429087b0-9584-11e8-a471-e1cc12dab5c6\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"version\":\"6.8.2\"},{\"gridData\":{\"x\":0,\"y\":52,\"w\":13,\"h\":11,\"i\":\"5\"},\"id\":\"38b93150-9585-11e8-a471-e1cc12dab5c6\",\"panelIndex\":\"5\",\"type\":\"visualization\",\"version\":\"6.8.2\"},{\"gridData\":{\"x\":0,\"y\":63,\"w\":13,\"h\":11,\"i\":\"6\"},\"id\":\"138c2220-9585-11e8-a471-e1cc12dab5c6\",\"panelIndex\":\"6\",\"type\":\"visualization\",\"version\":\"6.8.2\"}]","optionsJSON":"{\"darkTheme\":true,\"hidePanelTitles\":false,\"useMargins\":false}","version":1,"timeRestore":false,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"}}},{"id":"dbd12d90-93c9-11ea-a17b-e52b18339f68","type":"search","attributes":{"title":"Audit-Search: Pods","description":"Audit log search for pods with a `namespace that exists` filter applied","hits":0,"columns":["objectRef.namespace","user.username","sourceIPs","verb","requestURI"],"sort":["@timestamp","desc"],"version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"index\":\"kubernetes_audit\",\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"apiVersion:\\\"audit.k8s.io/v1\\\" AND objectRef.resource:\\\"pods\\\"\",\"language\":\"lucene\"},\"filter\":[{\"meta\":{\"index\":\"kubernetes_audit\",\"negate\":false,\"disabled\":false,\"alias\":null,\"type\":\"exists\",\"key\":\"objectRef.namespace\",\"value\":\"exists\"},\"exists\":{\"field\":\"objectRef.namespace\"},\"$state\":{\"store\":\"appState\"}}]}"}}},{"id":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","type":"search","attributes":{"title":"Audit-Search","description":"","hits":0,"columns":["objectRef.namespace","user.username","sourceIPs","verb","objectRef.resource","requestURI"],"sort":["@timestamp","desc"],"version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"index\":\"kubernetes_audit\",\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"apiVersion:\\\"audit.k8s.io/v1\\\"\",\"language\":\"lucene\"},\"filter\":[]}"}}},{"id":"07098510-93cb-11ea-a17b-e52b18339f68","type":"visualization","attributes":{"title":"Audit-Visualization: Namespace","visState":"{\"title\":\"Audit-Visualization: Namespace\",\"type\":\"histogram\",\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"},\"valueAxis\":null},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"truncate\":100,\"rotate\":90},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":false,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"mode\":\"stacked\",\"type\":\"histogram\",\"drawLinesBetweenPoints\":true,\"showCircles\":true,\"data\":{\"id\":\"2\",\"label\":\"Count\"},\"valueAxis\":\"ValueAxis-1\"}],\"addTooltip\":false,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"objectRef.namespace.keyword\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"2\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"}}]}","uiStateJSON":"{\"spy\":null,\"vis\":{\"legendOpen\":false}}","description":"","savedSearchId":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"filter\":[],\"query\":{\"language\":\"lucene\",\"query\":\"\"}}"}},"_migrationVersion":{"visualization":"6.7.2"}},{"id":"429087b0-9584-11e8-a471-e1cc12dab5c6","type":"visualization","attributes":{"title":"Audit-Visualization: Source-Ips","visState":"{\n  \"title\": \"Audit-Visualization: Source-Ips\",\n  \"type\": \"histogram\",\n  \"params\": {\n    \"type\": \"histogram\",\n    \"grid\": {\n      \"categoryLines\": false,\n      \"style\": {\n        \"color\": \"#eee\"\n      }\n    },\n    \"categoryAxes\": [\n      {\n        \"id\": \"CategoryAxis-1\",\n        \"type\": \"category\",\n        \"position\": \"bottom\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"truncate\": 100\n        },\n        \"title\": {}\n      }\n    ],\n    \"valueAxes\": [\n      {\n        \"id\": \"ValueAxis-1\",\n        \"name\": \"LeftAxis-1\",\n        \"type\": \"value\",\n        \"position\": \"left\",\n        \"show\": false,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\",\n          \"mode\": \"normal\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"rotate\": 0,\n          \"filter\": false,\n          \"truncate\": 100\n        },\n        \"title\": {\n          \"text\": \"Count\"\n        }\n      }\n    ],\n    \"seriesParams\": [\n      {\n        \"show\": true,\n        \"mode\": \"stacked\",\n        \"type\": \"histogram\",\n        \"drawLinesBetweenPoints\": true,\n        \"showCircles\": true,\n        \"data\": {\n          \"id\": \"2\",\n          \"label\": \"Count\"\n        },\n        \"valueAxis\": \"ValueAxis-1\"\n      }\n    ],\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"right\",\n    \"times\": [],\n    \"addTimeMarker\": false\n  },\n  \"aggs\": [\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {}\n    },\n    {\n      \"id\": \"3\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"sourceIPs.keyword\",\n        \"size\": 20,\n        \"order\": \"desc\",\n        \"orderBy\": \"2\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      }\n    }\n  ]\n}","uiStateJSON":"{}","description":"","savedSearchId":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"}},"_migrationVersion":{"visualization":"6.7.2"}},{"id":"324f3710-93eb-11e8-83ef-b5593250e6b7","type":"visualization","attributes":{"title":"Audit-Visualization: User","visState":"{\"title\":\"Audit-Visualization: User\",\"type\":\"histogram\",\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"}},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"truncate\":30},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":false,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\",\"defaultYExtents\":false,\"setYExtents\":false},\"labels\":{\"show\":false,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"mode\":\"stacked\",\"type\":\"histogram\",\"drawLinesBetweenPoints\":true,\"showCircles\":true,\"data\":{\"id\":\"2\",\"label\":\"Count\"},\"valueAxis\":\"ValueAxis-1\"}],\"addTooltip\":false,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"user.username.keyword\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"2\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"}}]}","uiStateJSON":"{\"spy\":null,\"vis\":{\"legendOpen\":false}}","description":"","savedSearchId":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"filter\":[],\"query\":{\"language\":\"lucene\",\"query\":\"\"}}"}},"_migrationVersion":{"visualization":"6.7.2"}},{"id":"38b93150-9585-11e8-a471-e1cc12dab5c6","type":"visualization","attributes":{"title":"Audit-Visualization: Verb","visState":"{\n  \"title\": \"Audit-Visualization: Verb\",\n  \"type\": \"histogram\",\n  \"params\": {\n    \"type\": \"histogram\",\n    \"grid\": {\n      \"categoryLines\": false,\n      \"style\": {\n        \"color\": \"#eee\"\n      }\n    },\n    \"categoryAxes\": [\n      {\n        \"id\": \"CategoryAxis-1\",\n        \"type\": \"category\",\n        \"position\": \"bottom\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"truncate\": 100\n        },\n        \"title\": {}\n      }\n    ],\n    \"valueAxes\": [\n      {\n        \"id\": \"ValueAxis-1\",\n        \"name\": \"LeftAxis-1\",\n        \"type\": \"value\",\n        \"position\": \"left\",\n        \"show\": false,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\",\n          \"mode\": \"normal\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"rotate\": 0,\n          \"filter\": false,\n          \"truncate\": 100\n        },\n        \"title\": {\n          \"text\": \"Count\"\n        }\n      }\n    ],\n    \"seriesParams\": [\n      {\n        \"show\": true,\n        \"mode\": \"stacked\",\n        \"type\": \"histogram\",\n        \"drawLinesBetweenPoints\": true,\n        \"showCircles\": true,\n        \"data\": {\n          \"id\": \"2\",\n          \"label\": \"Count\"\n        },\n        \"valueAxis\": \"ValueAxis-1\"\n      }\n    ],\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"right\",\n    \"times\": [],\n    \"addTimeMarker\": false\n  },\n  \"aggs\": [\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {}\n    },\n    {\n      \"id\": \"3\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"verb.keyword\",\n        \"size\": 20,\n        \"order\": \"desc\",\n        \"orderBy\": \"2\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      }\n    }\n  ]\n}","uiStateJSON":"{}","description":"","savedSearchId":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"}}},{"id":"138c2220-9585-11e8-a471-e1cc12dab5c6","type":"visualization","attributes":{"title":"Audit-Visualization: Resource","visState":"{\"title\":\"Audit-Visualization: Resource\",\"type\":\"histogram\",\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"}},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"truncate\":30},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":false,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"mode\":\"stacked\",\"type\":\"histogram\",\"drawLinesBetweenPoints\":true,\"showCircles\":true,\"data\":{\"id\":\"2\",\"label\":\"Count\"},\"valueAxis\":\"ValueAxis-1\"}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"objectRef.resource.keyword\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"2\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"}}]}","uiStateJSON":"{}","description":"","savedSearchId":"bb4f4e80-93e9-11e8-83ef-b5593250e6b7","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"}}}]}'

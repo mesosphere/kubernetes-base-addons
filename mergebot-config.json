@@ -1,0 +1,10 @@
+{
+   "update_jira_on_merge": {
+     "enabled": true,
+     "interactive": false,
+     "fix_version_map": {
+       "master": "K8s Base Addons 2.1.0",
+       "testing": "K8s Base Addons 2.0.0",
+     }
+   }
+}
