@@ -7,8 +7,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.1-1"
-    appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-1"
+    appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.2"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/6cba78c/charts/fluent-bit/values.yaml"
 spec:
   kubernetes:
@@ -32,10 +32,8 @@ spec:
   chartReference:
     chart: fluent-bit
     repo: https://fluent.github.io/helm-charts
-    version: 0.6.0
+    version: 0.6.1
     values: |
-      image:
-        tag: 1.5.1
       service:
         annotations:
           prometheus.io/path: "/api/v1/metrics/prometheus"
@@ -54,24 +52,35 @@ spec:
         requests:
           cpu: 350m
           memory: 350Mi
-      podSecurityPolicy:
-        create: true
-      podSecurityContext:
-        fsGroup: 2000
-      securityContext:
-        capabilities:
-          drop:
-          - ALL
-        readOnlyRootFilesystem: true
-        runAsNonRoot: true
-        runAsUser: 1000
       priorityClassName: system-node-critical
+      podSecurityContext:
+        privileged: true
       extraVolumes:
       - name: tail-db
         emptyDir: {}
+      # we create this to get rid of error messages that would appear on non control-plane nodes
+      - name: kubernetes-audit
+        hostPath:
+          path: /var/log/kubernetes/audit
+          type: DirectoryOrCreate
+      # needed for kmsg input plugin
+      - name: uptime
+        hostPath:
+          path: /proc/uptime
+          type: File
+      - name: kmsg
+        hostPath:
+          path: /dev/kmsg
+          type: CharDevice
       extraVolumeMounts:
       - name: tail-db
         mountPath: /tail-db
+      - name: kubernetes-audit
+        mountPath: /var/log/kubernetes/audit
+      - name: uptime
+        mountPath: /proc/uptime
+      - name: kmsg
+        mountPath: /dev/kmsg
       config:
         ## https://docs.fluentbit.io/manual/service
         service: |
@@ -110,10 +119,14 @@ spec:
               Skip_Long_Lines On
           [INPUT]
               Name systemd
+              DB /tail-db/journal.db
               Tag host.*
               Max_Entries 1000
               Read_From_Tail On
               Strip_Underscores On
+          [INPUT]
+              Name kmsg
+              Tag kernel
 
         ## https://docs.fluentbit.io/manual/pipeline/filters
         filters: |
@@ -156,6 +169,16 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_host
+              Retry_Limit False
+              Buffer_Size 512KB
+          [OUTPUT]
+              Name es
+              Match kernel
+              Host elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local.
+              Port 9200
+              Time_Key @ts
+              Logstash_Format On
+              Logstash_Prefix kubernetes_host_kernel
               Retry_Limit False
               Buffer_Size 512KB
 
