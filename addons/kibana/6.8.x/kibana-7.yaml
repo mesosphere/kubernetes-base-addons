@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-2"
     appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
@@ -65,15 +65,7 @@ spec:
         values:
           - kibana-prometheus-exporter,6.8.10,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/6.8.10/kibana-prometheus-exporter-6.8.10.zip
       extraContainers: |
-        - name: initialize-kibana-index
-          image: mesosphere/kubeaddons-addon-initializer:v0.1.5
-          command: ["/bin/bash", "-c", "addon-initializer kibana && sleep infinity"]
-          env:
-          - name: "KIBANA_NAMESPACE"
-            value: "kubeaddons"
-          - name: "KIBANA_SERVICE_NAME"
-            value: "kibana-kubeaddons"
-        - name: extra-index-patterns
+        - name: create-index-patterns
           image: curlimages/curl
           command:
             - sh
@@ -81,18 +73,20 @@ spec:
             - |
               #!/bin/sh
               KB_URL=http://localhost:5601
-              while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/status)" != "200" ]]; do sleep 1; done
+              while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L ${KB_URL}/api/status)" != "200" ]]; do sleep 1; done
+              INDICES="kubernetes_cluster kubernetes_audit kubernetes_host kubernetes_host_kernel"
               # Create index patterns
-              if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/saved_objects/index-pattern/kubernetes_audit)" != "200" ]]; then
-                curl -XPOST "$KB_URL/api/saved_objects/index-pattern/kubernetes_audit" \
-                  -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
-                  -d '{"attributes":{"title":"kubernetes_audit-*","timeFieldName":"@ts","fields":"[]"}}'
-              fi
-              if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL/api/saved_objects/index-pattern/kubernetes_host)" != "200" ]]; then
-                curl -XPOST "$KB_URL/api/saved_objects/index-pattern/kubernetes_host" \
-                  -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
-                  -d '{"attributes":{"title":"kubernetes_host-*","timeFieldName":"@ts","fields":"[]"}}'
-              fi
+              for index in $INDICES; do
+                if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L ${KB_URL}/api/saved_objects/index-pattern/${index})" != "200" ]]; then
+                  curl -XPOST "${KB_URL}/api/saved_objects/index-pattern/${index}" \
+                    -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
+                    -d '{"attributes":{"title":"'"${index}"'-*","timeFieldName":"@ts","fields":"[]"}}'
+                fi
+              done
+              # Set default index pattern
+              curl -XPOST "$KB_URL/api/kibana/settings/defaultIndex" \
+                -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
+                -d '{"value": "kubernetes_cluster"}'
               sleep infinity
       initContainers:
         # from https://github.com/mesosphere/kubeaddons-sidecars
