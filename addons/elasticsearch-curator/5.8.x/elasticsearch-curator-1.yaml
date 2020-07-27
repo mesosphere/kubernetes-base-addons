@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearch-curator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "5.7.6-2"
-    appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.7.6"
-    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/2967c0e1590fe86bed41d2219ace376e22930cb6/stable/elasticsearch-curator/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.8.1"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/139ee40/stable/elasticsearch-curator/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -29,9 +29,12 @@ spec:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
     chart: stable/elasticsearch-curator
-    version: 2.1.3
+    version: 2.1.5
     values: |
       ---
+      image:
+        tag: 5.8.1
+
       resources: {}
 
       cronjob:
@@ -58,7 +61,7 @@ spec:
           actions:
             1:
               action: delete_indices
-              description: "Clean up ES by deleting indices older than 30 days"
+              description: "Clean up ES by deleting indices older than 10 days"
               options:
                 timeout_override:
                 continue_if_exception: False
@@ -66,8 +69,8 @@ spec:
                 ignore_empty_list: True
               filters:
               - filtertype: pattern
-                kind: prefix
-                value: kubernetes_cluster-
+                kind: regex
+                value: ^(kubernetes_)(audit-|cluster-|host-|host_kernel-).*$
               - filtertype: age
                 source: name
                 direction: older
@@ -80,5 +83,5 @@ spec:
           ---
           client:
             hosts:
-              - http://elasticsearch-kubeaddons-client
+              - http://elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local
             port: 9200
