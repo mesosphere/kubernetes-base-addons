@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: cert-manager-setup
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.1.10
+    version: 0.1.13
     values: |
       ---
       issuers:

@@ -29,7 +29,7 @@ spec:
         kubeaddons.mesosphere.io/name: prometheus
   chartReference:
     chart: stable/prometheus-adapter
-    version: 2.0.0
+    version: 2.5.0
     values: |
       ---
       prometheus:

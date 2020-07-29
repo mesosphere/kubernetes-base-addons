@@ -30,7 +30,7 @@ spec:
   chartReference:
     chart: kubernetes-dashboard
     repo: https://kubernetes.github.io/dashboard/
-    version: 2.0.3
+    version: 2.3.0
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
