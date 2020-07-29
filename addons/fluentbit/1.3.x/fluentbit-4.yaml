@@ -31,7 +31,7 @@ spec:
       enabled: true
   chartReference:
     chart: stable/fluent-bit
-    version: 2.8.17
+    version: 2.10.0
     values: |
       audit:
         enable: true

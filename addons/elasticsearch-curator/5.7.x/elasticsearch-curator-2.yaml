@@ -29,7 +29,7 @@ spec:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
     chart: stable/elasticsearch-curator
-    version: 2.1.3
+    version: 2.1.5
     values: |
       ---
       resources: {}

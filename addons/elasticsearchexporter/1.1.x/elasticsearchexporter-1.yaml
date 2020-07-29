@@ -29,7 +29,7 @@ spec:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
     chart: stable/elasticsearch-exporter
-    version: 2.1.1
+    version: 3.6.0
     values: |
       ---
       es:

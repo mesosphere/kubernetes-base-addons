@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.2.13
+    version: 0.2.14
     values: |
       ---
       replicaCount: 1
