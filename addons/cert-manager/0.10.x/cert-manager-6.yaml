@@ -1,0 +1,56 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: cert-manager
+  labels:
+    kubeaddons.mesosphere.io/name: cert-manager
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.10.1-6"
+    appversion.kubeaddons.mesosphere.io/cert-manager: "0.10.1"
+    docs.kubeaddons.mesosphere.io/cert-manager: "https://docs.cert-manager.io/en/release-0.10/"
+    values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/848f804/staging/cert-manager-setup/values.yaml"
+spec:
+  namespace: cert-manager
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: true
+    - name: none
+      enabled: true
+  chartReference:
+    chart: cert-manager-setup
+    repo: https://mesosphere.github.io/charts/staging
+    version: 0.1.14
+    values: |
+      ---
+      issuers:
+        - name: kubernetes-root-issuer
+          secretName: kubernetes-root-ca
+
+      certificates:
+        - name: kubernetes-intermediate-ca
+          secretName: kubernetes-intermediate-ca
+          issuerRef:
+            name: kubernetes-root-issuer
+            kind: Issuer
+          # These are the default usages for reference
+          usages:
+            - "digital signature"
+            - "key encipherment"
+          commonName: cert-manager
+          duration: 87600h
+          dnsNames: []
+
+      clusterissuers:
+        - name: kubernetes-ca
+          spec:
+            ca:
+              secretName: kubernetes-intermediate-ca
