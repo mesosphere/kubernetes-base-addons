@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-2"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.2"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/6cba78c/charts/fluent-bit/values.yaml"
 spec:
@@ -53,7 +53,7 @@ spec:
           cpu: 350m
           memory: 350Mi
       priorityClassName: system-node-critical
-      securityContext:
+      podSecurityContext:
         privileged: true
       extraVolumes:
       - name: tail-db
