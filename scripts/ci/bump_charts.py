@@ -1,13 +1,25 @@
 import subprocess
 import os
 import re
-import yaml
 import pprint
+import requests
 
 from functools import cmp_to_key
+from ruamel import yaml
 
 
 def compare_versions(a, b):
+    pattern = r'\d+(\.\d+)*'
+    m = re.search(pattern, a)
+    if not m:
+        return -1
+    a = m.group(0)
+
+    m = re.search(pattern, b)
+    if not m:
+        return 1
+    b = m.group(0)
+
     a = a.split('.')
     b = b.split('.')
 
@@ -18,21 +30,10 @@ def compare_versions(a, b):
             return -1
 
     if len(a) > len(b):
-        return 1
-    elif len(a) < len(b):
         return -1
+    elif len(a) < len(b):
+        return 1
     return 0
-
-
-def compare_subfolders(a, b):
-    pattern = r'\d+(\.\d+)*'
-    m = re.search(pattern, a)
-    short_a = m.group(0)
-
-    m = re.search(pattern, b)
-    short_b = m.group(0)
-
-    return compare_versions(short_a, short_b)
 
 
 def compare_yaml_files(a, b):
@@ -62,68 +63,91 @@ def convert_repo_url(chart_repo_url, code_to_url, url_to_code):
     return repo_code
 
 
+def update_app_version(loaded_yaml, info, app_version):
+    res = compare_versions(info['app_version'], app_version)
+    update_app_version = res != 0
+
+    for k, v in loaded_yaml['metadata']['annotations'].items():
+            if k.startswith('appversion') and update_app_version:
+                loaded_yaml['metadata']['annotations'][k] = app_version
+            elif k.startswith('catalog'):
+                if update_app_version:
+                    loaded_yaml['metadata']['annotations'][k] = app_version + '-1'
+                else:
+                    revision_number = 1
+                    split_revision = v.split('-')
+                    if len(split_revision) != 0:
+                        try:
+                            revision_number = int(split_revision[-1]) + 1
+                        except ValueError:
+                            pass
+                    loaded_yaml['metadata']['annotations'][k] = '{}-{}'.format('-'.join(split_revision[:-1]), revision_number)
+            elif k.startswith('docs'):
+                minor_current_app_version = '.'.join(info['app_version'].split('.')[:2])
+                minor_new_app_version = '.'.join(app_version.split('.')[:2])
+                loaded_yaml['metadata']['annotations'][k] = v.replace(minor_current_app_version, minor_new_app_version)
+            elif k.startswith('values'):
+                m = re.search('.com/([^/]+/[^/]+)/([^/]+)', v)
+                org_and_repo = m.group(1)
+                old_sha = m.group(2)
+                
+                url = 'https://api.github.com/repos/{}/commits/master'.format(org_and_repo)
+                headers = {'Authorization': 'token ' + os.environ['GITHUB_TOKEN']}
+                r = requests.get(url, headers=headers)
+                print(r.content)
+                r.raise_for_status()
+                new_sha = r.json()['sha'][:7]
+                loaded_yaml['metadata']['annotations'][k] = v.replace(old_sha, new_sha)
+
+
 def update_chart(chart, info):
     print('searching for {}/{}'.format(info['repo'], chart))
     search_cmd = ['helm', 'search', 'repo', '{}/{}'.format(info['repo'], chart)]
     print('Running search command: ' + str(search_cmd))
     sub = subprocess.run(search_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = str(sub.stdout)
-    column_titles = output.split('\\n')[0]
-    assert column_titles[0] == 'NAME' and column_titles[1] == 'CHART VERSION' and column_titles[2] == 'APP VERSION'
-    result = output.split('\\n')[1]
+    column_titles = output.split('\\n')[0].split('\\t')
+    # removing 2 first characters from column_titles[0] as they represent start of byte string (b')
+    assert column_titles[0].strip()[2:] == 'NAME' and column_titles[1].strip() == 'CHART VERSION' and column_titles[2].strip() == 'APP VERSION'
     print('result from helm search: ' + output)
     try:
-        split_result = result.split('\\t')
-        chart_version = split_result[1].strip()
-        app_version = split_result[2].strip()
+        result = output.split('\\n')[1].split('\\t')
+        chart_version_from_search = result[1].strip()
+        app_version = result[2].strip()
     except:
         raise Exception("Can't fetch latest version of chart {}. Output from helm search: {}".format(chart, sub.stdout.decode('utf-8')))
-    
-    pattern = r'\d+(\.\d+)*'
-    m = re.search(pattern, info['version'])
-    m1 = re.search(pattern, chart_version)
-    res = compare_versions(m.group(0), m1.group(0))
+
+    res = compare_versions(info['chart_version'], chart_version_from_search)
     if res == -1:
-        print('Newer version found: ' + chart_version + '\n')
+        print('Newer chart version found: ' + chart_version_from_search + '\n')
         with open(info['file_path'], 'r+') as stream:
-            original_content = stream.read()
-            start = original_content.find('chartReference:')
-            if start == -1:
-                raise Exception("Error parsing chart yaml: chartReference not found")
-            content = original_content[start:]
-            index = content.find('version:')
-            if index == -1:
-                raise Exception("Error parsing chart yaml: chartReference version not found")
-            start += index
-            start += len('version:')
-            content = original_content[start:]
-            end = content.find('\n')
-            if end == -1:
-                raise Exception("Error parsing chart yaml: end of line not found")
-
-            updated_content = original_content[:start] + ' ' + chart_version + content[end:]
-
+            loaded = yaml.load(stream, Loader=yaml.RoundTripLoader)
+            loaded['spec']['chartReference']['version'] = chart_version_from_search
+            if app_version != 'latest':
+                update_app_version(loaded, info, app_version)
             with open(info['new_file_path'], 'w') as newfile:
-                newfile.write(updated_content)
+                newfile.write(yaml.dump(loaded, Dumper=yaml.RoundTripDumper))
     else:
-        print('Version is already the latest.\n')
+        print('Chart version is already at the latest.\n')
 
 
 if __name__ == '__main__':
+    # make sure github token is available
+    os.environ['GITHUB_TOKEN']
     addons = {}
     code_to_url = {}
     url_to_code = {}
     addon_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../addons')
     for folder in os.listdir(addon_dir):
         subfolders = os.listdir(os.path.join(addon_dir, folder))
-        subfolders.sort(key=cmp_to_key(compare_subfolders))
+        subfolders.sort(key=cmp_to_key(compare_versions))
         latest_subfolder = subfolders[-1]
         yaml_files = [file for file in os.listdir(os.path.join(addon_dir, folder, latest_subfolder))]
         yaml_files.sort(key=cmp_to_key(compare_yaml_files))
         latest_yaml_file = yaml_files[-1]
         file_path = os.path.join(addon_dir, folder, latest_subfolder, latest_yaml_file)
         with open(file_path, 'r') as stream:
-            loaded = yaml.load(stream, Loader=yaml.FullLoader)
+            loaded = yaml.safe_load(stream)
 
         chart_version = loaded['spec']['chartReference']['version']
         chart_name = loaded['spec']['chartReference']['chart']
@@ -131,19 +155,24 @@ if __name__ == '__main__':
             chart_name = chart_name.split('/')[1]
         chart_repo_url = loaded['spec']['chartReference'].get('repo', 'https://kubernetes-charts.storage.googleapis.com')
 
+        app_version = ''
+        for k, v in loaded['metadata']['annotations'].items():
+            if k.startswith('appversion'):
+                app_version = v
+
         repo_code = url_to_code.get(chart_repo_url)
         if repo_code is None:
             repo_code = convert_repo_url(chart_repo_url, code_to_url, url_to_code)
 
-        start_index = latest_yaml_file.find('-') + 1
-        end_index = latest_yaml_file.find('.yaml')
-        new_revision_number = int(latest_yaml_file[start_index:end_index]) + 1
-        new_file_name = latest_yaml_file[:start_index] + str(new_revision_number) + latest_yaml_file[end_index:]
+        m = re.search(r'-(\d+)\.yaml', latest_yaml_file)
+        new_revision_number = int(m.group(1)) + 1
+        new_file_name = latest_yaml_file.replace(m.group(0), '-{}.yaml'.format(new_revision_number))
         new_file_path = os.path.join(addon_dir, folder, latest_subfolder, new_file_name)
 
         addons[chart_name] = {
             'repo': repo_code,
-            'version': chart_version,
+            'chart_version': chart_version,
+            'app_version': app_version,
             'file_path': file_path,
             'new_file_path': new_file_path
         }

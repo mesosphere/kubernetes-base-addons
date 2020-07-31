@@ -48,50 +48,49 @@ dind_task("dispatch-integration-test",
 
 task("bump-charts", inputs=["src-git"], steps=[
     v1.Container(
-    name = "bump-charts",
-    image = "mesosphere/bump-charts:latest",
-    workingDir =  "/workspace/src-git/scripts/ci/",
-    command = ["python3"],
-    args = ["bump_charts.py"],
-    resources = k8s.corev1.ResourceRequirements(
-        limits = {
-            "cpu": k8s.resource_quantity("1000m"),
-            "memory": k8s.resource_quantity("4Gi")
-        }
-    )
+        name = "bump-charts",
+        image = "mesosphere/bump-charts:latest",
+        workingDir =  "/workspace/src-git/scripts/ci/",
+        command = ["python3"],
+        args = ["bump_charts.py"],
+        resources = k8s.corev1.ResourceRequirements(
+            limits = {
+                "cpu": k8s.resource_quantity("1000m"),
+                "memory": k8s.resource_quantity("4Gi")
+            }
+        ),
+        env=[k8s.corev1.EnvVar(name="GITHUB_TOKEN", valueFrom=secret_var("d2iq-dispatch-basic-auth", "password"))]
     ),
     v1.Container(
-    name = "create-pull-request",
-    image = "mesosphere/update-gitops-repo:1.1.1",
-    workingDir =  "/workspace/src-git",
-    command = ["/bin/sh", "-c"],
-    args = [
-        """
-        set -e
-        echo "$GPG_PRIVATE_KEY" > gpg_private_key
-        echo "$GPG_PUBLIC_KEY" > gpg_public_key
-        set -x
-        gpg --import gpg_private_key
-        gpg --import gpg_public_key
-        git config --local commit.gpgsign true
-        git config --local user.signingkey $GPG_KEY_ID
-        git config --local user.name 'Dispatch CI'
-        git config --local user.email '56653984+d2iq-dispatch@users.noreply.github.com'
-        git add addons/*
-        update-gitops-repo \
-        -git-revision="$(context.git.commit)" \
-        -filepath=none.yaml.tmpl \
-        -create-pull-request=false \ #todo remove this
-        -commit-message="Automated Helm chart bumps"
-        """
-    ],
-    env=[k8s.corev1.EnvVar(name="GPG_PRIVATE_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "private_key")),
-         k8s.corev1.EnvVar(name="GPG_PUBLIC_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "public_key")),
-         k8s.corev1.EnvVar(name="GPG_KEY_ID", valueFrom=secret_var("d2iq-dispatch-gpg", "key_id"))]
+        name = "create-pull-request",
+        image = "mesosphere/update-gitops-repo:1.1.1",
+        workingDir =  "/workspace/src-git",
+        command = ["/bin/sh", "-c"],
+        args = [
+            """
+            set -e
+            echo "$GPG_PRIVATE_KEY" > gpg_private_key
+            echo "$GPG_PUBLIC_KEY" > gpg_public_key
+            set -x
+            gpg --import gpg_private_key
+            gpg --import gpg_public_key
+            git config --local commit.gpgsign true
+            git config --local user.signingkey $GPG_KEY_ID
+            git config --local user.name 'Dispatch CI'
+            git config --local user.email '56653984+d2iq-dispatch@users.noreply.github.com'
+            git add addons/*
+            update-gitops-repo \
+            -git-revision="$(context.git.commit)" \
+            -filepath=none.yaml.tmpl \
+            -commit-message="Automated Helm chart bumps"
+            """
+        ],
+        env=[k8s.corev1.EnvVar(name="GPG_PRIVATE_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "private_key")),
+            k8s.corev1.EnvVar(name="GPG_PUBLIC_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "public_key")),
+            k8s.corev1.EnvVar(name="GPG_KEY_ID", valueFrom=secret_var("d2iq-dispatch-gpg", "key_id"))]
   )
 ])
 
 action(tasks=["dispatch-integration-test"], on=pull_request())
-action(tasks=["bump-charts"], on = push(branches = ["addon_bumps"])) #todo remove this
 action(tasks=["dispatch-integration-test"], on=pull_request(chatops=["test"]))
-#action(name="daily-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
+action(name="daily-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
