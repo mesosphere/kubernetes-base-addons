@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-8"
     appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
@@ -61,6 +61,7 @@ spec:
       plugins:
         # to avoid needing to download any plugins at runtime, use a container and a shared volume
         # do not enable the plugins here, instead rebuild the mesosphere/kibana-plugins image with the new plugins
+        # https://github.com/mesosphere/kubeaddons-sidecars
         enabled: false
         values:
           - kibana-prometheus-exporter,6.8.10,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/6.8.10/kibana-prometheus-exporter-6.8.10.zip
@@ -73,25 +74,33 @@ spec:
             - |
               #!/bin/sh
               KB_URL=http://localhost:5601
-              while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L ${KB_URL}/api/status)" != "200" ]]; do sleep 1; done
+              while [[ "$(curl -s -o /dev/null -w '%{http_code}' -L ${KB_URL}/api/status)" != "200" ]]; do sleep 1; done
               INDICES="kubernetes_cluster kubernetes_audit kubernetes_host kubernetes_host_kernel"
               # Create index patterns
               for index in $INDICES; do
-                if [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L ${KB_URL}/api/saved_objects/index-pattern/${index})" != "200" ]]; then
-                  curl -XPOST "${KB_URL}/api/saved_objects/index-pattern/${index}" \
+                if [[ "$(curl -s -o /dev/null -w '%{http_code}' -L ${KB_URL}/api/saved_objects/index-pattern/${index})" != "200" ]]; then
+                  RES_CREATE_INDEX=$(curl -XPOST -s -o /dev/null -w '%{http_code}' ${KB_URL}/api/saved_objects/index-pattern/${index} \
                     -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
-                    -d '{"attributes":{"title":"'"${index}"'-*","timeFieldName":"@ts","fields":"[]"}}'
+                    -d '{"attributes":{"title":"'"${index}"'-*","timeFieldName":"@ts","fields":"[]"}}')
+                  if [[ "${RES_CREATE_INDEX}" != "200" ]]; then
+                    echo "Error within index-pattern '${index}' creation - exiting"
+                    exit 1
+                  fi
                 fi
               done
               # Set default index pattern
-              curl -XPOST "$KB_URL/api/kibana/settings/defaultIndex" \
+              RES_DEFAULT_INDEX=$(curl -XPOST -s -o /dev/null -w '%{http_code}' ${KB_URL}/api/kibana/settings/defaultIndex \
                 -H "Content-Type: application/json; charset=utf-8" -H 'kbn-xsrf: true' \
-                -d '{"value": "kubernetes_cluster"}'
+                -d '{"value": "kubernetes_cluster"}')
+              if [[ "${RES_DEFAULT_INDEX}" != "200" ]]; then
+                echo "Error within defaultIndex set - exiting"
+                exit 1
+              fi
               sleep infinity
       initContainers:
         # from https://github.com/mesosphere/kubeaddons-sidecars
         - name: kibana-plugins-install
-          image: mesosphere/kibana-plugins:v6.8.2
+          image: mesosphere/kibana-plugins:v6.8.10
           command: ["/bin/sh", "-c", "cp -a /usr/share/kibana/plugins/. /usr/share/kibana/shared-plugins/"]
           volumeMounts:
           - name: plugins
