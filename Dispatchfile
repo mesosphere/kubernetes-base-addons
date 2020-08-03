@@ -1,41 +1,47 @@
-#!mesosphere/dispatch-starlark:v0.5-beta2
+#!mesosphere/dispatch-starlark:v0.6
 # vi:syntax=python
 
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.4", "gitResource", "pullRequest", "push", "secretVar", "clean", "imageResource", "volume")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
+load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
 
-gitResource("kba-git-resource", url = "$(context.git.url)", revision = "$(context.git.commit)")
+git_clone_dirname = "kba-git-src"
+kind_cluster_name = "kba-kind-cluster"
 
-
+gitResource(git_clone_dirname)
+kind_cluster=make_kind_cluster(kind_cluster_name, git_clone_dirname)
 
 dindTask("dispatch-integration-test",
-         inputs=["kba-git-resource"],
-         steps=[
-             v1.Container(
-                 name="fetch-master",
-                 workingDir="/workspace/kba-git-resource",
-                 args=["git", "fetch", "origin", "master"]),
+    inputs=[git_clone_dirname],
+    deps=[kind_cluster],
+    steps=[
+        fetch_kubeconfig(kind_cluster_name, git_clone_dirname),
 
-             v1.Container(
-                 name="dispatch-integration-test",
-                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 command=["/entrypoint.sh", "make", "dispatch-test"],
-                 workingDir="/workspace/kba-git-resource",
-                 env=[k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                      k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                      k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_ACCESS_KEY_ID")),
-                      k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_SECRET_ACCESS_KEY")),
-                      k8s.corev1.EnvVar(name="SSH_KEY_BASE64",
-                                        valueFrom=secretVar("d2iq-dispatch-git-ssh-base64",
-                                                            "ssh-privatekey-base64"))
-                      ]
-             )
-         ]
-         )
+        k8s.corev1.Container(
+            name="fetch-master",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            args=["git", "fetch", "origin", "master"]),
 
-action(tasks=["dispatch-integration-test"], on=pullRequest())
-action(tasks=["dispatch-integration-test"], on=pullRequest(chatops=["test"]))
+        k8s.corev1.Container(
+            name="dispatch-integration-test",
+            image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            command=["/entrypoint.sh", "make", "dispatch-test"],
+
+            env=[
+                k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
+                k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secretVar("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+                k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secretVar("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+                k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secretVar("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))],
+
+            resources=k8s.corev1.ResourceRequirements(
+              requests={
+                "cpu": k8s.resource_quantity("1000m"),
+                "memory": k8s.resource_quantity("2Gi")}))
+           ])
+
+clean_kind=cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
+action(tasks=["dispatch-integration-test", clean_kind], on=pullRequest())
+action(tasks=["dispatch-integration-test", clean_kind], on=pullRequest(chatops=["test"]))
