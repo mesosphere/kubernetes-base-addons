@@ -110,6 +110,19 @@ spec:
               - path: /api/v1/metrics/prometheus
                 port: metrics
                 interval: 30s
+          - name: kubeaddons-service-monitor-api-v1-metrics-prometheus-http-10s
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "api__v1__metrics__prometheus"
+                servicemonitor.kubeaddons.mesosphere.io/port: "http"
+                servicemonitor.kubeaddons.mesosphere.io/interval: "10s"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - path: /api/v1/metrics/prometheus
+                port: http
+                interval: 10s
           - name: kubeaddons-service-monitor-prometheus-metrics
             selector:
               matchLabels:
