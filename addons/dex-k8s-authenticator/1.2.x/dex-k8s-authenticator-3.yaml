@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -7,32 +6,32 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex-k8s-authenticator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.1-1"
-    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.1"
-    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/f44c645c6bc843b254bb0f4f97d516f2cfee4707/staging/dex-k8s-authenticator/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: v1.2.2-1
+    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: v1.2.2
+    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: https://raw.githubusercontent.com/mesosphere/charts/9c07daf/staging/dex-k8s-authenticator/values.yaml
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   cloudProvider:
-    - name: aws
-      enabled: true
-    - name: azure
-      enabled: true
-    - name: gcp
-      enabled: true
-    - name: docker
-      enabled: true
-    - name: none
-      enabled: true
+  - name: aws
+    enabled: true
+  - name: azure
+    enabled: true
+  - name: gcp
+    enabled: true
+  - name: docker
+    enabled: true
+  - name: none
+    enabled: true
   requires:
-    - matchLabels:
-        kubeaddons.mesosphere.io/name: dex
-    - matchLabels:
-        kubeaddons.mesosphere.io/provides: ingresscontroller
+  - matchLabels:
+      kubeaddons.mesosphere.io/name: dex
+  - matchLabels:
+      kubeaddons.mesosphere.io/provides: ingresscontroller
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.2.4
+    version: 1.2.5
     values: |
       ---
       image:
