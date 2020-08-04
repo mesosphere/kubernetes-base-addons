@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -7,32 +6,32 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-3"
-    appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.2"
-    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/6cba78c/charts/fluent-bit/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: 1.5.2-4
+    appversion.kubeaddons.mesosphere.io/fluentbit: 1.5.2
+    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: https://raw.githubusercontent.com/fluent/helm-charts/932b79b/charts/fluent-bit/values.yaml
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   requires:
     # This allows us to have fluentbit wait until ES is deployed and has the right configurations up, in particular
     # setting up index templates
-    - matchLabels:
-        kubeaddons.mesosphere.io/name: elasticsearch
+  - matchLabels:
+      kubeaddons.mesosphere.io/name: elasticsearch
   cloudProvider:
-    - name: aws
-      enabled: true
-    - name: azure
-      enabled: true
-    - name: gcp
-      enabled: true
-    - name: docker
-      enabled: false
-    - name: none
-      enabled: true
+  - name: aws
+    enabled: true
+  - name: azure
+    enabled: true
+  - name: gcp
+    enabled: true
+  - name: docker
+    enabled: false
+  - name: none
+    enabled: true
   chartReference:
     chart: fluent-bit
     repo: https://fluent.github.io/helm-charts
-    version: 0.6.1
+    version: 0.6.2
     values: |
       service:
         annotations:
