@@ -1,0 +1,71 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: prometheusadapter
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: prometheusadapter
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.5.0-1"
+    appversion.kubeaddons.mesosphere.io/prometheusadapter: "0.5.0"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/helm/charts/db62a6c595bbd9904014083edd0faa14de4096b2/stable/prometheus-adapter/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: prometheus
+  chartReference:
+    chart: stable/prometheus-adapter
+    version: 2.0.0
+    values: |
+      ---
+      prometheus:
+        url: http://prometheus-kubeaddons-prom-prometheus
+      resources:
+        limits:
+           cpu: 2000m
+           memory: 2000Mi
+        requests:
+           cpu: 1000m
+           memory: 1000Mi
+      metricsRelistInterval: 60s
+      rules:
+        resource:
+          cpu:
+            containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)
+            nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[2m])) by (<<.GroupBy>>)
+            resources:
+              overrides:
+                node:
+                 resource: node
+                namespace:
+                 resource: namespace
+                pod:
+                 resource: pod
+            containerLabel: container
+          memory:
+            containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+            nodeQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,id='/'}) by (<<.GroupBy>>)
+            resources:
+              overrides:
+                node:
+                 resource: node
+                namespace:
+                 resource: namespace
+                pod:
+                 resource: pod
+            containerLabel: container
+          window: 1m
