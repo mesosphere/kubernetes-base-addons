@@ -1,8 +1,10 @@
+import json
 import subprocess
 import os
 import re
 import pprint
 import requests
+import uuid
 
 from functools import cmp_to_key
 from ruamel import yaml
@@ -120,13 +122,37 @@ def update_chart(chart, info):
     res = compare_versions(info['chart_version'], chart_version_from_search)
     if res == -1:
         print('Newer chart version found: ' + chart_version_from_search + '\n')
+        subprocess.run(['git', 'checkout', 'master'], check=True)
+        random_string = uuid.uuid4()[:8]
+        new_branch_name = 'bump-{}-{}'.format(chart, random_string)
+        subprocess.run(['git', 'checkout', '-b', new_branch_name], check=True)
+
         with open(info['file_path'], 'r+') as stream:
+            # Copy the latest chart to a new file
+            with open(info['new_file_path'], 'w') as newfile:
+                newfile.write(stream.read())
+            subprocess.run(["git", "add", info['new_file_path']], check=True)
+            subprocess.run(["git", "commit", "-m", '"Copy latest {}"'.format(chart)], check=True)
+
+            # Update the new file
             loaded = yaml.load(stream, Loader=yaml.RoundTripLoader)
             loaded['spec']['chartReference']['version'] = chart_version_from_search
             if app_version != 'latest':
                 update_app_version(loaded, info, app_version)
             with open(info['new_file_path'], 'w') as newfile:
                 newfile.write(yaml.dump(loaded, Dumper=yaml.RoundTripDumper))
+            subprocess.run(["git", "commit", "-am", '"Bump {} to {}"'.format(chart, chart_version_from_search)], check=True)
+
+        subprocess.run(['git', 'push', '-u', 'origin', new_branch_name], check=True)
+        url = 'https://api.github.com/repos/mesosphere/kubernetes-base-addons/pulls'
+        headers = {'Authorization': 'token ' + os.environ['GITHUB_TOKEN']}
+        body = {
+            'title': 'Automated chart bump {}-{}'.format(chart, chart_version_from_search),
+            'head': new_branch_name,
+            'base': 'master'
+        }
+        data = json.dumps({'body': body}).encode('utf-8')
+        r = requests.post(url, body=data, headers=headers)
     else:
         print('Chart version is already at the latest.\n')
 
