@@ -123,7 +123,7 @@ def update_chart(chart, info):
     if res == -1:
         print('Newer chart version found: ' + chart_version_from_search + '\n')
         subprocess.run(['git', 'checkout', 'master'], check=True)
-        random_string = uuid.uuid4()[:8]
+        random_string = uuid.uuid4().hex[:8]
         new_branch_name = 'bump-{}-{}'.format(chart, random_string)
         subprocess.run(['git', 'checkout', '-b', new_branch_name], check=True)
 
@@ -131,6 +131,7 @@ def update_chart(chart, info):
             # Copy the latest chart to a new file
             with open(info['new_file_path'], 'w') as newfile:
                 newfile.write(stream.read())
+            stream.seek(0)
             subprocess.run(["git", "add", info['new_file_path']], check=True)
             subprocess.run(["git", "commit", "-m", '"Copy latest {}"'.format(chart)], check=True)
 
@@ -146,13 +147,15 @@ def update_chart(chart, info):
         subprocess.run(['git', 'push', '-u', 'origin', new_branch_name], check=True)
         url = 'https://api.github.com/repos/mesosphere/kubernetes-base-addons/pulls'
         headers = {'Authorization': 'token ' + os.environ['GITHUB_TOKEN']}
-        body = {
+        data = {
             'title': 'Automated chart bump {}-{}'.format(chart, chart_version_from_search),
             'head': new_branch_name,
             'base': 'master'
         }
-        data = json.dumps({'body': body}).encode('utf-8')
-        r = requests.post(url, body=data, headers=headers)
+        data = json.dumps(data).encode('utf-8')
+        r = requests.post(url, data=data, headers=headers)
+        print(r.content)
+        r.raise_for_status()
     else:
         print('Chart version is already at the latest.\n')
 
