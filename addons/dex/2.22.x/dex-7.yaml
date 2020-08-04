@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -7,30 +6,30 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-6"
-    appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
-    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/1691f6b7f7faa5842a2a30d684839a68819d8682/stable/dex/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: 2.22.0-7
+    appversion.kubeaddons.mesosphere.io/dex: 2.22.0
+    values.chart.helm.kubeaddons.mesosphere.io/dex: https://raw.githubusercontent.com/mesosphere/charts/9c07daf/stable/dex/values.yaml
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   cloudProvider:
-    - name: aws
-      enabled: true
-    - name: azure
-      enabled: true
-    - name: gcp
-      enabled: true
-    - name: docker
-      enabled: true
-    - name: none
-      enabled: true
+  - name: aws
+    enabled: true
+  - name: azure
+    enabled: true
+  - name: gcp
+    enabled: true
+  - name: docker
+    enabled: true
+  - name: none
+    enabled: true
   requires:
-    - matchLabels:
-        kubeaddons.mesosphere.io/provides: ingresscontroller
+  - matchLabels:
+      kubeaddons.mesosphere.io/provides: ingresscontroller
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 2.8.5
+    version: 2.8.6
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
