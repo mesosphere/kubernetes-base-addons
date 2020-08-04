@@ -1,0 +1,87 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: elasticsearch-curator
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: elasticsearch-curator
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.8.1"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/139ee40/stable/elasticsearch-curator/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: elasticsearch
+  chartReference:
+    chart: stable/elasticsearch-curator
+    version: 2.1.5
+    values: |
+      ---
+      image:
+        tag: 5.8.1
+
+      resources: {}
+
+      cronjob:
+        # At 12:00 pm every day
+        schedule: "0 0 * * *"
+        annotations: {}
+        labels: {}
+        concurrencyPolicy: ""
+        failedJobsHistoryLimit: ""
+        successfulJobsHistoryLimit: ""
+        jobRestartPolicy: Never
+
+      pod:
+        annotations: {}
+        labels: {}
+
+      rbac:
+        enabled: true
+
+      configMaps:
+        # Delete indices older than 10 days
+        action_file_yml: |-
+          ---
+          actions:
+            1:
+              action: delete_indices
+              description: "Clean up ES by deleting indices older than 10 days"
+              options:
+                timeout_override:
+                continue_if_exception: False
+                disable_action: False
+                ignore_empty_list: True
+              filters:
+              - filtertype: pattern
+                kind: regex
+                value: ^(kubernetes_)(audit-|cluster-|host-|host_kernel-).*$
+              - filtertype: age
+                source: name
+                direction: older
+                timestring: '%Y.%m.%d'
+                unit: days
+                unit_count: 10
+
+        # Having config_yaml WILL override the other config
+        config_yml: |-
+          ---
+          client:
+            hosts:
+              - http://elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local
+            port: 9200
