@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -7,16 +6,16 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: reloader
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.60-1"
-    appversion.kubeaddons.mesosphere.io/reloader: "v0.0.60"
-    values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/d2223f3/deployments/kubernetes/chart/reloader/values.yaml
+    catalog.kubeaddons.mesosphere.io/addon-revision: v0.0.65-1
+    appversion.kubeaddons.mesosphere.io/reloader: v0.0.65
+    values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/93f4ea2/deployments/kubernetes/chart/reloader/values.yaml
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   chartReference:
     chart: reloader
     repo: https://stakater.github.io/stakater-charts
-    version: v0.0.60
+    version: v0.0.65
     values: |
       ---
       reloader:
