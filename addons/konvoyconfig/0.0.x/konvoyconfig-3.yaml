@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -7,27 +6,27 @@ metadata:
   labels:
     kubaddons.mesosphere.io/name: konvoyconfig
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-1"
-    appversion.kubeaddons.mesosphere.io/konvoyconfig: "0.0.4"
-    values.chart.helm.kubeaddons.mesosphere.io/konvoyconfig: "https://raw.githubusercontent.com/mesosphere/charts/173f2200647defaf67e96b32cfdbb5b6932f1fa5/staging/konvoyconfig/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: 0.0.1-1
+    appversion.kubeaddons.mesosphere.io/konvoyconfig: 0.0.1
+    values.chart.helm.kubeaddons.mesosphere.io/konvoyconfig: https://raw.githubusercontent.com/mesosphere/charts/9c07daf/staging/konvoyconfig/values.yaml
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   cloudProvider:
-    - name: aws
-      enabled: true
-    - name: azure
-      enabled: true
-    - name: gcp
-      enabled: true
-    - name: docker
-      enabled: true
-    - name: none
-      enabled: true
+  - name: aws
+    enabled: true
+  - name: azure
+    enabled: true
+  - name: gcp
+    enabled: true
+  - name: docker
+    enabled: true
+  - name: none
+    enabled: true
   chartReference:
     chart: konvoyconfig
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.0.4
+    version: 0.0.5
     values: |
       ---
       config:
