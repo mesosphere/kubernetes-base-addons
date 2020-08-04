@@ -81,6 +81,16 @@ task("bump-charts", inputs=["src-git"], steps=[
     )
 ])
 
+task("test-bump-charts", inputs=["src-git"], steps=[
+    v1.Container(
+        name = "test-bump-charts",
+        image = "mesosphere/bump-charts:latest",
+        workingDir =  "/workspace/src-git/scripts/ci/",
+        command = ["pytest"],
+    )
+])
+
 action(tasks=["dispatch-integration-test"], on=pull_request())
+action(tasks=["test-bump-charts"], on=pull_request(paths=["scripts/ci/bump_charts.py"]))
 action(tasks=["dispatch-integration-test"], on=pull_request(chatops=["test"]))
 action(name="daily-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
