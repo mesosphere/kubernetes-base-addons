@@ -94,4 +94,3 @@ action(tasks=["dispatch-integration-test"], on=pull_request())
 action(tasks=["test-bump-charts"], on=pull_request(paths=["scripts/ci/bump_charts.py"]))
 action(tasks=["dispatch-integration-test"], on=pull_request(chatops=["test"]))
 action(name="daily-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
-action(tasks=["bump-charts"], on = push(branches = ["addon_bumps"])) # TODO remove this
