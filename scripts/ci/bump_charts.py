@@ -5,9 +5,9 @@ import re
 import pprint
 import requests
 import uuid
+import ruamel.yaml
 
 from functools import cmp_to_key
-from ruamel import yaml
 
 
 def compare_versions(a, b):
@@ -128,20 +128,15 @@ def update_chart(chart, info):
         subprocess.run(['git', 'checkout', '-b', new_branch_name], check=True)
 
         with open(info['file_path'], 'r+') as stream:
-            # Copy the latest chart to a new file
-            with open(info['new_file_path'], 'w') as newfile:
-                newfile.write(stream.read())
-            stream.seek(0)
-            subprocess.run(["git", "add", info['new_file_path']], check=True)
-            subprocess.run(["git", "commit", "-m", '"Copy latest {}"'.format(chart)], check=True)
-
-            # Update the new file
-            loaded = yaml.load(stream, Loader=yaml.RoundTripLoader)
+            yaml = ruamel.yaml.YAML()
+            yaml.preserve_quotes = True
+            loaded = yaml.load(stream)
             loaded['spec']['chartReference']['version'] = chart_version_from_search
             if app_version != 'latest':
                 update_app_version(loaded, info, app_version)
-            with open(info['new_file_path'], 'w') as newfile:
-                newfile.write(yaml.dump(loaded, Dumper=yaml.RoundTripDumper))
+            stream.truncate(0)
+            yaml.indent(sequence=4, offset=2)
+            yaml.dump(loaded, stream)
             subprocess.run(["git", "commit", "-am", '"Bump {} to {}"'.format(chart, chart_version_from_search)], check=True)
 
         subprocess.run(['git', 'push', '-u', 'origin', new_branch_name], check=True)
@@ -193,17 +188,11 @@ if __name__ == '__main__':
         if repo_code is None:
             repo_code = convert_repo_url(chart_repo_url, code_to_url, url_to_code)
 
-        m = re.search(r'-(\d+)\.yaml', latest_yaml_file)
-        new_revision_number = int(m.group(1)) + 1
-        new_file_name = latest_yaml_file.replace(m.group(0), '-{}.yaml'.format(new_revision_number))
-        new_file_path = os.path.join(addon_dir, folder, latest_subfolder, new_file_name)
-
         addons[chart_name] = {
             'repo': repo_code,
             'chart_version': chart_version,
             'app_version': app_version,
             'file_path': file_path,
-            'new_file_path': new_file_path
         }
 
     pprint.pprint(addons, indent=8)
