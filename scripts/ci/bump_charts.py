@@ -171,7 +171,8 @@ if __name__ == '__main__':
         latest_yaml_file = yaml_files[-1]
         file_path = os.path.join(addon_dir, folder, latest_subfolder, latest_yaml_file)
         with open(file_path, 'r') as stream:
-            loaded = yaml.safe_load(stream)
+            yaml = ruamel.yaml.YAML()
+            loaded = yaml.load(stream)
 
         chart_version = loaded['spec']['chartReference']['version']
         chart_name = loaded['spec']['chartReference']['chart']
