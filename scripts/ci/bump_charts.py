@@ -65,7 +65,7 @@ def convert_repo_url(chart_repo_url, code_to_url, url_to_code):
     return repo_code
 
 
-def update_app_version(loaded_yaml, info, app_version):
+def update_annotations(loaded_yaml, info, app_version):
     res = compare_versions(info['app_version'], app_version)
     update_app_version = res != 0
 
@@ -92,7 +92,7 @@ def update_app_version(loaded_yaml, info, app_version):
                 m = re.search('.com/([^/]+/[^/]+)/([^/]+)', v)
                 org_and_repo = m.group(1)
                 old_sha = m.group(2)
-                
+
                 url = 'https://api.github.com/repos/{}/commits/master'.format(org_and_repo)
                 headers = {'Authorization': 'token ' + os.environ['GITHUB_TOKEN']}
                 r = requests.get(url, headers=headers)
@@ -109,6 +109,7 @@ def update_chart(chart, info):
     sub = subprocess.run(search_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = str(sub.stdout)
     column_titles = output.split('\\n')[0].split('\\t')
+
     # removing 2 first characters from column_titles[0] as they represent start of byte string (b')
     assert column_titles[0].strip()[2:] == 'NAME' and column_titles[1].strip() == 'CHART VERSION' and column_titles[2].strip() == 'APP VERSION'
     print('result from helm search: ' + output)
@@ -133,8 +134,9 @@ def update_chart(chart, info):
             loaded = yaml.load(stream)
             loaded['spec']['chartReference']['version'] = chart_version_from_search
             if app_version != 'latest':
-                update_app_version(loaded, info, app_version)
+                update_annotations(loaded, info, app_version)
             stream.truncate(0)
+            stream.seek(0)
             yaml.indent(sequence=4, offset=2)
             yaml.dump(loaded, stream)
             subprocess.run(["git", "commit", "-am", '"Bump {} to {}"'.format(chart, chart_version_from_search)], check=True)
@@ -155,13 +157,17 @@ def update_chart(chart, info):
         print('Chart version is already at the latest.\n')
 
 
-if __name__ == '__main__':
+def get_addon_dir():
+    # Separating this in a function to enable mocking in unit tests
+    return os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../addons')
+
+def main():
     # make sure github token is available
     os.environ['GITHUB_TOKEN']
     addons = {}
     code_to_url = {}
     url_to_code = {}
-    addon_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../addons')
+    addon_dir = get_addon_dir()
     for folder in os.listdir(addon_dir):
         subfolders = os.listdir(os.path.join(addon_dir, folder))
         subfolders.sort(key=cmp_to_key(compare_versions))
@@ -206,3 +212,7 @@ if __name__ == '__main__':
 
     for chart, info in addons.items():
         update_chart(chart, info)
+
+
+if __name__ == '__main__':
+    main()

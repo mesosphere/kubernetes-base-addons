@@ -87,10 +87,11 @@ task("test-bump-charts", inputs=["src-git"], steps=[
         image = "mesosphere/bump-charts:latest",
         workingDir =  "/workspace/src-git/scripts/ci/",
         command = ["pytest"],
+        args= ["--disable-warnings", "-vv"]
     )
 ])
 
 action(tasks=["dispatch-integration-test"], on=pull_request())
-action(tasks=["test-bump-charts"], on=pull_request(paths=["scripts/ci/bump_charts.py"]))
+action(tasks=["test-bump-charts"], on=pull_request(paths=["scripts/ci/bump_charts.py", "scripts/ci/test_bump_charts.py", "scripts/ci/unit_test_yaml_samples/*"]))
 action(tasks=["dispatch-integration-test"], on=pull_request(chatops=["test"]))
-action(name="daily-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
+action(name="weekly-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
