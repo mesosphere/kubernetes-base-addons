@@ -9,7 +9,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/blang/semver"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
@@ -30,9 +29,10 @@ import (
 )
 
 const (
-	controllerBundle         = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
-	defaultKubernetesVersion = "1.15.6"
-	patchStorageClass        = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
+	controllerBundle = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
+	// just take the default from ksphere-testing-framework with ""
+	defaultKindestNodeImage = "kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
 	comRepoRef    = "master"
@@ -88,31 +88,31 @@ func TestValidateUnhandledAddons(t *testing.T) {
 }
 
 func TestGeneralGroup(t *testing.T) {
-	if err := testgroup(t, "general", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "general", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBackupsGroup(t *testing.T) {
-	if err := testgroup(t, "backups", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "backups", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestSsoGroup(t *testing.T) {
-	if err := testgroup(t, "sso", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "sso", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch", defaultKubernetesVersion, elasticsearchChecker, kibanaChecker); err != nil {
+	if err := testgroup(t, "elasticsearch", defaultKindestNodeImage, elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus", defaultKubernetesVersion, promChecker, alertmanagerChecker, grafanaChecker); err != nil {
+	if err := testgroup(t, "prometheus", defaultKindestNodeImage, promChecker, alertmanagerChecker, grafanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -124,19 +124,19 @@ func TestIstioGroup(t *testing.T) {
 }
 
 func TestLocalVolumeProvisionerGroup(t *testing.T) {
-	if err := testgroup(t, "localvolumeprovisioner", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "localvolumeprovisioner", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAwsGroup(t *testing.T) {
-	if err := testgroup(t, "aws", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "aws", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAzureGroup(t *testing.T) {
-	if err := testgroup(t, "azure", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "azure", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -190,13 +190,9 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string, kubernetesVersion string, jobs ...clusterTestJob) error {
+func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTestJob) error {
+	var err error
 	t.Logf("testing group %s", groupname)
-
-	version, err := semver.Parse(kubernetesVersion)
-	if err != nil {
-		return err
-	}
 
 	u := uuid.New()
 
