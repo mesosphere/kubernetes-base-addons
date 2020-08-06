@@ -171,7 +171,9 @@ def main():
     for folder in os.listdir(addon_dir):
         subfolders = os.listdir(os.path.join(addon_dir, folder))
         subfolders.sort(key=cmp_to_key(compare_versions))
-        latest_subfolder = subfolders[-1]
+        latest_subfolder = ''
+        if subfolders:
+            latest_subfolder = subfolders[-1]
         yaml_files = [file for file in os.listdir(os.path.join(addon_dir, folder, latest_subfolder))]
         yaml_files.sort(key=cmp_to_key(compare_yaml_files))
         latest_yaml_file = yaml_files[-1]
