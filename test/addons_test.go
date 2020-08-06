@@ -118,7 +118,7 @@ func TestPrometheusGroup(t *testing.T) {
 }
 
 func TestIstioGroup(t *testing.T) {
-	if err := testgroup(t, "istio", "1.16.9"); err != nil {
+	if err := testgroup(t, "istio", "kindest/node:v1.16.9"); err != nil {
 		t.Fatal(err)
 	}
 }
