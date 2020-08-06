@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"testing"
+	"time"
 
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
@@ -24,6 +25,7 @@ const (
 
 func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		time.Sleep(time.Second * 120)
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to prometheus pod: %s", err)

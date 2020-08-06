@@ -77,7 +77,8 @@ prometheus:
 # All Istio related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
 istio:
-    - "prometheus"
+    # prometheus disabled here temporarely to get a simple serviceMonitor change rolled out
+    # - "prometheus"
     - "metallb"
     - "opsportal"
     - "cert-manager"
