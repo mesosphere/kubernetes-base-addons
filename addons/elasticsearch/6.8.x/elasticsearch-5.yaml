@@ -54,6 +54,7 @@ spec:
             cpu: 500m
             memory: 1536Mi
       data:
+        replicas: 4
         updateStrategy:
           type: RollingUpdate
         hooks:
