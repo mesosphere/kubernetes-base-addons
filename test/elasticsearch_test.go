@@ -86,8 +86,14 @@ func waitForKibana(localport int) error {
 			return fmt.Errorf("could not GET %s: %s", path, err)
 		}
 
-		if resp.StatusCode != http.StatusServiceUnavailable {
-			break
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("response body read error %s", err)
+		}
+
+		obj := map[string]interface{}{}
+		if err := json.Unmarshal(b, &obj); err != nil {
+			return fmt.Errorf("could not decode JSON response: %s", err)
 		}
 		time.Sleep(retryWait)
 	}
@@ -211,10 +217,21 @@ func checkKibanaMetrics(localport int) error {
 // checkElasticsearchAvailable checks that the elasticsearch API is available on a local port.
 // Returns `nil` if the API responds to `GET` `/` with JSON containing `cluster_uuid`, otherwise an error.
 func checkElasticsearchAvailable(localport int) error {
+	var resp *http.Response
 	path := "/"
-	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
-	if err != nil {
-		return fmt.Errorf("could not GET %s: %s", path, err)
+
+	// Elasticsearch-Client may serve 503s for some time after its pod and container is ready. Retry until Elasticsearch is ready to accept requests.
+	retryWait := 10 * time.Second
+	for tries := 0; tries < 20; tries++ {
+		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+		if err != nil {
+			return fmt.Errorf("could not GET %s: %s", path, err)
+		}
+
+		if resp.StatusCode != http.StatusServiceUnavailable {
+			break
+		}
+		time.Sleep(retryWait)
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -222,6 +239,10 @@ func checkElasticsearchAvailable(localport int) error {
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("response body read error %s", err)
+	}
+
 	obj := map[string]interface{}{}
 	if err := json.Unmarshal(b, &obj); err != nil {
 		return fmt.Errorf("could not decode JSON response: %s", err)
@@ -238,6 +259,7 @@ func checkElasticsearchAvailable(localport int) error {
 // checkElasticsearchAvailable checks that the elasticsearch API on a local port can create and retrieve documents.
 // Returns `nil` if a document can be created and then retrieved, otherwise an error.
 func checkElasticsearchCreateAndGetDoc(localport int) error {
+	var resp *http.Response
 	docKey := "test_key"
 	docVal := uuid.New().String()
 
@@ -256,6 +278,10 @@ func checkElasticsearchCreateAndGetDoc(localport int) error {
 
 	// Get document ID from create response.
 	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("response body read error %s", err)
+	}
+
 	obj := map[string]interface{}{}
 	if err := json.Unmarshal(b, &obj); err != nil {
 		return fmt.Errorf("could not decode JSON response: %s", err)
@@ -280,6 +306,10 @@ func checkElasticsearchCreateAndGetDoc(localport int) error {
 
 	// Check document content.
 	b, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("response body read error %s", err)
+	}
+
 	obj = map[string]interface{}{}
 	if err := json.Unmarshal(b, &obj); err != nil {
 		return fmt.Errorf("could not decode JSON response: %s", err)
