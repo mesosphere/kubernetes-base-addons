@@ -10,4 +10,6 @@ fi
 
 set -euo pipefail
 
-curl --silent https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_${UNAME}.tar.bz2 | tar xjv --strip=1 konvoy_${KONVOY_VERSION}/konvoy
+if [[ ! -f konvoy ]] || [[ "$(./konvoy --version | awk '/Version/ {gsub("\"","",$2); gsub(",","",$2); print $2}')" == "${KONVOY_VERSION}" ]]; then
+  curl --silent https://downloads.mesosphere.io/konvoy/konvoy_${KONVOY_VERSION}_${UNAME}.tar.bz2 | tar xjv --strip=1 konvoy_${KONVOY_VERSION}/konvoy
+fi
