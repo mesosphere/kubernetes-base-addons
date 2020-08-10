@@ -110,6 +110,7 @@ spec:
         inputs: |
           [INPUT]
               Name tail
+              Alias kubernetes_audit
               Path /var/log/kubernetes/audit/*.log
               Parser kubernetes-audit
               DB /tail-db/audit.db
@@ -122,6 +123,7 @@ spec:
               Skip_Long_Lines Off
           [INPUT]
               Name tail
+              Alias kubernetes_cluster
               Path /var/log/containers/*.log
               Parser cri
               DB /tail-db/kube.db
@@ -132,6 +134,7 @@ spec:
               Skip_Long_Lines On
           [INPUT]
               Name systemd
+              Alias kubernetes_host
               DB /tail-db/journal.db
               Tag host.*
               Max_Entries 1000
@@ -139,6 +142,7 @@ spec:
               Strip_Underscores On
           [INPUT]
               Name kmsg
+              Alias kubernetes_host_kernel
               Tag kernel
 
         ## https://docs.fluentbit.io/manual/pipeline/filters
@@ -164,6 +168,7 @@ spec:
         outputs: |
           [OUTPUT]
               Name es
+              Alias kubernetes_audit
               Match audit.*
               Host elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local.
               Port 9200
@@ -174,6 +179,7 @@ spec:
               Buffer_Size 512KB
           [OUTPUT]
               Name es
+              Alias kubernetes_cluster
               Match kube.*
               Host elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local.
               Port 9200
@@ -184,6 +190,7 @@ spec:
               Buffer_Size 512KB
           [OUTPUT]
               Name es
+              Alias kubernetes_host
               Match host.*
               Host elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local.
               Port 9200
@@ -194,6 +201,7 @@ spec:
               Buffer_Size 512KB
           [OUTPUT]
               Name es
+              Alias kubernetes_host_kernel
               Match kernel
               Host elasticsearch-kubeaddons-client.kubeaddons.svc.cluster.local.
               Port 9200
