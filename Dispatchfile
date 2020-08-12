@@ -2,6 +2,7 @@
 # vi:syntax=python
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.4", "gitResource", "secretVar", "clean")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "push", "pull_request", "cron")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
 load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
 
