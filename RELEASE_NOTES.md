@@ -1,5 +1,10 @@
 # Release Notes
 
+## stable-1.15-2.1.1, stable-1.16-2.1.1, stable-1.17-2.1.1
+
+* dex-k8s-authenticator
+  * Windows download support for the credentials plugin ([#377](https://github.com/mesosphere/kubernetes-base-addons/pull/377), [@jr0d](https://github.com/jr0d))
+
 ## stable-1.15-2.1.0, stable-1.16-2.1.0, stable-1.17-2.1.0
 
 * traefik
