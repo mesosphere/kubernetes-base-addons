@@ -7,7 +7,7 @@ metadata:
     kubeaddons.mesosphere.io/name: azurediskprovisioner
     kubeaddons.mesosphere.io/provides: storageclass
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.0-2"
     appversion.kubeaddons.mesosphere.io/azurediskprovisioner: "1.0"
     values.chart.helm.kubeaddons.mesosphere.io/azurediskprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/efef983665c5bb1bef0901c4db26e90a32018cc8/stable/azurediskprovisioner/values.yaml"
 spec:
@@ -19,4 +19,4 @@ spec:
   chartReference:
     chart: azurediskprovisioner
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.1.0
+    version: 0.1.1
