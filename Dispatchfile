@@ -1,41 +1,97 @@
-#!mesosphere/dispatch-starlark:v0.5-beta2
-# vi:syntax=python
+#!mesosphere/dispatch-starlark:v0.6
 
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.4", "gitResource", "pullRequest", "push", "secretVar", "clean", "imageResource", "volume")
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "push", "pull_request", "cron")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.7", "dind_task")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource")
 
-gitResource("kba-git-resource", url = "$(context.git.url)", revision = "$(context.git.commit)")
+git_resource("src-git", url="$(context.git.url)",
+            revision="$(context.git.commit)")
 
+dind_task("dispatch-integration-test",
+    inputs=["src-git"],
+    steps=[
+        v1.Container(
+            name="fetch-master",
+            workingDir="/workspace/src-git",
+            args=["git", "fetch", "origin", "master"]),
 
+        v1.Container(
+            name="dispatch-integration-test",
+            image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+            args=["make", "dispatch-test"],
+            workingDir="/workspace/src-git",
+            env=[k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID",
+                                valueFrom=secret_var("d2iq-dispatch-aws-creds",
+                                                    "AWS_ACCESS_KEY_ID")),
+                k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY",
+                                valueFrom=secret_var("d2iq-dispatch-aws-creds",
+                                                    "AWS_SECRET_ACCESS_KEY")),
+                k8s.corev1.EnvVar(name="SSH_KEY_BASE64",
+                                valueFrom=secret_var("d2iq-dispatch-git-ssh-base64",
+                                                    "ssh-privatekey-base64"))
+                ],
+            resources=k8s.corev1.ResourceRequirements(
+                requests={
+                    "cpu": k8s.resource_quantity("750m"),
+                    "memory": k8s.resource_quantity("2Gi")
+                },
+                limits={
+                    "cpu": k8s.resource_quantity("8000m"),
+                    "memory": k8s.resource_quantity("6Gi")
+                }
+            )
+        )
+    ])
 
-dindTask("dispatch-integration-test",
-         inputs=["kba-git-resource"],
-         steps=[
-             v1.Container(
-                 name="fetch-master",
-                 workingDir="/workspace/kba-git-resource",
-                 args=["git", "fetch", "origin", "master"]),
+task("bump-charts", inputs=["src-git"], steps=[
+    v1.Container(
+        name = "bump-charts",
+        image = "mesosphere/bump-charts:latest",
+        workingDir =  "/workspace/src-git/scripts/ci/",
+        command = ["/bin/sh", "-c"],
+        args = [
+            """
+            set -e
+            echo "$GPG_PRIVATE_KEY" > gpg_private_key
+            echo "$GPG_PUBLIC_KEY" > gpg_public_key
+            set -x
+            git fetch origin
+            gpg --import gpg_private_key
+            gpg --import gpg_public_key
+            git config --local commit.gpgsign true
+            git config --local user.signingkey $GPG_KEY_ID
+            git config --local user.name 'Dispatch CI'
+            git config --local user.email '56653984+d2iq-dispatch@users.noreply.github.com'
+            python3 bump_charts.py
+            """
+        ],
+        resources = k8s.corev1.ResourceRequirements(
+            limits = {
+                "cpu": k8s.resource_quantity("1000m"),
+                "memory": k8s.resource_quantity("4Gi")
+            }
+        ),
+        env=[k8s.corev1.EnvVar(name="GITHUB_TOKEN", valueFrom=secret_var("d2iq-dispatch-basic-auth", "password")),
+             k8s.corev1.EnvVar(name="GPG_PRIVATE_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "private_key")),
+             k8s.corev1.EnvVar(name="GPG_PUBLIC_KEY", valueFrom=secret_var("d2iq-dispatch-gpg", "public_key")),
+             k8s.corev1.EnvVar(name="GPG_KEY_ID", valueFrom=secret_var("d2iq-dispatch-gpg", "key_id"))]
+    )
+])
 
-             v1.Container(
-                 name="dispatch-integration-test",
-                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 command=["/entrypoint.sh", "make", "dispatch-test"],
-                 workingDir="/workspace/kba-git-resource",
-                 env=[k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                      k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                      k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_ACCESS_KEY_ID")),
-                      k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_SECRET_ACCESS_KEY")),
-                      k8s.corev1.EnvVar(name="SSH_KEY_BASE64",
-                                        valueFrom=secretVar("d2iq-dispatch-git-ssh-base64",
-                                                            "ssh-privatekey-base64"))
-                      ]
-             )
-         ]
-         )
+task("test-bump-charts", inputs=["src-git"], steps=[
+    v1.Container(
+        name = "test-bump-charts",
+        image = "mesosphere/bump-charts:latest",
+        workingDir =  "/workspace/src-git/scripts/ci/",
+        command = ["pytest"],
+        args= ["--disable-warnings", "-vv"]
+    )
+])
 
-action(tasks=["dispatch-integration-test"], on=pullRequest())
-action(tasks=["dispatch-integration-test"], on=pullRequest(chatops=["test"]))
+action(tasks=["dispatch-integration-test"], on=pull_request())
+action(tasks=["test-bump-charts"], on=pull_request(paths=["scripts/ci/bump_charts.py", "scripts/ci/test_bump_charts.py", "scripts/ci/unit_test_yaml_samples/*"]))
+action(tasks=["dispatch-integration-test"], on=pull_request(chatops=["test"]))
+action(name="weekly-chart-bump", on=cron(schedule="0 6 * * 1"), tasks=["bump-charts"])
