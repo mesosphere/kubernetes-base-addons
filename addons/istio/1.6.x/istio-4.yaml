@@ -23,6 +23,7 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/name: prometheus
   kubernetes:
     minSupportedVersion: v1.16.0
   cloudProvider:
