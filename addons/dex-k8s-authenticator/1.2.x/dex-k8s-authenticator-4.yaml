@@ -32,7 +32,7 @@ spec:
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.2.5
+    version: 1.2.6
     values: |
       ---
       image:
