@@ -3,9 +3,11 @@ package test
 import (
 	"context"
 	"fmt"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"sigs.k8s.io/kind/pkg/cluster"
 	"sync"
 	"testing"
 
@@ -13,7 +15,6 @@ import (
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
@@ -25,7 +26,6 @@ import (
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
-	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 const (
@@ -211,7 +211,18 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		path, _ := os.Getwd()
 		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
 	} else {
-		tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+		if path, ok := os.LookupEnv("KUBECONFIG"); !ok {
+			t.Logf("No Kubeconfig specified. Creating Kind cluster")
+			tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+		} else {
+			t.Log("Using KUBECONFIG at", path)
+			// load the file from kubeconfig
+			kubeConfig, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			tcluster, err = testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
+		}
 	}
 	if err != nil {
 		// try to clean up in case cluster was created and reference available

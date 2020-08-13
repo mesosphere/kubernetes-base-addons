@@ -14,10 +14,11 @@ ifdef DISPATCH_CI
 	./scripts/ci/setup_ssh.sh
 endif
 
-# Target to run restricted set of tests on Dispatch CI.
+# Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
+# The KUBECONFIG is set to config file in the git-clone repo of Dispatch.
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
-	./test/dispatch-ci.sh
+	KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
 
 .PHONY: test
 test:

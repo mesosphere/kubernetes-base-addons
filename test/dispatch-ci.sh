@@ -13,20 +13,14 @@ source ./scripts/setup-konvoy.sh v1.5.0
 echo "git fetch branches."
 git fetch
 
-echo "INFO: Exercise TestAwsGroup "
-go test -tags experimental -timeout 60m -race -v -run TestAwsGroup
+echo "Run a subset of tests on dispatch"
 
-# Fix kind cluster issues on Dispatch CI before enabling complete test-suite.
+# Full Testsuite is Blocked on https://jira.d2iq.com/browse/D2IQ-70406
+# Dispatch Staging Cluster cannot run full KBA test suite. Results in Pipeline timeout
 
-# Once these issues are fixed. This target and the dispatch specific test script
-# can be removed and make test can be exercised directly on dispatch.
-#
-# TODO: (D2IQ-66356) - Fix the kind cluster issues on dispatch
-#
-# echo "INFO: the following test groups will be run:"
-# go run -tags experimental scripts/test-wrapper.go
-#
-# for g in $(go run -tags experimental scripts/test-wrapper.go)
-# do
-#     go test -tags experimental -timeout 60m -race -v -run $g
-# done
+DISPATCH_SUBSET_REGEX='TestDisabledGroup\|TestGeneralGroup\|TestAwsGroup'
+
+for g in $(go run -tags experimental scripts/test-wrapper.go | grep $DISPATCH_SUBSET_REGEX)
+do
+    go test -tags experimental -timeout 60m -race -v -run $g
+done
