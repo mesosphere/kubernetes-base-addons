@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	github.com/google/uuid v1.1.1
-	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200806132303-8e10596082d3
+	github.com/mesosphere/ksphere-testing-framework v0.0.0-20200814171113-1a98809a8734
 	github.com/mesosphere/kubeaddons v0.18.2
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect

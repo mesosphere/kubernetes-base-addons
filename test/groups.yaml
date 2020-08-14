@@ -76,13 +76,14 @@ prometheus:
 #
 # All Istio related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
-istio:
-    - "prometheus"
-    - "metallb"
-    - "opsportal"
-    - "cert-manager"
-    - "istio"
-    - "flagger"
+#istio:
+#    - "prometheus"
+#    - "prometheusadapter"
+#    - "metallb"
+#    - "opsportal"
+#    - "cert-manager"
+#    - "istio"
+#    - "flagger"
 
 # ------------------------------------------------------------------------------
 # Local Volume Provisioner
@@ -131,3 +132,5 @@ disabled:
     # TODO: Konvoy doesn't fully support GCP just yet
     - "gcpdisk-csi-driver"
     - "gcpdiskprovisioner"
+    # TODO: Istio is in preview and not yet supported, at the time of writing several deployment issues which we're not ready to tackle yet.
+    - "istio"
