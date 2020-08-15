@@ -11,7 +11,7 @@ require (
 	go.uber.org/multierr v1.4.0 // indirect
 	k8s.io/api v0.18.8
 	k8s.io/apimachinery v0.18.8
-	k8s.io/helm v2.16.9+incompatible
+	k8s.io/helm v2.16.10+incompatible
 	sigs.k8s.io/kind v0.8.1
 )
 
