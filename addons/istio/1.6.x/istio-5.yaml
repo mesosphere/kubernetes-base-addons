@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-5"
     appversion.kubeaddons.mesosphere.io/istio: "1.6.4"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
@@ -23,6 +23,7 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+    - matchLabels:
         kubeaddons.mesosphere.io/name: prometheus
   kubernetes:
     minSupportedVersion: v1.16.0
