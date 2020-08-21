@@ -1,0 +1,56 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: ClusterAddon
+metadata:
+  name: metallb
+  labels:
+    kubeaddons.mesosphere.io/name: metallb
+    kubeaddons.mesosphere.io/provides: loadbalancer
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.3-1"
+    appversion.kubeaddons.mesosphere.io/metallb: "0.9.3"
+    values.chart.helm.kubeaddons.mesosphere.io/metallb: "https://raw.githubusercontent.com/helm/charts/b0f9cb2d7af822e0031f632f2faa0cbb53167770/stable/metallb/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.6
+  cloudProvider:
+    - name: azure
+      enabled: false
+    - name: docker
+      enabled: true
+      values: |
+        configInline:
+          address-pools:
+          - name: default
+            protocol: layer2
+            addresses:
+            - 172.17.1.200-172.17.1.250
+    - name: none
+      enabled: true
+      values: |
+        configInline:
+          address-pools:
+          - name: default
+            protocol: layer2
+            # configure addresses for your network
+            addresses: []
+  chartReference:
+    chart: stable/metallb
+    version: 0.12.0
+    values: |
+      ---
+      controller:
+        image:
+          repository: metallb/controller
+          tag: v0.9.3
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      speaker:
+        image:
+          repository: metallb/speaker
+          tag: v0.9.3
+        requests:
+          cpu: 100m
+          memory: 100Mi
+
