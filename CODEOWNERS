@@ -8,3 +8,7 @@
 
 # Prometheus
 addons/prometheus/* @mesosphere/sig-ksphere-observability 
+
+# Networking
+addons/metallb/* @mesosphere/sig-ksphere-networking
+addons/istio/* @mesosphere/sig-ksphere-networking
