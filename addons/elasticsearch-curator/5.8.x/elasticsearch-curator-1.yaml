@@ -1,3 +1,4 @@
+---
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: Addon
 metadata:
@@ -6,8 +7,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearch-curator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "5.7.6-1"
-    appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.7.6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-2"
+    appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.8.1"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/506eedd/stable/elasticsearch-curator/values.yaml"
 spec:
   kubernetes:
