@@ -7,7 +7,7 @@ metadata:
     kubeaddons.mesosphere.io/name: metallb
     kubeaddons.mesosphere.io/provides: loadbalancer
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.3-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.9.3-2"
     appversion.kubeaddons.mesosphere.io/metallb: "0.9.3"
     values.chart.helm.kubeaddons.mesosphere.io/metallb: "https://raw.githubusercontent.com/helm/charts/b0f9cb2d7af822e0031f632f2faa0cbb53167770/stable/metallb/values.yaml"
 spec:
@@ -35,8 +35,9 @@ spec:
             # configure addresses for your network
             addresses: []
   chartReference:
-    chart: stable/metallb
-    version: 0.12.0
+    chart: metallb
+    repo: https://charts.bitnami.com/bitnami
+    version: 0.1.21
     values: |
       ---
       controller:
