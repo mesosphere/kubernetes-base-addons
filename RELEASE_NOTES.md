@@ -2,7 +2,12 @@
 
 ## stable-1.15-1.9.0, stable-1.16-1.9.0
 
-* Traefik: fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+* Traefik 
+  * fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+* Elasticsearch
+  * default data nodes has been increased to 4 by default. ([#327](https://github.com/mesosphere/kubernetes-base-addons/pull/327), [@alejandroEsc](https://github.com/alejandroEsc))
+* Prometheus
+  * disable ServiceMonitors for kube-controller-manager and kube-scheduler. kubernetes has determined the ports that were used for these tests was insecure and has limited it to localhost only. This causes these specific tests to fail. The state of the controller-manager and scheduler pods are still tracked in general as pods. ([#476](https://github.com/mesosphere/kubernetes-base-addons/pull/476), [@dkoshkin](https://github.com/dkoshkin))
 
 ## stable-1.15-1.8.0, stable-1.16-1.8.0
 
