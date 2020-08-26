@@ -1,5 +1,14 @@
 # Release Notes
 
+## stable-1.15-2.2.0, stable-1.16-2.2.0, stable-1.17-2.2.0
+
+* Prometheus
+  * Fix an issue that may cause Grafana's home dashboard to be empty. ([#351](https://github.com/mesosphere/kubernetes-base-addons/pull/351), [@branden](https://github.com/branden))
+  * disable ServiceMonitors for kube-controller-manager and kube-scheduler. kubernetes has determined the ports that were used for these tests was insecure and has limited it to localhost only. This causes these specific tests to fail. The state of the controller-manager and scheduler pods are still tracked in general as pods. ([#474](https://github.com/mesosphere/kubernetes-base-addons/pull/474), [@dkoshkin](https://github.com/dkoshkin))
+  * Improve Grafana dashboard names and tags for dashboards tied to addons ([#352](https://github.com/mesosphere/kubernetes-base-addons/pull/352), [@gracedo](https://github.com/gracedo))
+* Traefik
+  * fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+
 ## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
 
 * \[awsebscsiprovisioner\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#273](https://github.com/mesosphere/kubernetes-base-addons/pull/273), [@sebbrandt87](https://github.com/sebbrandt87))
@@ -15,7 +24,7 @@
 * Prometheus-alert-manager: increase memory and cpu limits due to OOM errors ([#298](https://github.com/mesosphere/kubernetes-base-addons/pull/298), [@hectorj2f](https://github.com/hectorj2f))
 * Traefik is now upgradeable again when the `initCertJobImage` field is modified. ([#302](https://github.com/mesosphere/kubernetes-base-addons/pull/302), [@makkes](https://github.com/makkes))
 * \[traefik\]:
-  - upgrade to 1.7.24 
+  - upgrade to 1.7.24
   - mTLS available
   - accessLogs.filters setable
   - caServer setable for acme challenge ([#304](https://github.com/mesosphere/kubernetes-base-addons/pull/304), [@sebbrandt87](https://github.com/sebbrandt87))
@@ -23,7 +32,7 @@
 * Opsportal: fix a typo in 'lables' that caused issues during upgrades. ([#307](https://github.com/mesosphere/kubernetes-base-addons/pull/307), [@dkoshkin](https://github.com/dkoshkin))
 * \[prometheus\]: Update prometheus-operator chart, which adds a grafana dashboard for monitoring autoscaler ([#308](https://github.com/mesosphere/kubernetes-base-addons/pull/308), [@gracedo](https://github.com/gracedo))
 * \[dex-k8s-authenticator\]:
-  - fix: render configure kubectl instructions with the cluster hostname. 
+  - fix: render configure kubectl instructions with the cluster hostname.
   - fix: add clippy js for clipboard support ([#309](https://github.com/mesosphere/kubernetes-base-addons/pull/309), [@samvantran](https://github.com/samvantran))
 * \[prometheus\] Increases default Prometheus server resources. ([#310](https://github.com/mesosphere/kubernetes-base-addons/pull/310), [@branden](https://github.com/branden))
 * ValuesRemap has been added for rewriting the forward authentication url in multiple addons. ([#315](https://github.com/mesosphere/kubernetes-base-addons/pull/315), [@jr0d](https://github.com/jr0d))
@@ -92,7 +101,7 @@
   * fix an issue in dex addon which disallowed adding local users
   * use Dex controller v0.4.1, which includes the support for OIDC group claims
   * upgrade Dex to v2.22.0, which supports groups claims for OIDC connectors
-* dex-k8s-authenticator: 
+* dex-k8s-authenticator:
   * allow scopes to be configured, and drop the `offline_access` scope as it is not used
 * kube-oidc-proxy:
   *  enable token passthrough
