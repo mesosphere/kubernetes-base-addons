@@ -263,7 +263,7 @@ spec:
       kubeControllerManager:
         enabled: false
       kubeScheduler:
-        enabled: false       
+        enabled: false
       alertmanager:
         ingress:
           enabled: true
