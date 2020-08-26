@@ -530,6 +530,8 @@ github.com/mesosphere/kubeaddons v0.18.4 h1:tU5sUFVL2dvN7XMR9vFEom4dnSkUyd/wa7jm
 github.com/mesosphere/kubeaddons v0.18.4/go.mod h1:SAfTv9vP2TIvC/BL8COxCdioYTKNPz04FC2ov1Lv5ZE=
 github.com/mesosphere/kubeaddons v0.19.0 h1:WPOsCmUsq73gCo04Kihg2f9k3qmvViwqxmEy9zLg8D0=
 github.com/mesosphere/kubeaddons v0.19.0/go.mod h1:Olyd/FXqmsko8lx56dMs1YAMrbzDl1q97JXSRMkEYIs=
+github.com/mesosphere/kubeaddons v0.19.1 h1:Hr0ryzHaj0W5Otj1MqzirSOzsksTCBINrnUyyB0A5h8=
+github.com/mesosphere/kubeaddons v0.19.1/go.mod h1:Olyd/FXqmsko8lx56dMs1YAMrbzDl1q97JXSRMkEYIs=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/mitchellh/cli v1.0.0/go.mod h1:hNIlj7HEI86fIcpObd7a0FcrxTWetlwJDGcceTlRvqc=
 github.com/mitchellh/copystructure v1.0.0/go.mod h1:SNtv71yrdKgLRyLFxmLdkAbkKEFWgYaq1OVrnRcwhnw=
