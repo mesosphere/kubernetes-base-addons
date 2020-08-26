@@ -23,9 +23,6 @@ dispatch-test: set-git-ssh
 
 .PHONY: lint
 lint:
-ifeq ($(YAMLLINT),)
-$(error yamllint is not installed)
-endif
 	yamllint --config-file test/yamllint.yaml .
 
 .PHONY: test
