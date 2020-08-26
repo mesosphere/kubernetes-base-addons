@@ -45,10 +45,31 @@ dindTask("dispatch-integration-test",
                 "memory": k8s.resource_quantity("2Gi")}))
            ])
 
+dindTask("lint-yaml",
+    inputs=[git_clone_dirname],
+    steps=[
+        k8s.corev1.Container(
+            name="fetch-master",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            args=["git", "fetch", "origin", "master"]
+        ),
+
+        k8s.corev1.Container(
+            name="yamllint",
+            image="cytopia/yamllint:1.23@sha256:a16045dacb68f34a6e2a5c25e8175265105f48a8ee3033e0bdc36689e2911ff9",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            command=["yamllint", "--config-file", "test/yamllint.yaml", "."],
+       ),
+    ]
+)
+
 clean_kind=cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
 
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
+
+action(tasks=["lint-yaml", clean_kind], on=pull_request())
+action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint","test"]))
 
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba_bump_charts")
 action(name="bump-charts", on=cron(schedule="0 3 1,15 * *"), tasks=[do_bump_charts])

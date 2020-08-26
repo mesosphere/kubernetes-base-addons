@@ -47,4 +47,3 @@ spec:
         ## to the opsportal-admin role. This mimics the existing security policy where any authenticated and whitelisted user
         ## has full access to the opsportal. This option will be removed in the 0.3 release of this chart.
         allowAllAuthenticated: false
-  

@@ -44,7 +44,7 @@ spec:
           kiali:
             enabled: true
           tracing:
-            enabled: true 
+            enabled: true
 
         values:
           global:
