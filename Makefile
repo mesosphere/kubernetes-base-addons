@@ -1,4 +1,5 @@
 SHELL := /bin/bash -euo pipefail
+YAMLLINT := $(shell command -v yamllint)
 
 export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
@@ -19,6 +20,13 @@ endif
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
 	KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
+
+.PHONY: lint
+lint:
+ifeq ($(YAMLLINT),)
+$(error yamllint is not installed)
+endif
+	yamllint --config-file test/yamllint.yaml .
 
 .PHONY: test
 test:
