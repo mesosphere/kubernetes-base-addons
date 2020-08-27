@@ -14,9 +14,10 @@ echo "git fetch branches."
 git fetch
 
 echo "INFO: the following test groups will be run:"
-go run -tags experimental scripts/test-wrapper.go
+TESTS=($(go run -tags experimental scripts/test-wrapper.go))
+echo ${TESTS[*]}
 
-for g in $(go run -tags experimental scripts/test-wrapper.go)
+for g in ${TESTS[*]}
 do
-    go test -tags experimental -timeout 60m -race -v -run $g
+    go test -tags experimental -timeout 60m -race -v -run "$g"
 done
