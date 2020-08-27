@@ -1,4 +1,5 @@
 SHELL := /bin/bash -euo pipefail
+YAMLLINT := $(shell command -v yamllint)
 
 export GO111MODULE := on
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
@@ -20,6 +21,24 @@ endif
 dispatch-test: set-git-ssh
 	KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
 
+.PHONY: lint
+lint:
+	yamllint --config-file test/yamllint.yaml .
+
 .PHONY: test
 test:
 	./test/run-tests.sh
+
+kubeaddons-tests:
+	git clone --depth 1 https://github.com/mesosphere/kubeaddons-tests.git --branch master --single-branch
+
+.PHONY: kind-test
+kind-test: kubeaddons-tests
+	make -f kubeaddons-tests/Makefile kind-test KUBEADDONS_REPO=kubernetes-base-addons
+
+.PHONY: clean
+clean:
+ifneq (,$(wildcard kubeaddons-tests/Makefile))
+	make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
+endif
+	rm -rf kubeaddons-tests

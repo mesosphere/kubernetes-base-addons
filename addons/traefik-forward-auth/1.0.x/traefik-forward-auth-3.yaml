@@ -90,4 +90,3 @@ spec:
           value: "kubeaddons"
         - name: "TFA_INGRESS_SERVICE_NAME"
           value: "traefik-kubeaddons"
-
