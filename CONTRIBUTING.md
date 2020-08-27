@@ -6,6 +6,12 @@ See the [Kubeaddons Contributing Documentation](https://github.com/mesosphere/ku
 
 Additionally see the sections below for notes about other rules and considerations for contributions.
 
+## Testing
+
+There are two types of tests associated with this repository.
+* [ksphere-testing-framework](https://github.com/mesosphere/ksphere-testing-framework): An integration test built around a golang framework.
+* [kubeaddons-tests](https://github.com/mesosphere/kubeaddons-tests): Regression tests built using kuttl.
+
 ## Deprecation
 
 Sometimes you may want to **deprecate an older version (or revision) of an Addon**, for instance perhaps you have several revisions of the `v1.x` release of your addon, but now `v2.x` is out and you no longer wish to maintain the older major version.

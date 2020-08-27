@@ -23,6 +23,7 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+    - matchLabels:
         kubeaddons.mesosphere.io/name: prometheus
   kubernetes:
     minSupportedVersion: v1.16.0
@@ -50,7 +51,7 @@ spec:
           kiali:
             enabled: true
           tracing:
-            enabled: true 
+            enabled: true
 
         components:
           ingressGateways:
