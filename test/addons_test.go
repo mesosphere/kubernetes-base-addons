@@ -3,13 +3,14 @@ package test
 import (
 	"context"
 	"fmt"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"sigs.k8s.io/kind/pkg/cluster"
 	"sync"
 	"testing"
+
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
+	"sigs.k8s.io/kind/pkg/cluster"
 
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
@@ -24,6 +25,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
 )
@@ -206,30 +208,16 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		}
 	}()
 
-	var tcluster testcluster.Cluster
-	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
-		path, _ := os.Getwd()
-		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
-	} else {
-		if path, ok := os.LookupEnv("KUBECONFIG"); !ok {
-			t.Logf("No Kubeconfig specified. Creating Kind cluster")
-			tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
-		} else {
-			t.Log("Using KUBECONFIG at", path)
-			// load the file from kubeconfig
-			kubeConfig, err := ioutil.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			tcluster, err = testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
-		}
-	}
+	tcluster, err := newCluster(groupname, version, node, t)
 	if err != nil {
 		// try to clean up in case cluster was created and reference available
 		if tcluster != nil {
 			_ = tcluster.Cleanup()
 		}
 		return err
+	}
+	if tcluster == nil {
+		return fmt.Errorf("tcluster is nil")
 	}
 	defer tcluster.Cleanup()
 
@@ -428,4 +416,31 @@ prometheus:
 kubeEtcd:
   enabled: false
 `,
+}
+
+func newCluster(groupname string, version string, node v1alpha3.Node, t *testing.T) (testcluster.Cluster, error) {
+	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
+		path, _ := os.Getwd()
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
+	}
+
+	path, ok := os.LookupEnv("KBA_KUBECONFIG")
+	if !ok {
+		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+	}
+
+	config, err := clientcmd.LoadFromFile(path)
+	if err != nil || len(config.Contexts) == 0 {
+		t.Logf("%s is not a valid kubeconfig. Creating Kind cluster", path)
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}), cluster.CreateWithKubeconfigPath(path))
+	}
+
+	t.Log("Using KBA_KUBECONFIG at", path)
+	// load the file from kubeconfig
+	kubeConfig, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
 }
