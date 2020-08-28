@@ -76,14 +76,14 @@ prometheus:
 #
 # All Istio related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
-#istio:
-#    - "prometheus"
-#    - "prometheusadapter"
-#    - "metallb"
-#    - "opsportal"
-#    - "cert-manager"
-#    - "istio"
-#    - "flagger"
+istio:
+    - "prometheus"
+    - "prometheusadapter"
+    - "metallb"
+    - "opsportal"
+    - "cert-manager"
+    - "istio"
+    - "flagger"
 
 # ------------------------------------------------------------------------------
 # Local Volume Provisioner
