@@ -43,5 +43,5 @@ clean:
 ifneq (,$(wildcard kubeaddons-tests/Makefile))
 	make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
 endif
-	rm -rf kubeaddons-tests
-	rm kba-kubeconfig-*
+	-rm -rf kubeaddons-tests
+	-rm kba-kubeconfig-*
