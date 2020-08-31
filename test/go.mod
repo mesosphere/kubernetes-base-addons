@@ -1,6 +1,7 @@
 module github.com/mesosphere/kubeaddons-base-addons/test
 
-go 1.14
+go 1.15
+
 
 require (
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
