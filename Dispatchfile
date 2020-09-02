@@ -71,6 +71,6 @@ action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=
 action(tasks=["lint-yaml", clean_kind], on=pull_request())
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint","test"]))
 
-do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba_bump_charts")
-action(name="bump-charts", on=cron(schedule="0 3 1,15 * *"), tasks=[do_bump_charts])
+do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
+action(name="bump-charts", on=cron(schedule="0 3 * * 5"), tasks=[do_bump_charts])
 
