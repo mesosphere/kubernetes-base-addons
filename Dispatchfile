@@ -1,54 +1,76 @@
-#!starlark
+#!mesosphere/dispatch-starlark:v0.6
+# vi:syntax=python
+load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "push", "pull_request", "cron", "clean")
+load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bump_charts")
 
-gitResource("src-git", url="$(context.git.url)",
-            revision="$(context.git.commit)")
+git_clone_dirname = "kba-git-src"
+kind_cluster_name = "kba-kind-cluster"
 
+git_resource(git_clone_dirname, url="$(context.git.url)", revision="$(context.git.commit)")
 
-def secretVar(name, key):
-    return k8s.corev1.EnvVarSource(secretKeyRef=k8s.corev1.SecretKeySelector(
-        localObjectReference=k8s.corev1.LocalObjectReference(name=name),
-        key=key))
-
+kind_cluster=make_kind_cluster(kind_cluster_name, git_clone_dirname)
 
 dindTask("dispatch-integration-test",
-         inputs=["src-git"],
-         steps=[
-             v1.Container(
-                 name="fetch-master",
-                 image="mesosphere/dispatch-dind:v0.5.2",
-                 workingDir="/workspace/src-git",
-                 args=["git", "fetch", "origin", "master"]),
+    inputs=[git_clone_dirname],
+    deps=[kind_cluster],
+    steps=[
+        fetch_kubeconfig(kind_cluster_name, git_clone_dirname),
 
-             v1.Container(
-                 name="dispatch-integration-test",
-                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 command=["make", "dispatch-test"],
-                 workingDir="/workspace/src-git",
-                 env=[k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                      k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                      k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_ACCESS_KEY_ID")),
-                      k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY",
-                                        valueFrom=secretVar("d2iq-dispatch-aws-creds",
-                                                            "AWS_SECRET_ACCESS_KEY")),
-                      k8s.corev1.EnvVar(name="SSH_KEY_BASE64",
-                                        valueFrom=secretVar("d2iq-dispatch-git-ssh-base64",
-                                                            "ssh-privatekey-base64"))
-                      ],
-                 resources=k8s.corev1.ResourceRequirements(
-                     requests={
-                         "cpu": k8s.resource_quantity("750m"),
-                         "memory": k8s.resource_quantity("2Gi")
-                     },
-                     limits={
-                         "cpu": k8s.resource_quantity("8000m"),
-                         "memory": k8s.resource_quantity("6Gi")
-                     }
-                 )
-             )
-         ]
-         )
+        k8s.corev1.Container(
+            name="fetch-master",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            args=["git", "fetch", "origin", "master"]),
 
-action(tasks=["dispatch-integration-test"], on=pullRequest())
-action(tasks=["dispatch-integration-test"], on=pullRequest(chatops=["test"]))
+        k8s.corev1.Container(
+            name="dispatch-integration-test",
+            image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            command=["/entrypoint.sh", "make", "dispatch-test"],
+
+            env=[
+                k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
+                k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+                k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+                k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))],
+
+            resources=k8s.corev1.ResourceRequirements(
+              requests={
+                "cpu": k8s.resource_quantity("1000m"),
+                "memory": k8s.resource_quantity("2Gi")}))
+           ])
+
+dindTask("lint-yaml",
+    inputs=[git_clone_dirname],
+    steps=[
+        k8s.corev1.Container(
+            name="fetch-master",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            args=["git", "fetch", "origin", "master"]
+        ),
+
+        k8s.corev1.Container(
+            name="yamllint",
+            image="cytopia/yamllint:1.23@sha256:a16045dacb68f34a6e2a5c25e8175265105f48a8ee3033e0bdc36689e2911ff9",
+            workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+            command=["yamllint", "--config-file", "test/yamllint.yaml", "."],
+       ),
+    ]
+)
+
+clean_kind=cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
+
+action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
+action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
+
+action(tasks=["lint-yaml", clean_kind], on=pull_request())
+action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint","test"]))
+
+do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba_bump_charts")
+action(name="bump-charts", on=cron(schedule="0 3 1,15 * *"), tasks=[do_bump_charts])
+

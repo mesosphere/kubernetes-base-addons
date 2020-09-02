@@ -1,0 +1,7 @@
+kubeconfig
+bin/
+dist/
+kind-logs-*/
+**/*.kube/
+/kubeaddons-tests
+kba-kubeconfig-*

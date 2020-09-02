@@ -24,6 +24,7 @@ const (
 
 func elasticsearchChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		time.Sleep(time.Second * 120)
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", esClientPodPrefix, esClientPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to elasticsearch client pod: %s", err)
@@ -44,6 +45,7 @@ func elasticsearchChecker(t *testing.T, cluster testcluster.Cluster) testharness
 
 func kibanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		time.Sleep(time.Second * 120)
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", kibanaPodPrefix, kibanaPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to kibana pod: %s", err)

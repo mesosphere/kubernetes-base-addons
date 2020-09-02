@@ -9,12 +9,13 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/blang/semver"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
+	"sigs.k8s.io/kind/pkg/cluster"
+
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
@@ -24,15 +25,16 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
-	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 const (
-	controllerBundle         = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
-	defaultKubernetesVersion = "1.15.6"
-	patchStorageClass        = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
+	controllerBundle = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
+	// just take the default from ksphere-testing-framework with ""
+	defaultKindestNodeImage = "kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
 	comRepoRef    = "master"
@@ -88,55 +90,55 @@ func TestValidateUnhandledAddons(t *testing.T) {
 }
 
 func TestGeneralGroup(t *testing.T) {
-	if err := testgroup(t, "general", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "general", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBackupsGroup(t *testing.T) {
-	if err := testgroup(t, "backups", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "backups", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestSsoGroup(t *testing.T) {
-	if err := testgroup(t, "sso", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "sso", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch", defaultKubernetesVersion, elasticsearchChecker, kibanaChecker); err != nil {
+	if err := testgroup(t, "elasticsearch", defaultKindestNodeImage, elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPrometheusGroup(t *testing.T) {
-	if err := testgroup(t, "prometheus", defaultKubernetesVersion, promChecker, alertmanagerChecker, grafanaChecker); err != nil {
+	if err := testgroup(t, "prometheus", defaultKindestNodeImage, promChecker, alertmanagerChecker, grafanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestIstioGroup(t *testing.T) {
-	if err := testgroup(t, "istio", "1.16.9"); err != nil {
+	if err := testgroup(t, "istio", "kindest/node:v1.16.9"); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestLocalVolumeProvisionerGroup(t *testing.T) {
-	if err := testgroup(t, "localvolumeprovisioner", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "localvolumeprovisioner", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAwsGroup(t *testing.T) {
-	if err := testgroup(t, "aws", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "aws", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestAzureGroup(t *testing.T) {
-	if err := testgroup(t, "azure", defaultKubernetesVersion); err != nil {
+	if err := testgroup(t, "azure", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -190,13 +192,9 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string, kubernetesVersion string, jobs ...clusterTestJob) error {
+func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTestJob) error {
+	var err error
 	t.Logf("testing group %s", groupname)
-
-	version, err := semver.Parse(kubernetesVersion)
-	if err != nil {
-		return err
-	}
 
 	u := uuid.New()
 
@@ -210,19 +208,16 @@ func testgroup(t *testing.T, groupname string, kubernetesVersion string, jobs ..
 		}
 	}()
 
-	var tcluster testcluster.Cluster
-	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
-		path, _ := os.Getwd()
-		tcluster, err = konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
-	} else {
-		tcluster, err = kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
-	}
+	tcluster, err := newCluster(groupname, version, node, t)
 	if err != nil {
 		// try to clean up in case cluster was created and reference available
 		if tcluster != nil {
 			_ = tcluster.Cleanup()
 		}
 		return err
+	}
+	if tcluster == nil {
+		return fmt.Errorf("tcluster is nil")
 	}
 	defer tcluster.Cleanup()
 
@@ -421,4 +416,31 @@ prometheus:
 kubeEtcd:
   enabled: false
 `,
+}
+
+func newCluster(groupname string, version string, node v1alpha3.Node, t *testing.T) (testcluster.Cluster, error) {
+	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
+		path, _ := os.Getwd()
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
+	}
+
+	path, ok := os.LookupEnv("KBA_KUBECONFIG")
+	if !ok {
+		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+	}
+
+	config, err := clientcmd.LoadFromFile(path)
+	if err != nil || len(config.Contexts) == 0 {
+		t.Logf("%s is not a valid kubeconfig. Creating Kind cluster", path)
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}), cluster.CreateWithKubeconfigPath(path))
+	}
+
+	t.Log("Using KBA_KUBECONFIG at", path)
+	// load the file from kubeconfig
+	kubeConfig, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
 }
