@@ -26,6 +26,8 @@ spec:
       enabled: false
     - name: gcp
       enabled: false
+    - name: vsphere
+      enabled: false
     - name: docker
       enabled: false
     - name: none
