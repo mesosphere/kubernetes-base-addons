@@ -26,7 +26,7 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: prometheus
   kubernetes:
-    minSupportedVersion: v1.17.0
+    minSupportedVersion: v1.16.0
   cloudProvider:
     - name: aws
       enabled: false
