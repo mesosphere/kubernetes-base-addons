@@ -10,7 +10,7 @@ metadata:
     appversion.kubeaddons.mesosphere.io/dashboard: "2.0.0-beta6"
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
-    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
     values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/5e7b6640dd6b566bb136fffaca1b54da392d3074/stable/kubernetes-dashboard/values.yaml"
 spec:
   kubernetes:
