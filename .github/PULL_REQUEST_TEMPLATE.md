@@ -40,3 +40,4 @@ Enter your extended release note in the block below. If the PR requires addition
 * [ ] The relevant subset of integration tests pass locally.
 * [ ] The core changes are covered by tests.
 * [ ] The documentation is updated where needed.
+* [ ] Manually tested upgrades from previous addon revisions for updated addons.
