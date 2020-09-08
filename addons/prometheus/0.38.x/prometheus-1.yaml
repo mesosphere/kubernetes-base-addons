@@ -24,7 +24,7 @@ metadata:
     values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/81ca01f13e88fc05bf195c95356a9cfd8902ed86/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to this chart version.
     # See https://jira.d2iq.com/browse/DCOS-62924.
-    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=5.19.7", "strategy": "delete"}]'
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=5.19.7", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
