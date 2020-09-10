@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.4-3"
-    appversion.kubeaddons.mesosphere.io/istio: "1.6.4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-0"
+    appversion.kubeaddons.mesosphere.io/istio: "1.6.8"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
     stage.kubeaddons.mesosphere.io/kiali: Preview
@@ -23,6 +23,8 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: prometheus
   kubernetes:
     minSupportedVersion: v1.16.0
   cloudProvider:
@@ -39,18 +41,14 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.6.5
+    version: 1.6.8
     values: |
       istioOperator:
-        hub: docker.io/istio
-        tag: 1.6.4
-
         addonComponents:
           kiali:
             enabled: true
           tracing:
             enabled: true
-
         components:
           ingressGateways:
           - enabled: true
@@ -62,7 +60,6 @@ spec:
             k8s:
               hpaSpec:
                 minReplicas: 2
-
         values:
           kiali:
             contextPath: /ops/portal/kiali
@@ -72,6 +69,5 @@ spec:
               grafanaInClusterURL: http://prometheus-kubeaddons-grafana.kubeaddons:3000
               jaegerInClusterURL: http://tracing/jaeger
             prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
-
           tracing:
             contextPath: /ops/portal/jaeger
