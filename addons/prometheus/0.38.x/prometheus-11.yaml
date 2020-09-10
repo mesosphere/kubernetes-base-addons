@@ -25,7 +25,7 @@ metadata:
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
-    helmv2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6

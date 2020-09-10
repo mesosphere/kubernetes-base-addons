@@ -1,5 +1,98 @@
 # Release Notes
 
+## stable-1.15-2.3.0, stable-1.16-2.3.0, stable-1.17-2.3.0
+
+- Azuredisk-csi-driver: 
+  - enable the Snapshot controller ([#443](https://github.com/mesosphere/kubernetes-base-addons/pull/443), [@dkoshkin](https://github.com/dkoshkin))
+- Cert-manager:
+  - `Issuer` namespace setable
+    - `Certificate` namespace setable ([#378](https://github.com/mesosphere/kubernetes-base-addons/pull/378), [@sebbrandt87](https://github.com/sebbrandt87))
+- Dex-k8s-authenticator:
+  - Windows download support for the credentials plugin ([#377](https://github.com/mesosphere/kubernetes-base-addons/pull/377), [@jr0d](https://github.com/jr0d))
+  - Fixed bug causing `certificate-authority=`  option to be added to token instructions on the windows tab when it should have been omitted. ([#436](https://github.com/mesosphere/kubernetes-base-addons/pull/436), [@jr0d](https://github.com/jr0d))
+- Elasticsearch-curator:
+  - version 5.8.1 ([#374](https://github.com/mesosphere/kubernetes-base-addons/pull/374), [@sebbrandt87](https://github.com/sebbrandt87))
+  - Added value `cronjob.startingDeadlineSeconds`: Amount of time to try reschedule job if we can't run on time ([#447](https://github.com/mesosphere/kubernetes-base-addons/pull/447), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+- Elasticsearch-exporter: 
+  - updated from 2.11 to 3.7.0
+    - Add a parameter for the elasticsearch-exporter: es.indices_settings as it is supported since version 1.0.4 (the elasticsearch-exporter chart is supporting the version 1.1.0)
+    - Update description for envFromSecret parameter in readme
+    - Feature flap the flag es.uri to allow fallback to env var ES_URI
+    - Allow setting environment variables with k8s secret information to support referencing already existing sensitive parameters.
+    - Add es.ssl.client.enabled value for better functionality readability
+    - Add option to disable client cert auth in Elasticsearch exporter
+    - Add the serviceMonitor targetLabels key as documented in the Prometheus Operator API
+    - Add log.level and log.format configs
+    - Add the ServiceMonitor metricRelabelings key as documented in the Prometheus Operator API
+    - Add sampleLimit configuration option ([#449](https://github.com/mesosphere/kubernetes-base-addons/pull/449), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+- Fluent-bit:
+  - Three different elasticsearch indicies created
+    - kubernetes_cluster-- (for container logs)
+    - kubernetes_audit-- (for audit logs from kube-apiserver)
+    - kubernetes_host-- (for all systemd host logs)
+  - version 1.5.2
+    - Kernel messages forwarded ([#375](https://github.com/mesosphere/kubernetes-base-addons/pull/375), [@sebbrandt87](https://github.com/sebbrandt87))
+  - apply meaningful aliases to plugins and their metrics. ([#432](https://github.com/mesosphere/kubernetes-base-addons/pull/432), [@branden](https://github.com/branden))
+- Istio:
+  - the "kubernetes-service-monitor" service monitor has been removed. ([#483](https://github.com/mesosphere/kubernetes-base-addons/pull/483), [@gracedo](https://github.com/gracedo))
+- Traefik-foward-auth:
+  - update to 0.2.14
+    - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+- Kibana:
+    - version 6.8.10 ([#373](https://github.com/mesosphere/kubernetes-base-addons/pull/373), [@sebbrandt87](https://github.com/sebbrandt87))
+- Ops-portal:
+  - Fix: Unable to change ops-portal password ([#379](https://github.com/mesosphere/kubernetes-base-addons/pull/379), [@GoelDeepak](https://github.com/GoelDeepak))
+- Prometheus:
+  - chore: bump chart to v9.3.1
+    - refactor!: (breaking change) version 9 of the helm chart removes the existing `additionalScrapeConfigsExternal` in favor of `additionalScrapeConfigsSecret`. This change lets users specify the secret name and secret key to use for the additional scrape configuration of prometheus.
+    - feat: add ingress configuration for Thanos sidecar, enabling external access from a centralized thanos querier running in another cluster
+    - feat: add scrape timeout config to service monitor to avoid timeouts on slow kubelets
+    - feat: add docker checksum option to improve security for deployed containers
+    - feat: add option to disable availability rules
+    - feat: enable scraping /metrics/resource for kubelet service
+    - feat: [prometheus] enable namespace overrides
+    - feat: [prometheus] allow additional volumes and volumeMounts
+    - feat: [alertmanager] add volume and volume mounts to spec
+    - feat: [alertmanager] add support for serviceAccount.annotations
+    - feat: [grafana] enable adding annotations to all default dashboard configmaps
+    - chore: bump prometheus to v2.18.2
+    - chore: bump alertmanager to v0.21.0
+    - chore: bump hyperkube to v1.16.12
+    - chore: bump grafana to v5.3.0
+    - fix: add missing grafana annotations to k8s-coredns dashboard
+    - fix: reduced CPU utilization and time lag for code_verb:apiserver_request_total:increase30d scrape
+    - fix: invalid image pull policy for the admission webhook patch
+    - fix: alert "KubeNodeUnreachable" no longer fires on an autoscaling scale-down event ([#444](https://github.com/mesosphere/kubernetes-base-addons/pull/444), [@samvantran](https://github.com/samvantran))
+  - disable ServiceMonitors for kube-controller-manager and kube-scheduler. kubernetes has determined the ports that were used for these tests was insecure and has limited it to localhost only. This causes these specific tests to fail. The state of the controller-manager and scheduler pods are still tracked in general as pods. ([#474](https://github.com/mesosphere/kubernetes-base-addons/pull/474), [@dkoshkin](https://github.com/dkoshkin))
+
+## stable-1.15-2.2.0, stable-1.16-2.2.0, stable-1.17-2.2.0
+
+* Prometheus
+  * Fix an issue that may cause Grafana's home dashboard to be empty. ([#351](https://github.com/mesosphere/kubernetes-base-addons/pull/351), [@branden](https://github.com/branden))
+  * disable ServiceMonitors for kube-controller-manager and kube-scheduler. kubernetes has determined the ports that were used for these tests was insecure and has limited it to localhost only. This causes these specific tests to fail. The state of the controller-manager and scheduler pods are still tracked in general as pods. ([#474](https://github.com/mesosphere/kubernetes-base-addons/pull/474), [@dkoshkin](https://github.com/dkoshkin))
+  * Improve Grafana dashboard names and tags for dashboards tied to addons ([#352](https://github.com/mesosphere/kubernetes-base-addons/pull/352), [@gracedo](https://github.com/gracedo))
+* Traefik
+  * fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+
+## stable-1.15-2.1.1, stable-1.16-2.1.1, stable-1.17-2.1.1
+
+* dex-k8s-authenticator
+  * Windows download support for the credentials plugin ([#377](https://github.com/mesosphere/kubernetes-base-addons/pull/377), [@jr0d](https://github.com/jr0d))
+
+## stable-1.15-2.1.0, stable-1.16-2.1.0, stable-1.17-2.1.0
+
+* traefik
+  * fix the velero-minio entrypoint to inherit global ssl and proxy protocol configurations ([#259](https://github.com/mesosphere/kubernetes-base-addons/pull/259), [@jieyu](https://github.com/jieyu))
+* elasticsearch
+  * default data nodes has been increased to 4 ([#327](https://github.com/mesosphere/kubernetes-base-addons/pull/327), [@alejandroEsc](https://github.com/alejandroEsc))
+* external-dns
+  * disable by default ([#335](https://github.com/mesosphere/kubernetes-base-addons/pull/335), [@GoelDeepak](https://github.com/GoelDeepak))
+
+## stable-1.15-2.0.1, stable-1.16-2.0.1, stable-1.17-2.0.1
+
+- Traefik: fix metrics access and reporting ([#349](https://github.com/mesosphere/kubernetes-base-addons/pull/349), [@gracedo](https://github.com/gracedo))
+- Prometheus: Improve Grafana dashboard names and tags for dashboards tied to addons ([#352](https://github.com/mesosphere/kubernetes-base-addons/pull/352), [@gracedo](https://github.com/gracedo))
+
 ## stable-1.15-2.0.0, stable-1.16-2.0.0, stable-1.17-2.0.0
 
 * \[awsebscsiprovisioner\] The manual steps to upgrade the snapshot APIs from v1alpha1 to v1beta1 is no longer required. It has been automated in the chart CRD install hook by default. If you do not want that default behavior of cleaning up v1alpha1 snapshot CRDs, you can set `cleanupVolumeSnapshotCRDV1alpha1` to `false` and follow the instructions for upgrading to Kubernetes `1.17`. ([#273](https://github.com/mesosphere/kubernetes-base-addons/pull/273), [@sebbrandt87](https://github.com/sebbrandt87))
@@ -15,7 +108,7 @@
 * Prometheus-alert-manager: increase memory and cpu limits due to OOM errors ([#298](https://github.com/mesosphere/kubernetes-base-addons/pull/298), [@hectorj2f](https://github.com/hectorj2f))
 * Traefik is now upgradeable again when the `initCertJobImage` field is modified. ([#302](https://github.com/mesosphere/kubernetes-base-addons/pull/302), [@makkes](https://github.com/makkes))
 * \[traefik\]:
-  - upgrade to 1.7.24 
+  - upgrade to 1.7.24
   - mTLS available
   - accessLogs.filters setable
   - caServer setable for acme challenge ([#304](https://github.com/mesosphere/kubernetes-base-addons/pull/304), [@sebbrandt87](https://github.com/sebbrandt87))
@@ -23,7 +116,7 @@
 * Opsportal: fix a typo in 'lables' that caused issues during upgrades. ([#307](https://github.com/mesosphere/kubernetes-base-addons/pull/307), [@dkoshkin](https://github.com/dkoshkin))
 * \[prometheus\]: Update prometheus-operator chart, which adds a grafana dashboard for monitoring autoscaler ([#308](https://github.com/mesosphere/kubernetes-base-addons/pull/308), [@gracedo](https://github.com/gracedo))
 * \[dex-k8s-authenticator\]:
-  - fix: render configure kubectl instructions with the cluster hostname. 
+  - fix: render configure kubectl instructions with the cluster hostname.
   - fix: add clippy js for clipboard support ([#309](https://github.com/mesosphere/kubernetes-base-addons/pull/309), [@samvantran](https://github.com/samvantran))
 * \[prometheus\] Increases default Prometheus server resources. ([#310](https://github.com/mesosphere/kubernetes-base-addons/pull/310), [@branden](https://github.com/branden))
 * ValuesRemap has been added for rewriting the forward authentication url in multiple addons. ([#315](https://github.com/mesosphere/kubernetes-base-addons/pull/315), [@jr0d](https://github.com/jr0d))
@@ -92,7 +185,7 @@
   * fix an issue in dex addon which disallowed adding local users
   * use Dex controller v0.4.1, which includes the support for OIDC group claims
   * upgrade Dex to v2.22.0, which supports groups claims for OIDC connectors
-* dex-k8s-authenticator: 
+* dex-k8s-authenticator:
   * allow scopes to be configured, and drop the `offline_access` scope as it is not used
 * kube-oidc-proxy:
   *  enable token passthrough
