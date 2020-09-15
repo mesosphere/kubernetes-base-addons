@@ -27,7 +27,7 @@ import (
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
-	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
 )
 
 const (
@@ -147,7 +147,7 @@ func TestAzureGroup(t *testing.T) {
 // Private Functions
 // -----------------------------------------------------------------------------
 
-func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
 		return fmt.Errorf("creating docker client: %w", err)
@@ -165,7 +165,7 @@ func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node
 			return fmt.Errorf("creating volume for node: %w", err)
 		}
 
-		node.ExtraMounts = append(node.ExtraMounts, v1alpha3.Mount{
+		node.ExtraMounts = append(node.ExtraMounts, v1alpha4.Mount{
 			ContainerPath: fmt.Sprintf("/mnt/disks/%s", volumeName),
 			HostPath:      volume.Mountpoint,
 		})
@@ -174,7 +174,7 @@ func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node
 	return nil
 }
 
-func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
 		return fmt.Errorf("creating docker client: %w", err)
@@ -198,7 +198,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 
 	u := uuid.New()
 
-	node := v1alpha3.Node{}
+	node := v1alpha4.Node{}
 	if err := createNodeVolumes(3, u.String(), &node); err != nil {
 		return err
 	}
@@ -418,7 +418,7 @@ kubeEtcd:
 `,
 }
 
-func newCluster(groupname string, version string, node v1alpha3.Node, t *testing.T) (testcluster.Cluster, error) {
+func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
 	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
 		path, _ := os.Getwd()
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
@@ -427,13 +427,13 @@ func newCluster(groupname string, version string, node v1alpha3.Node, t *testing
 	path, ok := os.LookupEnv("KBA_KUBECONFIG")
 	if !ok {
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
-		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}))
 	}
 
 	config, err := clientcmd.LoadFromFile(path)
 	if err != nil || len(config.Contexts) == 0 {
 		t.Logf("%s is not a valid kubeconfig. Creating Kind cluster", path)
-		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}), cluster.CreateWithKubeconfigPath(path))
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}), cluster.CreateWithKubeconfigPath(path))
 	}
 
 	t.Log("Using KBA_KUBECONFIG at", path)
