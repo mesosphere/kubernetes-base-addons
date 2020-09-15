@@ -5,3 +5,4 @@ kind-logs-*/
 **/*.kube/
 /kubeaddons-tests
 kba-kubeconfig-*
+admin.conf
