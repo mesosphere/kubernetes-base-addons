@@ -31,9 +31,8 @@ import (
 )
 
 const (
-	controllerBundle = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
-	// just take the default from ksphere-testing-framework with ""
-	defaultKindestNodeImage = "kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+	controllerBundle        = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
+	defaultKindestNodeImage = "kindest/node:v1.18.8"
 	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
