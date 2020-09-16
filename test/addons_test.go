@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"testing"
 
+	"github.com/blang/semver"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"sigs.k8s.io/kind/pkg/cluster"
 
@@ -21,6 +23,7 @@ import (
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
+	"github.com/mesosphere/kubeaddons/pkg/constants"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
@@ -31,9 +34,8 @@ import (
 )
 
 const (
-	controllerBundle = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
-	// just take the default from ksphere-testing-framework with ""
-	defaultKindestNodeImage = "kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+	controllerBundle        = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
+	defaultKindestNodeImage = "kindest/node:v1.18.8"
 	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
@@ -265,13 +267,54 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		return err
 	}
 
+	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
+	addonUpgrades := testharness.Loadables{}
+	for _, newAddon := range addons {
+		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRef, newAddon.GetName())
+		if err != nil {
+			return err
+		}
+		if oldAddon == nil {
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			continue // new addon, upgrade test not needed
+		}
+
+		t.Logf("determining old and new versions for upgrade testing addon %s", newAddon.GetName())
+		oldVersion, err := semver.Parse(strings.TrimPrefix(oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		if err != nil {
+			return err
+		}
+		newVersion, err := semver.Parse(strings.TrimPrefix(newAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		if err != nil {
+			return err
+		}
+		if oldVersion.GT(newVersion) {
+			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		}
+		if !newVersion.GT(oldVersion) {
+			t.Logf("skipping upgrade test for addon %s, it has not be updated", newAddon.GetName())
+			continue
+		}
+
+		t.Logf("INFO: addon %s was modified and will be upgrade tested", newAddon.GetName())
+		addonUpgrade, err := addontesters.UpgradeAddon(t, tcluster, oldAddon, newAddon)
+		if err != nil {
+			return err
+		}
+
+		addonUpgrades = append(addonUpgrades, addonUpgrade)
+	}
+
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
 		addonDeployment,
 		addonDefaults,
-		addonCleanup,
 	)
+	th.Load(addonUpgrades...)
+	th.Load(addonCleanup)
+
 	for _, job := range jobs {
 		th.Load(testharness.Loadable{
 			Plan: testharness.DefaultPlan,
