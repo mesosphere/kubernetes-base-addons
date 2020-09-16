@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"testing"
 
+	"github.com/blang/semver"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"sigs.k8s.io/kind/pkg/cluster"
 
@@ -21,19 +23,19 @@ import (
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
+	"github.com/mesosphere/kubeaddons/pkg/constants"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
-	"sigs.k8s.io/kind/pkg/apis/config/v1alpha3"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
 )
 
 const (
-	controllerBundle = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
-	// just take the default from ksphere-testing-framework with ""
-	defaultKindestNodeImage = "kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+	controllerBundle        = "https://mesosphere.github.io/kubeaddons/bundle.yaml"
+	defaultKindestNodeImage = "kindest/node:v1.18.8"
 	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
@@ -147,7 +149,7 @@ func TestAzureGroup(t *testing.T) {
 // Private Functions
 // -----------------------------------------------------------------------------
 
-func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
 		return fmt.Errorf("creating docker client: %w", err)
@@ -165,7 +167,7 @@ func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node
 			return fmt.Errorf("creating volume for node: %w", err)
 		}
 
-		node.ExtraMounts = append(node.ExtraMounts, v1alpha3.Mount{
+		node.ExtraMounts = append(node.ExtraMounts, v1alpha4.Mount{
 			ContainerPath: fmt.Sprintf("/mnt/disks/%s", volumeName),
 			HostPath:      volume.Mountpoint,
 		})
@@ -174,7 +176,7 @@ func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node
 	return nil
 }
 
-func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha3.Node) error {
+func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
 		return fmt.Errorf("creating docker client: %w", err)
@@ -198,7 +200,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 
 	u := uuid.New()
 
-	node := v1alpha3.Node{}
+	node := v1alpha4.Node{}
 	if err := createNodeVolumes(3, u.String(), &node); err != nil {
 		return err
 	}
@@ -265,13 +267,54 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		return err
 	}
 
+	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
+	addonUpgrades := testharness.Loadables{}
+	for _, newAddon := range addons {
+		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRef, newAddon.GetName())
+		if err != nil {
+			return err
+		}
+		if oldAddon == nil {
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			continue // new addon, upgrade test not needed
+		}
+
+		t.Logf("determining old and new versions for upgrade testing addon %s", newAddon.GetName())
+		oldVersion, err := semver.Parse(strings.TrimPrefix(oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		if err != nil {
+			return err
+		}
+		newVersion, err := semver.Parse(strings.TrimPrefix(newAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		if err != nil {
+			return err
+		}
+		if oldVersion.GT(newVersion) {
+			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		}
+		if !newVersion.GT(oldVersion) {
+			t.Logf("skipping upgrade test for addon %s, it has not be updated", newAddon.GetName())
+			continue
+		}
+
+		t.Logf("INFO: addon %s was modified and will be upgrade tested", newAddon.GetName())
+		addonUpgrade, err := addontesters.UpgradeAddon(t, tcluster, oldAddon, newAddon)
+		if err != nil {
+			return err
+		}
+
+		addonUpgrades = append(addonUpgrades, addonUpgrade)
+	}
+
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
 		addonDeployment,
 		addonDefaults,
-		addonCleanup,
 	)
+	th.Load(addonUpgrades...)
+	th.Load(addonCleanup)
+
 	for _, job := range jobs {
 		th.Load(testharness.Loadable{
 			Plan: testharness.DefaultPlan,
@@ -418,7 +461,7 @@ kubeEtcd:
 `,
 }
 
-func newCluster(groupname string, version string, node v1alpha3.Node, t *testing.T) (testcluster.Cluster, error) {
+func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
 	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
 		path, _ := os.Getwd()
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
@@ -427,13 +470,13 @@ func newCluster(groupname string, version string, node v1alpha3.Node, t *testing
 	path, ok := os.LookupEnv("KBA_KUBECONFIG")
 	if !ok {
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
-		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}))
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}))
 	}
 
 	config, err := clientcmd.LoadFromFile(path)
 	if err != nil || len(config.Contexts) == 0 {
 		t.Logf("%s is not a valid kubeconfig. Creating Kind cluster", path)
-		return kind.NewCluster(version, cluster.CreateWithV1Alpha3Config(&v1alpha3.Cluster{Nodes: []v1alpha3.Node{node}}), cluster.CreateWithKubeconfigPath(path))
+		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}), cluster.CreateWithKubeconfigPath(path))
 	}
 
 	t.Log("Using KBA_KUBECONFIG at", path)

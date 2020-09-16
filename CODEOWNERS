@@ -6,9 +6,16 @@
 
 * @mesosphere/sig-ksphere-catalog
 
-# Prometheus
-addons/prometheus/* @mesosphere/sig-ksphere-observability 
+# Logging and Metrics stack
+addons/prometheus/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/prometheusadapter/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/elasticsearch/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/elasticsearch-curator/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/elasticsearchexporter/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/fluentbit/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+addons/kibana/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-catalog
+
 
 # Networking
-addons/metallb/* @mesosphere/sig-ksphere-networking
-addons/istio/* @mesosphere/sig-ksphere-networking
+addons/metallb/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
+addons/istio/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
