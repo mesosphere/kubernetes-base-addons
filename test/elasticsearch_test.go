@@ -52,52 +52,129 @@ func kibanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		}
 		defer close(stop)
 
-		// Check kibana status is healthy.
-		// Kibana may serve 503s for some time after its pod is ready. Retry until kibana is ready to accept requests.
-		var resp *http.Response
-		path := "/api/status"
-		retryWait := 10 * time.Second
-		for tries := 0; tries < 20; tries++ {
-			resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
-			if err != nil {
-				return fmt.Errorf("could not GET %s: %s", path, err)
-			}
-
-			if resp.StatusCode != http.StatusServiceUnavailable {
-				break
-			}
-			time.Sleep(retryWait)
+		if err := waitForKibana(localport); err != nil {
+			return fmt.Errorf("kibana took too long to become available: %s", err)
 		}
 
-		if resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
+		if err := checkKibanaStatus(localport); err != nil {
+			return fmt.Errorf("failed to check kibana status: %s", err)
 		}
 
-		b, err := ioutil.ReadAll(resp.Body)
-		obj := map[string]interface{}{}
-		if err := json.Unmarshal(b, &obj); err != nil {
-			return fmt.Errorf("could not decode JSON response: %s", err)
-		}
-
-		status, ok := obj["status"].(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("JSON response missing key status with object value")
-		}
-		overallStatus, ok := status["overall"].(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("status missing key overall with object value")
-		}
-		overallState, ok := overallStatus["state"].(string)
-		if !ok {
-			return fmt.Errorf("overall status missing key state with string value")
-		}
-		if overallState != "green" {
-			return fmt.Errorf("expected kibana state green, got %s", overallState)
+		if err := checkKibanaDashboards(localport); err != nil {
+			return fmt.Errorf("failed to check kibana dashboards: %s", err)
 		}
 
 		t.Logf("INFO: successfully tested kibana")
 		return nil
 	}
+}
+
+// waitForKibana returns nil once the Kibana API serves a 200 response, indicating it is ready to accept requests.
+// Kibana may serve 503s for some time after its pod is ready.
+func waitForKibana(localport int) error {
+	path := "/api/status"
+	retryWait := 10 * time.Second
+	maxTries := 20
+
+	var resp *http.Response
+	for tries := 0; tries < maxTries; tries++ {
+		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+		if err != nil {
+			return fmt.Errorf("could not GET %s: %s", path, err)
+		}
+
+		if resp.StatusCode != http.StatusServiceUnavailable {
+			break
+		}
+		time.Sleep(retryWait)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
+	}
+
+	return nil
+}
+
+// checkKibanaStatus returns nil if the overall cluster state is green, otherwise an error.
+func checkKibanaStatus(localport int) error {
+	path := "/api/status"
+
+	var resp *http.Response
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+	if err != nil {
+		return fmt.Errorf("could not GET %s: %s", path, err)
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	obj := map[string]interface{}{}
+	if err := json.Unmarshal(b, &obj); err != nil {
+		return fmt.Errorf("could not decode JSON response: %s", err)
+	}
+
+	status, ok := obj["status"].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("JSON response missing key status with object value")
+	}
+	overallStatus, ok := status["overall"].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("status missing key overall with object value")
+	}
+	overallState, ok := overallStatus["state"].(string)
+	if !ok {
+		return fmt.Errorf("overall status missing key state with string value")
+	}
+	if overallState != "green" {
+		return fmt.Errorf("expected kibana state green, got %s", overallState)
+	}
+
+	return nil
+}
+
+// checkKibanaDashboards returns nil if Kibana has all expected dashboards, otherwise an error.
+func checkKibanaDashboards(localport int) error {
+	expectedDashboards := []string{"Audit-Dashboard"}
+	path := "/api/saved_objects/_find?type=dashboard"
+
+	var resp *http.Response
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+	if err != nil {
+		return fmt.Errorf("could not GET %s: %s", path, err)
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	obj := map[string]interface{}{}
+	if err := json.Unmarshal(b, &obj); err != nil {
+		return fmt.Errorf("could not decode JSON response: %s", err)
+	}
+
+	saved_objects, ok := obj["saved_objects"].([]map[string]interface{})
+	if !ok {
+		return fmt.Errorf("JSON response missing key saved_objects with array value")
+	}
+
+	titles := make(map[string]bool)
+	for _, object := range saved_objects {
+		attributes, ok := object["attributes"].(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("Kibana API object missing key attributes with object value")
+		}
+
+		title, ok := attributes["title"].(string)
+		if !ok {
+			return fmt.Errorf("Kibana API object attributes missing key title with string value")
+		}
+
+		titles[title] = true
+	}
+
+	for _, title := range expectedDashboards {
+		if _, ok := titles[title]; !ok {
+			return fmt.Errorf("Dashboard %s not found", title)
+		}
+	}
+
+	return nil
 }
 
 // checkElasticsearchAvailable checks that the elasticsearch API is available on a local port.
