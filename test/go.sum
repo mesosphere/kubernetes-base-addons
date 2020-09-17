@@ -553,10 +553,8 @@ github.com/mesosphere/ksphere-testing-framework v0.2.0/go.mod h1:FMV0aXxxjC6+Q6R
 github.com/mesosphere/kubeaddons v0.10.2/go.mod h1:6TEL+jD4yW324GCF+aaIXNmBBgeeaF636DAi43OJffo=
 github.com/mesosphere/kubeaddons v0.11.0/go.mod h1:vUibt0jKmrxwRi2nDS7Os+Lz1PMqGVDG6HpdI0HUWGQ=
 github.com/mesosphere/kubeaddons v0.16.1/go.mod h1:CQd9wXoGtdH7iDQ00++WaiL/vJCsXNx22ug94P4z+X0=
-github.com/mesosphere/kubeaddons v0.20.1 h1:ylsyaq5wz6/gqyTCl/VfaGP2ByzgqQEbkQTdQKLmRLQ=
-github.com/mesosphere/kubeaddons v0.20.1/go.mod h1:HBLL0ZV1sGw5KNNtxJDALW8AiNsyY+c+FCerrQjFL90=
-github.com/mesosphere/kubeaddons v0.20.2 h1:lThvyDh0slvCKKka5csl9D0nZTbomBdfqVXw+yyCn14=
-github.com/mesosphere/kubeaddons v0.20.2/go.mod h1:HBLL0ZV1sGw5KNNtxJDALW8AiNsyY+c+FCerrQjFL90=
+github.com/mesosphere/kubeaddons v0.20.3 h1:cj0074Kq8tJvYqgU9RypILUIf3lVm8tkTYnlNmIYgtI=
+github.com/mesosphere/kubeaddons v0.20.3/go.mod h1:HBLL0ZV1sGw5KNNtxJDALW8AiNsyY+c+FCerrQjFL90=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/mitchellh/cli v1.0.0/go.mod h1:hNIlj7HEI86fIcpObd7a0FcrxTWetlwJDGcceTlRvqc=
 github.com/mitchellh/copystructure v1.0.0/go.mod h1:SNtv71yrdKgLRyLFxmLdkAbkKEFWgYaq1OVrnRcwhnw=

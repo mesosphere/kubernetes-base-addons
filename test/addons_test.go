@@ -55,21 +55,25 @@ type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
 func init() {
 	var err error
 
+	fmt.Println("initializing local repository for test...")
 	localRepo, err = local.NewRepository("local", "../addons")
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Printf("initializing remote repository %s for test...\n", comRepoURL)
 	comRepo, err = git.NewRemoteRepository(comRepoURL, comRepoRef, comRepoRemote)
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("initializing catalog with repositories...")
 	cat, err = catalog.NewCatalog(localRepo, comRepo)
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("finding addon test groups...")
 	groups, err = experimental.AddonsForGroupsFile("groups.yaml", cat)
 	if err != nil {
 		panic(err)
@@ -210,6 +214,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		}
 	}()
 
+	t.Logf("setting up cluster for test group %s", groupname)
 	tcluster, err := newCluster(groupname, version, node, t)
 	if err != nil {
 		// try to clean up in case cluster was created and reference available
@@ -271,7 +276,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	addonUpgrades := testharness.Loadables{}
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRef, newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
 		if err != nil {
 			return err
 		}
@@ -281,14 +286,18 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		}
 
 		t.Logf("determining old and new versions for upgrade testing addon %s", newAddon.GetName())
-		oldVersion, err := semver.Parse(strings.TrimPrefix(oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		oldRev := oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		oldVersion, err := semver.Parse(strings.TrimPrefix(oldRev, "v"))
 		if err != nil {
 			return err
 		}
-		newVersion, err := semver.Parse(strings.TrimPrefix(newAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		newRev := newAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		newVersion, err := semver.Parse(strings.TrimPrefix(newRev, "v"))
 		if err != nil {
 			return err
 		}
+
+		t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
 		if oldVersion.GT(newVersion) {
 			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
 		}
