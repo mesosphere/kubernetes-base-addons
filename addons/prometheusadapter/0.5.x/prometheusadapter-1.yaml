@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: prometheusadapter
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-2"
     appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.7.0"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/helm/charts/76696b9/stable/prometheus-adapter/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/helm/charts/8d6ee06/stable/prometheus-adapter/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -28,7 +28,7 @@ spec:
         kubeaddons.mesosphere.io/name: prometheus
   chartReference:
     chart: stable/prometheus-adapter
-    version: 2.5.0
+    version: 2.5.1
     values: |
       ---
       prometheus:
