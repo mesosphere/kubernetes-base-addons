@@ -105,6 +105,10 @@ func checkKibanaStatus(localport int) error {
 		return fmt.Errorf("could not GET %s: %s", path, err)
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
+	}
+
 	b, err := ioutil.ReadAll(resp.Body)
 	obj := map[string]interface{}{}
 	if err := json.Unmarshal(b, &obj); err != nil {
@@ -138,6 +142,10 @@ func checkKibanaDashboards(localport int) error {
 	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 	if err != nil {
 		return fmt.Errorf("could not GET %s: %s", path, err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
