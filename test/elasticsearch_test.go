@@ -77,8 +77,9 @@ func waitForKibana(localport int) error {
 	maxTries := 20
 
 	var resp *http.Response
+	var err error
 	for tries := 0; tries < maxTries; tries++ {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
 			return fmt.Errorf("could not GET %s: %s", path, err)
 		}
