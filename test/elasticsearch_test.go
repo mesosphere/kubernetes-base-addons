@@ -100,7 +100,6 @@ func waitForKibana(localport int) error {
 func checkKibanaStatus(localport int) error {
 	path := "/api/status"
 
-	var resp *http.Response
 	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 	if err != nil {
 		return fmt.Errorf("could not GET %s: %s", path, err)
@@ -136,7 +135,6 @@ func checkKibanaDashboards(localport int) error {
 	expectedDashboards := []string{"Audit-Dashboard"}
 	path := "/api/saved_objects/_find?type=dashboard"
 
-	var resp *http.Response
 	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 	if err != nil {
 		return fmt.Errorf("could not GET %s: %s", path, err)
