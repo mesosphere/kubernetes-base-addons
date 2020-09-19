@@ -155,13 +155,18 @@ func checkKibanaDashboards(localport int) error {
 		return fmt.Errorf("could not decode JSON response: %s", err)
 	}
 
-	saved_objects, ok := obj["saved_objects"].([]map[string]interface{})
+	saved_objects, ok := obj["saved_objects"].([]interface{})
 	if !ok {
 		return fmt.Errorf("JSON response missing key saved_objects with array value")
 	}
 
 	titles := make(map[string]bool)
-	for _, object := range saved_objects {
+	for _, obj := range saved_objects {
+		object, ok := obj.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("Unexpected type for Kibana API object")
+		}
+
 		attributes, ok := object["attributes"].(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("Kibana API object missing key attributes with object value")
