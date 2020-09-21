@@ -77,8 +77,9 @@ func waitForKibana(localport int) error {
 	maxTries := 20
 
 	var resp *http.Response
+	var err error
 	for tries := 0; tries < maxTries; tries++ {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
 			return fmt.Errorf("could not GET %s: %s", path, err)
 		}
@@ -100,10 +101,13 @@ func waitForKibana(localport int) error {
 func checkKibanaStatus(localport int) error {
 	path := "/api/status"
 
-	var resp *http.Response
 	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 	if err != nil {
 		return fmt.Errorf("could not GET %s: %s", path, err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -136,10 +140,13 @@ func checkKibanaDashboards(localport int) error {
 	expectedDashboards := []string{"Audit-Dashboard"}
 	path := "/api/saved_objects/_find?type=dashboard"
 
-	var resp *http.Response
 	resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 	if err != nil {
 		return fmt.Errorf("could not GET %s: %s", path, err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -148,13 +155,18 @@ func checkKibanaDashboards(localport int) error {
 		return fmt.Errorf("could not decode JSON response: %s", err)
 	}
 
-	saved_objects, ok := obj["saved_objects"].([]map[string]interface{})
+	saved_objects, ok := obj["saved_objects"].([]interface{})
 	if !ok {
 		return fmt.Errorf("JSON response missing key saved_objects with array value")
 	}
 
 	titles := make(map[string]bool)
-	for _, object := range saved_objects {
+	for _, obj := range saved_objects {
+		object, ok := obj.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("Unexpected type for Kibana API object")
+		}
+
 		attributes, ok := object["attributes"].(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("Kibana API object missing key attributes with object value")
