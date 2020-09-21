@@ -19,3 +19,4 @@ addons/kibana/* @mesosphere/sig-ksphere-observability @mesosphere/sig-ksphere-ca
 # Networking
 addons/metallb/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
 addons/istio/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
+addons/ambassador/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog

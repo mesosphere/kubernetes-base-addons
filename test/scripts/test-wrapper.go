@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
+	testgroups "github.com/mesosphere/ksphere-testing-framework/pkg/groups"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/constants"
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
@@ -46,7 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	groups, err := experimental.AddonsForGroupsFile("groups.yaml", c)
+	groups, err := testgroups.AddonsForGroupsFile("groups.yaml", c)
 	if err != nil {
 		panic(err)
 	}
