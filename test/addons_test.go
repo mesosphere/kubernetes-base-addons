@@ -278,6 +278,10 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
 		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
 		if err != nil {
+			if strings.Contains(err.Error(), "directory not found") {
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				continue
+			}
 			return err
 		}
 		if oldAddon == nil {
