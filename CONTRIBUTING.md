@@ -27,7 +27,7 @@ Once this is complete end users who are using older releases of `kubernetes-base
 
 For Addons, "revisions" are a reference to the application version with an added revision count which indicates the latest iteration on that version. This enables multiple different versions of an Addon which ultimately utilize the same underlying application version so that configuration and other aspects of the Addon can change without overriding a previously released Addon.
 
-The [Kubeaddons Catalog API](https://github.com/mesosphere/kubeaddons) supports two different modes for addon repositories to host revisions:
+The [Kubeaddons Catalog API](https://github.com/mesosphere/kubeaddons/tree/master/pkg/catalog) supports two different modes for addon repositories to host revisions:
 
 * single file mode: a single file for the addon exists at `addons/<addon-name>/<addon-name>.yaml` and the revision for that addon must be adjusted forward when any changes are made
 * multi file mode: each new revision is a separate file, and you can structure this like `addons/<addon-name>/<app-version>/<addon-name>-<revision>.yaml`. However, there's no obligation to follow this pattern as the Kubeaddons controller will consider every valid Addon manifest it finds in the directory hierarchy.
