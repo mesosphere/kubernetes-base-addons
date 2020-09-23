@@ -25,10 +25,13 @@ Once this is complete end users who are using older releases of `kubernetes-base
 
 ## Addon Revisions
 
-You will find that any particular addon directory (e.g. `addons/prometheus`) may have several directories and several manifests nested in them each with variants of that addon. These are what we refered to above as "revisions".
+For Addons, "revisions" are a reference to the application version with an added revision count which indicates the latest iteration on that version. This enables multiple different versions of an Addon which ultimately utilize the same underlying application version so that configuration and other aspects of the Addon can change without overriding a previously released Addon.
 
-The **intention of revisions is to maintain a flat history of addon changes**. If you are making changes to any particular addon you should be making a revision of that addon as a copy of the original file with the changes made therein and the `addon-revision` version updated to reflect the new version appropriately.
+The [Kubeaddons Catalog API](https://github.com/mesosphere/kubeaddons) supports two different modes for addon repositories to host revisions:
 
-New directories can be created for minor versions of a release (e.g. a directory named `v0.9.x`) and contain any revisions matching that minor release. You create new files which should follow the patter `<addon_name>-<version>-<revision>` (e.g. `helloworld-v0.9.1-1.yaml`) keeping in mind revisions start over from 1 again if the patch version updates.
+* single file mode: a single file for the addon exists at `addons/<addon-name>/<addon-name>.yaml` and the revision for that addon must be adjusted forward when any changes are made
+* multi file mode: each new revision is a separate file, and you can structure this like `addons/<addon-name>/<app-version>/<addon-name>-<revision>.yaml`
 
-Right now adding revisions is a manual process (see [DCOS-62943](https://jira.mesosphere.com/browse/DCOS-62943) related to automating this in future iterations). To make it easier for reviewers to review PRs where revisions are [manually] added make the first commit in your branch a commit to ONLY copy the previous revision to the new revision file. That way the following commits can actually include your changes and will be easier to historically follow without needing to manually diff the files.
+In this repository we use single file mode because that Catalog API is not used in such a way that we need to bother searching the historical revisions (this repository is predominantly used by Konvoy which does it's versioning for Addons based on Git).
+
+You may find in other repositories (such as [mesosphere/kubeaddons-enterprise](https://github.com/mesosphere/kubeaddons-enterprise)) that multi-file mode is used to support flat searching of the Addon revision history.
