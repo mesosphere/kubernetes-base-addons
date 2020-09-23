@@ -30,7 +30,7 @@ For Addons, "revisions" are a reference to the application version with an added
 The [Kubeaddons Catalog API](https://github.com/mesosphere/kubeaddons) supports two different modes for addon repositories to host revisions:
 
 * single file mode: a single file for the addon exists at `addons/<addon-name>/<addon-name>.yaml` and the revision for that addon must be adjusted forward when any changes are made
-* multi file mode: each new revision is a separate file, and you can structure this like `addons/<addon-name>/<app-version>/<addon-name>-<revision>.yaml`
+* multi file mode: each new revision is a separate file, and you can structure this like `addons/<addon-name>/<app-version>/<addon-name>-<revision>.yaml`. However, there's no obligation to follow this pattern as the Kubeaddons controller will consider every valid Addon manifest it finds in the directory hierarchy.
 
 In this repository we use single file mode because that Catalog API is not used in such a way that we need to bother searching the historical revisions (this repository is predominantly used by Konvoy which does it's versioning for Addons based on Git).
 
