@@ -8,9 +8,18 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/blang/semver"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
+	"github.com/mesosphere/kubeaddons/pkg/constants"
+	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
+	testutils "github.com/mesosphere/kubeaddons/test/utils"
+)
+
+const (
+	upstreamRemote = "origin"
+	upstreamBranch = "master"
 )
 
 type addonName string
@@ -25,6 +34,10 @@ func main() {
 
 	r, err := local.NewRepository("local", "../addons/")
 	if err != nil {
+		panic(err)
+	}
+
+	if err := ensureModifiedAddonsHaveUpdatedRevisions(modifiedAddons, r); err != nil {
 		panic(err)
 	}
 
@@ -85,4 +98,40 @@ func getModifiedAddons() ([]addonName, error) {
 	}
 
 	return addonsModified, nil
+}
+
+func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
+	for _, addonName := range namesOfModifiedAddons {
+		fmt.Printf("INFO: ensuring revision was updated for modified addon %s\n", addonName)
+
+		modifiedAddonRevisions, err := repo.GetAddon(string(addonName))
+		if err != nil {
+			return err
+		}
+
+		modifiedAddon, err := modifiedAddonRevisions.Latest()
+		if err != nil {
+			return err
+		}
+
+		upstreamAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", upstreamRemote, upstreamBranch, string(addonName))
+		if err != nil {
+			if strings.Contains(err.Error(), "directory not found") {
+				fmt.Printf("%s is a new addon, revision check skipped", addonName)
+				continue
+			}
+			return err
+		}
+
+		modifiedVersion := semver.MustParse(modifiedAddon.GetAnnotations()[constants.AddonRevisionAnnotation])
+		upstreamVersion := semver.MustParse(upstreamAddon.GetAnnotations()[constants.AddonRevisionAnnotation])
+
+		if modifiedVersion.LE(upstreamVersion) {
+			return fmt.Errorf("the revision for addons %s was not properly updated (current: %s, previous from branch %s: %s). Please update the revision for any addons which you modify (see CONTRIBUTING.md)", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
+		}
+
+		fmt.Printf("INFO: addon %s has an updated revision %s (upstream branch %s: %s)\n", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
+	}
+
+	return nil
 }
