@@ -13,7 +13,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	github.com/google/uuid v1.1.2
-	github.com/mesosphere/ksphere-testing-framework v0.2.0
+	github.com/mesosphere/ksphere-testing-framework v0.2.1
 	github.com/mesosphere/kubeaddons v0.20.3
 	k8s.io/api v0.19.1
 	k8s.io/apimachinery v0.19.1
