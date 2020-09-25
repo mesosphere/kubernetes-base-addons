@@ -1,8 +1,58 @@
 # Release Notes
 
+## stable-1.15-2.4.0, stable-1.16-2.4.0, stable-1.17-2.4.0
+
+* Istio:
+  - The "kubernetes-service-monitor" service monitor has been removed. ([#481](https://github.com/mesosphere/kubernetes-base-addons/pull/481), [@gracedo](https://github.com/gracedo))
+
+  - Bumped Istio to v1.6.8:
+    - Fixed security issues:
+      - CVE-2020-12603: By sending a specially crafted packet, an attacker could cause Envoy to consume excessive amounts of memory when proxying HTTP/2 requests or responses.
+      - CVE-2020-12605: An attacker could cause Envoy to consume excessive amounts of memory when processing specially crafted HTTP/1.1 packets.
+      - CVE-2020-8663: An attacker could cause Envoy to exhaust file descriptors when accepting too many connections.
+      - CVE-2020-12604: An attacker could cause increased memory usage when processing specially crafted packets.
+      - CVE-2020-15104: When validating TLS certificates, Envoy incorrectly allows a wildcard DNS Subject Alternative Name to apply to multiple subdomains. For example, with a SAN of   .example.com, Envoy incorrectly allows nested.subdomain.example.com, when it should only allow subdomain.example.com.
+      - CVE-2020-16844: Callers to TCP services that have a defined Authorization Policies with DENY actions using wildcard suffixes (e.g. *-some-suffix) for source principals or namespace fields will never be denied access.
+    - Other changes:
+      - Fixed return the proper source name after Mixer does a lookup by IP if multiple pods have the same IP.
+      - Improved the sidecar injection control based on revision at a per-pod level (Issue 24801)
+      - Improved istioctl validate to disallow unknown fields not included in the Open API specification (Issue 24860)
+      - Changed stsPort to sts_port in Envoy’s bootstrap file.
+      - Preserved existing WASM state schema for state objects to reference it later as needed.
+      - Added targetUri to stackdriver_grpc_service.
+      - Updated WASM state to log for Access Log Service.
+      - Increased default protocol detection timeout from 100 ms to 5 s (Issue 24379)
+      - Removed UDP port 53 from Istiod.
+      - Allowed setting status.sidecar.istio.io/port to zero (Issue 24722)
+      - Fixed EDS endpoint selection for subsets with no or empty label selector. (Issue 24969)
+      - Allowed k8s.overlays on BaseComponentSpec. (Issue 24476)
+      - Fixed istio-agent to create elliptical curve CSRs when ECC_SIGNATURE_ALGORITHM is set.
+      - Improved mapping of gRPC status codes into HTTP domain for telemetry.
+      - Fixed scaleTargetRef naming in HorizontalPodAutoscaler for Istiod (Issue 24809)
+      - Optimized performance in scenarios with large numbers of gateways. (Issue 25116)
+      - Fixed an issue where out of order events may cause the Istiod update queue to get stuck. This resulted in proxies with stale configuration.
+      - Fixed istioctl upgrade so that it no longer checks remote component versions when using --dry-run. (Issue 24865)
+      - Fixed long log messages for clusters with many gateways.
+      - Fixed outlier detection to only fire on user configured errors and not depend on success rate. (Issue 25220)
+      - Fixed demo profile to use port 15021 as the status port. (Issue &#35;25626)
+      - Fixed Galley to properly handle errors from Kubernetes tombstones.
+      - Fixed an issue where manually enabling TLS/mTLS for communication between a sidecar and an egress gateway did not work. (Issue 23910)
+      - Fixed Bookinfo demo application to verify if a specified namespace exists and if not, use the default namespace.
+      - Added a label to the pilot_xds metric in order to give more information on data plane versions without scraping the data plane.
+      - Added CA_ADDR field to allow configuring the certificate authority address on the egress gateway configuration and fixed the istio-certs mount secret name.
+      - Updated Bookinfo demo application to latest versions of libraries.
+      - Updated Istio to disable auto mTLS when sending traffic to headless services without a sidecar.
+      - Fixed an issue which prevented endpoints not associated with pods from working. (Issue &#35;25974) ([#489](https://github.com/mesosphere/kubernetes-base-addons/pull/489), [@shaneutt](https://github.com/shaneutt))
+
+* Traefik-forward-auth:
+  - Update traefik-foward-auth to 0.2.14
+  - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+
+* Fixed an upgrade issue for several addons which would cause them to not be properly targeted for upgrade ([#492](https://github.com/mesosphere/kubernetes-base-addons/pull/492), [@shaneutt](https://github.com/shaneutt))
+
 ## stable-1.15-2.3.0, stable-1.16-2.3.0, stable-1.17-2.3.0
 
-- Azuredisk-csi-driver: 
+- Azuredisk-csi-driver:
   - enable the Snapshot controller ([#443](https://github.com/mesosphere/kubernetes-base-addons/pull/443), [@dkoshkin](https://github.com/dkoshkin))
 - Cert-manager:
   - `Issuer` namespace setable
@@ -13,7 +63,7 @@
 - Elasticsearch-curator:
   - version 5.8.1 ([#374](https://github.com/mesosphere/kubernetes-base-addons/pull/374), [@sebbrandt87](https://github.com/sebbrandt87))
   - Added value `cronjob.startingDeadlineSeconds`: Amount of time to try reschedule job if we can't run on time ([#447](https://github.com/mesosphere/kubernetes-base-addons/pull/447), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
-- Elasticsearch-exporter: 
+- Elasticsearch-exporter:
   - updated from 2.11 to 3.7.0
     - Add a parameter for the elasticsearch-exporter: es.indices_settings as it is supported since version 1.0.4 (the elasticsearch-exporter chart is supporting the version 1.1.0)
     - Update description for envFromSecret parameter in readme
