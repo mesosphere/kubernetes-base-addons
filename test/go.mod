@@ -16,7 +16,7 @@ require (
 	github.com/mesosphere/ksphere-testing-framework v0.2.0
 	github.com/mesosphere/kubeaddons v0.20.3
 	k8s.io/api v0.19.1
-	k8s.io/apimachinery v0.19.1
+	k8s.io/apimachinery v0.19.2
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 	k8s.io/helm v2.16.10+incompatible
 	sigs.k8s.io/kind v0.9.0
