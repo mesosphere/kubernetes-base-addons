@@ -550,6 +550,8 @@ github.com/mesosphere/ksphere-testing-framework v0.0.0-20200624200651-6b661edc68
 github.com/mesosphere/ksphere-testing-framework v0.0.0-20200624200651-6b661edc6888/go.mod h1:VepB0MnVsAdG5U7CkSQQXkrYvlfOELYlMiNOmutuZEA=
 github.com/mesosphere/ksphere-testing-framework v0.2.0 h1:ogL9OLjsV+V3ZQRVR6AqcXaFIGDC+dwQ2O6oR5wKDP4=
 github.com/mesosphere/ksphere-testing-framework v0.2.0/go.mod h1:FMV0aXxxjC6+Q6Ra0vph2kF34EtgKunHlkORapcztSc=
+github.com/mesosphere/ksphere-testing-framework v0.2.2 h1:TGwiAV+zKAcqzJj7e+v6xX0ValoxFTiokeFi4aXqXBs=
+github.com/mesosphere/ksphere-testing-framework v0.2.2/go.mod h1:dUMM5TgKfr1uWqI+Lx+bkqZP3Zyhge8BHC4wAPQswzs=
 github.com/mesosphere/kubeaddons v0.10.2/go.mod h1:6TEL+jD4yW324GCF+aaIXNmBBgeeaF636DAi43OJffo=
 github.com/mesosphere/kubeaddons v0.11.0/go.mod h1:vUibt0jKmrxwRi2nDS7Os+Lz1PMqGVDG6HpdI0HUWGQ=
 github.com/mesosphere/kubeaddons v0.16.1/go.mod h1:CQd9wXoGtdH7iDQ00++WaiL/vJCsXNx22ug94P4z+X0=
