@@ -19,7 +19,7 @@ spec:
         kubeaddons.mesosphere.io/name: cert-manager
   chartReference:
     chart: traefik
-    repo: https://mesosphere.github.io/charts/staging
+    repo: https://gracedo.github.io/charts/staging
     version: 1.88.0
     valuesRemap:
       "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
