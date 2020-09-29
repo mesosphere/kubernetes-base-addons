@@ -1,0 +1,64 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: elasticsearch
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: elasticsearch-master
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "7.9.3-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearch: "7.9.3"
+    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/elasticsearch/reference/7.9/index.html"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/elastic/helm-charts/7.9.3/elasticsearch/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.0
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/provides: storageclass
+  chartReference:
+    chart: elasticsearch
+    repo: https://helm.elastic.co
+    version: 7.9.3
+    values: |
+      ---
+      roles:
+        master: "true"
+        ingest: "false"
+        data: "false"
+      image: docker.elastic.co/elasticsearch/elasticsearch-oss
+      esJavaOpts: "-Xmx1g -Xms1g"
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 2048Mi
+        requests:
+          cpu: 500m
+          memory: 1536Mi
+      rbac:
+        create: true
+      podSecurityPolicy:
+        create: true
+      securityContext:
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+      volumeClaimTemplate:
+        resources:
+          requests:
+            storage: 4Gi

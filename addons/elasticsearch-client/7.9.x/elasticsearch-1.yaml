@@ -1,0 +1,98 @@
+---
+apiVersion: kubeaddons.mesosphere.io/v1beta1
+kind: Addon
+metadata:
+  name: elasticsearch
+  namespace: kubeaddons
+  labels:
+    kubeaddons.mesosphere.io/name: elasticsearch-client
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "7.9.3-1"
+    appversion.kubeaddons.mesosphere.io/elasticsearch: "7.9.3"
+    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/elasticsearch/reference/7.9/index.html"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/elastic/helm-charts/7.9.3/elasticsearch/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.15.0
+  cloudProvider:
+    - name: aws
+      enabled: true
+    - name: azure
+      enabled: true
+    - name: gcp
+      enabled: true
+    - name: docker
+      enabled: false
+    - name: none
+      enabled: true
+  requires:
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: elasticsearch-master
+  chartReference:
+    chart: elasticsearch
+    repo: https://helm.elastic.co
+    version: 7.9.3
+    values: |
+      ---
+      roles:
+        master: "false"
+        ingest: "false"
+        data: "false"
+      image: docker.elastic.co/elasticsearch/elasticsearch-oss
+      esJavaOpts: "-Xmx1g -Xms1g"
+      resources:
+        limits:
+          cpu: 500m
+          memory: 2048Mi
+        requests:
+          cpu: 100m
+          memory: 1536Mi
+      rbac:
+        create: true
+      podSecurityPolicy:
+        create: true
+      securityContext:
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+      replicas: 2
+      persistence:
+        enabled: false
+      lifecycle:
+        postStart:
+          exec:
+            command:
+              - bash
+              - -c
+              - |
+                #!/bin/bash
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+
+                TEMPLATE_NAME=kubernetes_audit
+                INDEX_PATTERN="${TEMPLATE_NAME}-*"
+                SHARD_COUNT=8
+                REPLICA_COUNT=1
+                ES_URL=http://{{ template "elasticsearch.client.fullname" . }}.kubeaddons.svc.cluster.local.:9200
+
+                # Wait until client nodes accept requests.
+                # This prevents data pods from getting into a long CrashLoopBackoff.
+                echo "Waiting for client node service ..."
+                while [[ "$(curl -s -o /dev/null -w '%{http_code}' -L ${ES_URL}/_cluster/health)" != "200" ]]; do sleep 1; done
+
+                # Reduces the number of fields produced due to the indexing of the audit logs
+                # if template doesnt return 200, try to create it
+                if [[ "$(curl -s -o /dev/null -w '%{http_code}' -L ${ES_URL}/_template/${TEMPLATE_NAME})" != "200" ]]; then
+                  echo "Creating the index template: '${TEMPLATE_NAME}'"
+                  RES_CREATE_TEMPLATE=$(curl -XPUT -s -o /dev/null -w '%{http_code}' ${ES_URL}/_template/${TEMPLATE_NAME} \
+                    -H "Content-Type: application/json; charset=utf-8" \
+                    -d '{"index_patterns":["'${INDEX_PATTERN}'"],"mappings":{"flb_type":{"properties":{"@ts":{"type":"date"},"requestObject":{"dynamic":false,"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"properties":{"creationTimestamp":{"type":"date"},"labels":{"properties":{"app":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/instance":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/managed-by":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/version":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"helm_sh/chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespace":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ownerReferences":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"status":{"properties":{"allowed":{"type":"boolean"},"conditions":{"properties":{"lastHeartbeatTime":{"type":"date"},"lastTransitionTime":{"type":"date"},"lastUpdateTime":{"type":"date"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"type":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"containerStatuses":{"properties":{"containerID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imageID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"lastState":{"properties":{"terminated":{"properties":{"containerID":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"exitCode":{"type":"long"},"finishedAt":{"type":"date"},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"startedAt":{"type":"date"}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ready":{"type":"boolean"},"restartCount":{"type":"long"},"started":{"type":"boolean"},"state":{"properties":{"running":{"properties":{"startedAt":{"type":"date"}}},"waiting":{"properties":{"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"hostIP":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"loadBalancer":{"properties":{"ingress":{"properties":{"hostname":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"podIP":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"spec":{"properties":{"user":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"template":{"properties":{"spec":{"properties":{"containers":{"properties":{"args":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"command":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"env":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"value":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"valueFrom":{"properties":{"fieldRef":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"fieldPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imagePullPolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"livenessProbe":{"properties":{"failureThreshold":{"type":"long"},"httpGet":{"properties":{"path":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"port":{"type":"long"},"scheme":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"initialDelaySeconds":{"type":"long"},"periodSeconds":{"type":"long"},"successThreshold":{"type":"long"},"timeoutSeconds":{"type":"long"}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ports":{"properties":{"containerPort":{"type":"long"},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"protocol":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"readinessProbe":{"properties":{"failureThreshold":{"type":"long"},"httpGet":{"properties":{"path":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"port":{"type":"long"},"scheme":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"initialDelaySeconds":{"type":"long"},"periodSeconds":{"type":"long"},"successThreshold":{"type":"long"},"timeoutSeconds":{"type":"long"}}},"resources":{"properties":{"limits":{"properties":{"cpu":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"memory":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"requests":{"properties":{"cpu":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"memory":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"terminationMessagePath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"terminationMessagePolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"volumeMounts":{"properties":{"mountPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"readOnly":{"type":"boolean"}}}}},"serviceAccount":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"serviceAccountName":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}},"webhooks":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespaceSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"objectSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}}},"responseObject":{"dynamic":false,"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"properties":{"creationTimestamp":{"type":"date"},"labels":{"properties":{"app":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/instance":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/managed-by":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"app_kubernetes_io/version":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"helm_sh/chart":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespace":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ownerReferences":{"properties":{"apiVersion":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"kind":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"uid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"status":{"properties":{"allowed":{"type":"boolean"},"conditions":{"properties":{"lastTransitionTime":{"type":"date"},"lastUpdateTime":{"type":"date"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"type":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"spec":{"properties":{"template":{"properties":{"spec":{"properties":{"containers":{"properties":{"command":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"image":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"imagePullPolicy":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"ports":{"properties":{"containerPort":{"type":"long"},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"protocol":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"volumeMounts":{"properties":{"mountPath":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"readOnly":{"type":"boolean"}}}}},"serviceAccount":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"serviceAccountName":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}},"user":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"webhooks":{"properties":{"name":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"namespaceSelector":{"properties":{"matchExpressions":{"properties":{"key":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"operator":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"values":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}}},"responseStatus":{"dynamic":false,"properties":{"code":{"type":"long"},"message":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"metadata":{"type":"object"},"reason":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"status":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}}}')
+                  if [[ "${RES_CREATE_TEMPLATE}" != "200" ]]; then
+                    echo "Error within _template '${TEMPLATE_NAME}' creation - exiting"
+                    exit 1
+                  fi
+                fi

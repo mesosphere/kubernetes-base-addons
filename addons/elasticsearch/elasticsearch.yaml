@@ -5,7 +5,7 @@ metadata:
   name: elasticsearch
   namespace: kubeaddons
   labels:
-    kubeaddons.mesosphere.io/name: elasticsearch
+    kubeaddons.mesosphere.io/name: never-allowed-again-to-start
     # TODO: we're temporarily supporting dependency on an existing default storage class
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
@@ -18,15 +18,15 @@ spec:
     minSupportedVersion: v1.15.0
   cloudProvider:
     - name: aws
-      enabled: true
+      enabled: false
     - name: azure
-      enabled: true
+      enabled: false
     - name: gcp
-      enabled: true
+      enabled: false
     - name: docker
       enabled: false
     - name: none
-      enabled: true
+      enabled: false
   chartReference:
     chart: elasticsearch
     repo: https://mesosphere.github.io/charts/stable
