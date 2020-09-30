@@ -19,7 +19,7 @@ resource("artifacts", type="storage", params={
 })
 
 git_resource(git_clone_dirname, url="$(context.git.url)", revision="$(context.git.commit)")
-git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="v6.36.9")
+git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="v6.37.0")
 
 kind_cluster=make_kind_cluster(kind_cluster_name, git_clone_dirname)
 
