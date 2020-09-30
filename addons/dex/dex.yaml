@@ -30,7 +30,7 @@ spec:
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 2.8.7
+    version: 2.8.8
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
