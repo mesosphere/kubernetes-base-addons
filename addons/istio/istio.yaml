@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.9-0"
-    appversion.kubeaddons.mesosphere.io/istio: "1.6.9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.10-0"
+    appversion.kubeaddons.mesosphere.io/istio: "1.6.10"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
     stage.kubeaddons.mesosphere.io/kiali: Preview
@@ -41,7 +41,7 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.6.9
+    version: 1.6.10
     values: |
       istioOperator:
         addonComponents:
