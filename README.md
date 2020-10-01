@@ -49,7 +49,9 @@ The test suite can be exercised locally by running
 
     make test
 
-Pull Requests against this repo is tested by [Teamcity](https://teamcity.mesosphere.io/viewType.html?buildTypeId=kubeaddons_KubernetesBaseAddons) and [Dispatch](https://konvoy-staging.production.d2iq.cloud/dispatch/tekton/#/pipelineruns). 
+Pull Requests against this repo is tested by [Teamcity](https://teamcity.mesosphere.io/viewType.html?buildTypeId=kubeaddons_KubernetesBaseAddons) and [Dispatch](https://konvoy-staging.production.d2iq.cloud/dispatch/tekton/#/pipelineruns).
+
+**NOTE**: E2E tests for the UI are _only_ run in Dispatch.
 
 [Dispatchfile](Dispatchfile) defines the config and exercises the test in the Makefile.
 
