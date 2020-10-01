@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: defaultstorageclass-protection
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.1-2"
-    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.3-1"
+    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.3"
 spec:
   requires:
     - matchLabels:
@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: defaultstorageclass
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.0.2
+    version: 0.0.3
     values: |
       ---
       issuer:
