@@ -5,10 +5,11 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: cert-manager
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.10.1-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.10.1-10"
     appversion.kubeaddons.mesosphere.io/cert-manager: "0.10.1"
     docs.kubeaddons.mesosphere.io/cert-manager: "https://docs.cert-manager.io/en/release-0.10/"
     values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/c36a9b7/staging/cert-manager-setup/values.yaml"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.1.17\", \"strategy\": \"delete\"}]"
 spec:
   namespace: cert-manager
   kubernetes:
