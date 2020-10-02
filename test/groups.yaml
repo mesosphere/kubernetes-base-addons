@@ -19,6 +19,15 @@ general:
     - "dashboard"
 
 # ------------------------------------------------------------------------------
+# All Ambassador related addons should be tested as a part of this group
+#
+# NOTE: Ambassador is currently in PREVIEW
+# ------------------------------------------------------------------------------
+ambassador:
+    - "ambassador"
+    - "metallb"
+
+# ------------------------------------------------------------------------------
 # Backups
 #
 # Addons related to backup and restore tools are tested as part of this group.
