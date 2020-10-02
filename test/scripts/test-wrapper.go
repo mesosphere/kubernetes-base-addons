@@ -123,8 +123,8 @@ func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName,
 			return err
 		}
 
-		modifiedVersion := semver.MustParse(modifiedAddon.GetAnnotations()[constants.AddonRevisionAnnotation])
-		upstreamVersion := semver.MustParse(upstreamAddon.GetAnnotations()[constants.AddonRevisionAnnotation])
+		modifiedVersion := semver.MustParse(strings.TrimPrefix(modifiedAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
+		upstreamVersion := semver.MustParse(strings.TrimPrefix(upstreamAddon.GetAnnotations()[constants.AddonRevisionAnnotation], "v"))
 
 		if modifiedVersion.LE(upstreamVersion) {
 			return fmt.Errorf("the revision for addons %s was not properly updated (current: %s, previous from branch %s: %s). Please update the revision for any addons which you modify (see CONTRIBUTING.md)", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
