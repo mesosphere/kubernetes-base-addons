@@ -1,0 +1,49 @@
+# ------------------------------------------------------------------------------
+# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
+# ------------------------------------------------------------------------------
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: ambassador
+  labels:
+    kubeaddons.mesosphere.io/name: ambassador
+    kubeaddons.mesosphere.io/provides: ingresscontroller
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.5.6-1"
+    appversion.kubeaddons.mesosphere.io/ambassador: "1.7.2"
+    docs.kubeaddons.mesosphere.io/ambassador: "https://www.getambassador.io/docs/1.7/"
+    values.chart.helm.kubeaddons.mesosphere.io/ambassador: "https://raw.githubusercontent.com/datawire/ambassador-chart/d082fc2f2bc563726f5a940ad48b1b005fb85ef9/values.yaml"
+spec:
+  kubernetes:
+    minSupportedVersion: v1.17.11
+  cloudProvider:
+    - name: aws
+      enabled: false
+    - name: gcp
+      enabled: false
+    - name: azure
+      enabled: false
+    - name: docker
+      enabled: false
+    - name: vsphere
+      enabled: false
+# TODO: at the time of writing there are several changes in flight for our cert-manager addon and we're holding on cert-manager integration until a follow-up iteration
+#  requires:
+#    - matchLabels:
+#        kubeaddons.mesosphere.io/name: cert-manager
+  chartReference:
+    chart: ambassador
+    repo: https://getambassador.io
+    version: 6.5.6
+    values: |
+      enableAES: false # use the OSS features
+      image:
+        repository: "datawire/ambassador" # use the OSS image
+        tag: 1.7.2
+      rbac:
+        create: true
+      resources:
+        limits:
+          cpu: 1000m
+        requests:
+          cpu: 500m
