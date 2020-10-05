@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
@@ -6,8 +5,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.9-0"
-    appversion.kubeaddons.mesosphere.io/istio: "1.6.9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.12-1"
+    appversion.kubeaddons.mesosphere.io/istio: "1.6.12"
     appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
     stage.kubeaddons.mesosphere.io/kiali: Preview
@@ -17,7 +16,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
     docs.kubeaddons.mesosphere.io/kiali: "https://istio.io/docs/tasks/telemetry/kiali/"
     docs.kubeaddons.mesosphere.io/jaeger: "https://istio.io/docs/tasks/telemetry/distributed-tracing/jaeger/"
-    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/a7d3c02bac8c4c3ae02854e60483b97cfb80b1b7/staging/istio/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/4cf84f5/staging/istio/values.yaml"
 spec:
   namespace: istio-system
   requires:
@@ -41,7 +40,7 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.6.9
+    version: 1.6.12
     values: |
       istioOperator:
         addonComponents:
