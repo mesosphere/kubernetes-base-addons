@@ -11,15 +11,14 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
-	"sigs.k8s.io/kind/pkg/cluster"
-
 	volumetypes "github.com/docker/docker/api/types/volume"
 	docker "github.com/docker/docker/client"
 	"github.com/google/uuid"
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
+	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
+	testgroups "github.com/mesosphere/ksphere-testing-framework/pkg/groups"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
@@ -31,6 +30,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
+	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 const (
@@ -74,7 +74,7 @@ func init() {
 	}
 
 	fmt.Println("finding addon test groups...")
-	groups, err = experimental.AddonsForGroupsFile("groups.yaml", cat)
+	groups, err = testgroups.AddonsForGroupsFile("groups.yaml", cat)
 	if err != nil {
 		panic(err)
 	}
@@ -97,6 +97,12 @@ func TestValidateUnhandledAddons(t *testing.T) {
 
 func TestGeneralGroup(t *testing.T) {
 	if err := testgroup(t, "general", defaultKindestNodeImage); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAmbassadorGroup(t *testing.T) {
+	if err := testgroup(t, "ambassador", defaultKindestNodeImage, ambassadorChecker); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -306,7 +312,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
 		}
 		if !newVersion.GT(oldVersion) {
-			t.Logf("skipping upgrade test for addon %s, it has not be updated", newAddon.GetName())
+			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
 			continue
 		}
 
