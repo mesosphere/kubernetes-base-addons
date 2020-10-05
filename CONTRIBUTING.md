@@ -8,9 +8,10 @@ Additionally see the sections below for notes about other rules and consideratio
 
 ## Testing
 
-There are two types of tests associated with this repository.
+There are three types of tests associated with this repository.
 * [ksphere-testing-framework](https://github.com/mesosphere/ksphere-testing-framework): An integration test built around a golang framework.
 * [kubeaddons-tests](https://github.com/mesosphere/kubeaddons-tests): Regression tests built using kuttl.
+* [E2E tests](https://github.com/mesosphere/kommander/tree/master/system-tests#system-tests): E2E tests that spin up AWS clusters and deploy projects with addons.
 
 ## Deprecation
 
