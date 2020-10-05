@@ -105,7 +105,7 @@ spec:
     elb:
       apiServerPort: 6443
     tags:
-      owner: danielschmidt
+      owner: kubernetes-base-addons
       expiration: 3h
   nodePools:
     - name: worker
@@ -246,6 +246,11 @@ spec:
           enabled: true
         - name: traefik
           enabled: true
+          values: |
+            ---
+            service:
+              annotations:
+                service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "owner=kubernetes-base-addons,expiration=3h"
         - name: traefik-forward-auth
           enabled: true
         - name: velero
