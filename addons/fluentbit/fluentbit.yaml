@@ -6,9 +6,12 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.6-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.6-2"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.6"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/5e20fbc/charts/fluent-bit/values.yaml"
+    # the older versions were being deployed from stable/fluent-bit
+    # and were versioned like 2.8.x
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \">=2.8.0\", \"strategy\": \"delete\"}]"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
