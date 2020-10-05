@@ -35,8 +35,8 @@ ambassador:
 backups:
     - "konvoyconfig"
     - "metallb"
-    - "traefik"
     - "cert-manager"
+    - "traefik"
     - "velero"
 
 # ------------------------------------------------------------------------------
@@ -48,9 +48,9 @@ sso:
     - "konvoyconfig"
     - "external-dns"
     - "metallb"
+    - "cert-manager"
     - "traefik"
     - "opsportal"
-    - "cert-manager"
     - "dex"
     - "dex-k8s-authenticator"
     - "kube-oidc-proxy"
@@ -112,8 +112,8 @@ localvolumeprovisioner:
 # All AWS utility addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
 aws:
-    - "defaultstorageclass-protection"
     - "cert-manager"
+    - "defaultstorageclass-protection"
     - "awsebscsiprovisioner"
 
 # ------------------------------------------------------------------------------
@@ -122,8 +122,8 @@ aws:
 # All Azure utility addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
 #azure:
-#    - "defaultstorageclass-protection"
 #    - "cert-manager"
+#    - "defaultstorageclass-protection"
 #    - "azuredisk-csi-driver"
 #    - "azurediskprovisioner"
 
