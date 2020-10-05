@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: reloader
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.69-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.69-2"
     appversion.kubeaddons.mesosphere.io/reloader: "0.0.69"
     values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/422c291/deployments/kubernetes/chart/reloader/values.yaml
 spec:
