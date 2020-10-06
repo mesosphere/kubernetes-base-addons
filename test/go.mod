@@ -11,7 +11,7 @@ replace (
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/datawire/ambassador v1.7.2
+	github.com/datawire/ambassador v1.7.3
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	github.com/google/uuid v1.1.2
 	github.com/mesosphere/ksphere-testing-framework v0.2.1
