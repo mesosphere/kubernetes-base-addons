@@ -110,15 +110,16 @@ dindTask("lint-yaml",
 
 clean_kind=cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
 
+# Robot Actions
 action(tasks=["dispatch-e2e-test"], on=pull_request())
-action(tasks=["dispatch-e2e-test"], on=pull_request(chatops=["test-e2e"]))
-
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
+action(tasks=["lint-yaml", clean_kind], on=pull_request())
+
+# Chatops Actions
+action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint","test"]))
+action(tasks=["dispatch-e2e-test"], on=pull_request(chatops=["test-e2e"]))
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
 
-action(tasks=["lint-yaml", clean_kind], on=pull_request())
-action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint","test"]))
-
+# Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
 action(name="bump-charts", on=cron(schedule="0 3 * * 5"), tasks=[do_bump_charts])
-
