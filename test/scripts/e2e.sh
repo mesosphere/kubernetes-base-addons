@@ -256,17 +256,17 @@ spec:
         - name: velero
           enabled: true
     - configRepository: https://github.com/mesosphere/kubeaddons-conductor
-      configVersion: stable-1.17-1.0.0
+      configVersion: master
       addonsList:
         - name: conductor
           enabled: false
     - configRepository: https://github.com/mesosphere/kubeaddons-dispatch
-      configVersion: stable-1.17-1.2.2
+      configVersion: master
       addonsList:
         - name: dispatch
           enabled: false
     - configRepository: https://github.com/mesosphere/kubeaddons-kommander
-      configVersion: stable-1.17-1.1.0
+      configVersion: master
       addonsList:
         - name: kommander
           enabled: true
