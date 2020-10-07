@@ -76,7 +76,7 @@ cd "$PROJECT_ROOT"
 
 # Set up Konvoy
 echo "Setup Konvoy"
-source ${PROJECT_ROOT}/test/scripts/setup-konvoy.sh v1.5.0
+source ${PROJECT_ROOT}/test/scripts/setup-konvoy.sh v1.6.0-rc.1
 
 # Generate SSH Keys
 echo "Generate SSH Keys"
@@ -145,7 +145,7 @@ spec:
     user: centos
     publicKeyFile: base-addons-e2e-ssh.pub
     privateKeyFile: base-addons-e2e-ssh.pem
-  version: v1.5.0
+  version: v1.6.0-rc.1
 ---
 kind: ClusterConfiguration
 apiVersion: konvoy.mesosphere.io/v1beta2
@@ -270,7 +270,7 @@ spec:
       addonsList:
         - name: kommander
           enabled: true
-  version: v1.5.0
+  version: v1.6.0-rc.1
 EOF
 
 # Start the cluster
