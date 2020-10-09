@@ -8,7 +8,7 @@ Additionally see the sections below for notes about other rules and consideratio
 
 ## Addon Delete Upgrade Strategy
 
-It's possible to add an annotation to an Addon which will trigger a "delete style upgrade" (literally, removal and reinstallation) for the addon under certain version conditions, e.g.:
+It's possible to add an annotation to an Addon which will trigger a "delete style upgrade" (removal and reinstallation) for the addon under certain version conditions, e.g.:
 
 ```yaml
 apiVersion: kubeaddons.mesosphere.io/v1beta2
