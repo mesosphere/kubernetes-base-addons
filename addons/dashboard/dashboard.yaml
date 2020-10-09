@@ -5,12 +5,13 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dashboard
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.7.1-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.7.1-2"
     appversion.kubeaddons.mesosphere.io/dashboard: "2.7.1"
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
-    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\"\
+      , \"strategy\": \"delete\"}]"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/506eedd/stable/kubernetes-dashboard/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/8ac98f7/stable/kubernetes-dashboard/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -29,7 +30,7 @@ spec:
   chartReference:
     chart: kubernetes-dashboard
     repo: https://kubernetes.github.io/dashboard/
-    version: 2.7.1
+    version: 2.8.1
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
