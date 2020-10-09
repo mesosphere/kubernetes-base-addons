@@ -177,7 +177,7 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_audit
-              Retry_Limit False
+              Retry_Limit 10
               Buffer_Size 512KB
           [OUTPUT]
               Name es
@@ -188,7 +188,7 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_cluster
-              Retry_Limit False
+              Retry_Limit 10
               Buffer_Size 512KB
           [OUTPUT]
               Name es
@@ -199,7 +199,7 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_host
-              Retry_Limit False
+              Retry_Limit 10
               Buffer_Size 512KB
           [OUTPUT]
               Name es
@@ -210,7 +210,7 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_host_kernel
-              Retry_Limit False
+              Retry_Limit 10
               Buffer_Size 512KB
 
         ## https://docs.fluentbit.io/manual/pipeline/parsers
