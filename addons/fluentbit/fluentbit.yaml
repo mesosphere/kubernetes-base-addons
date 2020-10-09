@@ -177,7 +177,10 @@ spec:
               Time_Key @ts
               Logstash_Format On
               Logstash_Prefix kubernetes_audit
-              Retry_Limit 10
+              # A small fraction of audit logs will be rejected by Elasticsearch because values may have an inconsistent type.
+              # We set a low retry limit here in order to prevent fluent-bit from backing up while it repeatedly retries flushing these logs.
+              # See https://github.com/uken/fluent-plugin-elasticsearch#random-400---rejected-by-elasticsearch-is-occured-why.
+              Retry_Limit 1
               Buffer_Size 512KB
           [OUTPUT]
               Name es
