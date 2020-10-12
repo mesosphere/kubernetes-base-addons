@@ -6,6 +6,23 @@ See the [Kubeaddons Contributing Documentation](https://github.com/mesosphere/ku
 
 Additionally see the sections below for notes about other rules and considerations for contributions.
 
+## Addon Delete Upgrade Strategy
+
+It's possible to add an annotation to an Addon which will trigger a "delete style upgrade" (removal and reinstallation) for the addon under certain version conditions, e.g.:
+
+```yaml
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: dashboard
+    # versions of the dashboard older than v2 are not directly compatible and so a delete uprade is needed in this case to avoid conflicts with the older resources.
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+    # to maintain compatibility with older versions of the kubeaddons controller, please duplicate this with the old key:
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+```
+
+As seen in the above example, if this upgrade strategy is required for any reason **it must be documented on the addon itself the reasoning/context as to why the delete strategy is used**.
+
 ## Testing
 
 There are three types of tests associated with this repository.
