@@ -11,7 +11,6 @@ The structure of this repository follows the [Kubeaddons Catalog Documentation](
 You will find the following directories here:
 
 * `addons/` - containing the actual manifests for addon resources
-* `deployments/` - containing the default addons depending on the Kubernetes version
 * `metadata/` - containing static metadata for the addons in `addons/`
 * `test/` - containing integration tests for the addons in `addons/`
 
@@ -25,25 +24,25 @@ Please [contact D2iQ](https://d2iq.com/contact) for questions and more informati
 
 ## Releases
 
-Releases are tags which are cut from `master` and other branches and are intended to signify a single supported instance of `kubernetes-base-addons`.
+Releases signify a single supported instance of `kubernetes-base-addons`. They undergo significant integration and soak testing and must be used together to be supported. Any variation from these sets will not be supported.
 
-While you may see other tags in our [releases page](https://github.com/mesosphere/kubernetes-base-addons/releases) the only releases which are official and supported releases are those designated as non-prerelease and specifically mentioned to be official releases.
+While you may see other tags in our [releases page](https://github.com/mesosphere/kubernetes-base-addons/releases) the only releases which are official and supported releases are named with the prefix `stable` and not marked as prerelease.
 
 **NOTE**: Do not use `master` for production. Instead, pick a supported release version.
 
 For the release process, see the [release](RELEASE.md) document.
 
-### Creating a Release
+### version 3
 
-Creating a releases is as simple as cutting a tag and making a [Github release](https://help.github.com/en/github/administering-a-repository/creating-releases).
+The `master` branch of `kubernetes-base-addons` has made a hard transition to cert-manager v1. Prior to this change, this repository was using the v1alpha1 resource definition which cannot be upgraded to v1alpha2 or beyond.
+Releases from this branch will be tagged with the major version 3.
 
-If the release is meant to be an official KSphere supported release, ensure it's not marked as a pre-release, follows the `stable-{MAJOR}.{MINOR}.{PATCH}-{REVISION}` pattern where the major, minor and patch version are that of the corresponding Kubernetes version. Ensure the language in the title and description indicate "Official Release".
+### version 2
 
-Some supported releases are supported via the terms of support for some other KSphere entity using them, particularly releases will be connected with a [Konvoy Release](https://github.com/mesosphere/konvoy). Make sure that you mention and link to any externally related sources for your release in the release description (e.g. if the release is specifically intended to support a specific Konvoy release, say so in the description).
+`release/2` is going to have backports of changes made to master in order to continue to support cert-manager v1alpha1.
+The releases cut from this branch will be major version 2.
 
-For all other non-official releases, make sure your tag and description are distinctly different from the official release pattern, explain the purpose of your release, and mark is as a `pre-release`.
-
-### Testing
+## Testing
 
 The test suite can be exercised locally by running
 
