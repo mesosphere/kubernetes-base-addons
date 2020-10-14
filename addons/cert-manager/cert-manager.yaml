@@ -5,13 +5,11 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: cert-manager
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.1-2"
-    appversion.kubeaddons.mesosphere.io/cert-manager: "1.0.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.3-1"
+    appversion.kubeaddons.mesosphere.io/cert-manager: "1.0.3"
     docs.kubeaddons.mesosphere.io/cert-manager: "https://cert-manager.io/docs/release-notes/release-notes-1.0/"
     values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/c36a9b7/staging/cert-manager-setup/values.yaml"
-    # when upgrading from the older v0.1 version deployment selectors changed making it backwards incompatible for standard upgrades
-    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.1.17\", \"strategy\": \"delete\"}]"
-    helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.1.17\", \"strategy\": \"delete\"}]"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.2.0\", \"strategy\": \"delete\"}]"
 spec:
   namespace: cert-manager
   kubernetes:
@@ -29,10 +27,11 @@ spec:
       enabled: true
   chartReference:
     chart: cert-manager-setup
-    repo: https://mesosphere.github.io/charts/staging
-    version: 0.2.3
+    repo: https://mesosphere.github.io/charts/stable
+    version: 0.2.4
     values: |
       ---
+      upgradeImage: "mesosphere/kubeaddons-addon-initializer:v3.0.1"
       issuers:
         - name: kubernetes-root-issuer
           secretName: kubernetes-root-ca
