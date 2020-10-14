@@ -10,7 +10,6 @@ awsebscsiprovisioner:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 awsebsprovisioner:
   display_name: awsebsprovisioner
   description: awsebsprovisioner
@@ -22,7 +21,6 @@ awsebsprovisioner:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 azuredisk-csi-driver:
   display_name: azuredisk-csi-driver
   description: azuredisk-csi-driver
@@ -34,7 +32,6 @@ azuredisk-csi-driver:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 azurediskprovisioner:
   display_name: azurediskprovisioner
   description: azurediskprovisioner
@@ -46,7 +43,6 @@ azurediskprovisioner:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 cert-manager:
   display_name: cert-manager
   description: cert-manager
@@ -58,7 +54,6 @@ cert-manager:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 dashboard:
   display_name: dashboard
   description: dashboard
@@ -70,7 +65,6 @@ dashboard:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 defaultstorageclass-protection:
   display_name: defaultstorageclass-protection
   description: defaultstorageclass-protection
@@ -82,7 +76,6 @@ defaultstorageclass-protection:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 dex-k8s-authenticator:
   display_name: dex-k8s-authenticator
   description: dex-k8s-authenticator
@@ -94,7 +87,6 @@ dex-k8s-authenticator:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 dex:
   display_name: dex
   description: dex
@@ -106,7 +98,6 @@ dex:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 elasticsearchexporter:
   display_name: elasticsearchexporter
   description: elasticsearchexporter
@@ -118,7 +109,6 @@ elasticsearchexporter:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 elasticsearch:
   display_name: elasticsearch
   description: elasticsearch
@@ -130,7 +120,6 @@ elasticsearch:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 external-dns:
   display_name: external-dns
   description: external-dns
@@ -142,7 +131,6 @@ external-dns:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 flagger:
   display_name: flagger
   description: flagger
@@ -154,7 +142,6 @@ flagger:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 fluentbit:
   display_name: fluentbit
   description: fluentbit
@@ -166,7 +153,6 @@ fluentbit:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 gatekeeper:
   display_name: gatekeeper
   description: gatekeeper
@@ -178,7 +164,6 @@ gatekeeper:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 gcpdisk-csi-driver:
   display_name: gcpdisk-csi-driver
   description: gcpdisk-csi-driver
@@ -190,7 +175,6 @@ gcpdisk-csi-driver:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 gcpdiskprovisioner:
   display_name: gcpdiskprovisioner
   description: gcpdiskprovisioner
@@ -202,7 +186,6 @@ gcpdiskprovisioner:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 istio:
   display_name: istio
   description: istio
@@ -214,7 +197,6 @@ istio:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 kibana:
   display_name: kibana
   description: kibana
@@ -226,7 +208,6 @@ kibana:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 konvoyconfig:
   display_name: konvoyconfig
   description: konvoyconfig
@@ -238,7 +219,6 @@ konvoyconfig:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 kube-oidc-proxy:
   display_name: kube-oidc-proxy
   description: kube-oidc-proxy
@@ -250,7 +230,6 @@ kube-oidc-proxy:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 localvolumeprovisioner:
   display_name: localvolumeprovisioner
   description: localvolumeprovisioner
@@ -262,7 +241,6 @@ localvolumeprovisioner:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 metallb:
   display_name: metallb
   description: metallb
@@ -274,7 +252,6 @@ metallb:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 nvidia:
   display_name: nvidia
   description: nvidia
@@ -286,7 +263,6 @@ nvidia:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 opsportal:
   display_name: opsportal
   description: opsportal
@@ -298,7 +274,6 @@ opsportal:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 prometheusadapter:
   display_name: prometheusadapter
   description: prometheusadapter
@@ -310,7 +285,6 @@ prometheusadapter:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 prometheus:
   display_name: prometheus
   description: prometheus
@@ -322,7 +296,6 @@ prometheus:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 reloader:
   display_name: reloader
   description: reloader
@@ -334,7 +307,6 @@ reloader:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 traefik-forward-auth:
   display_name: traefik-forward-auth
   description: traefik-forward-auth
@@ -346,7 +318,6 @@ traefik-forward-auth:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 traefik:
   display_name: traefik
   description: traefik
@@ -358,7 +329,6 @@ traefik:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
----
 velero:
   display_name: velero
   description: velero
