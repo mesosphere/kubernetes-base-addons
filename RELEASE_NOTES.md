@@ -4,10 +4,6 @@
 
 * Cert-manager
   - use `delete` upgrade-strategy.
-* Elasticsearch
-  - Fixes regression from [helm/charts&#35;17643](https://github.com/helm/charts/pull/17643) where the explicit selectors do match the previously implicit selectors.
-  - Fix plugin install initcontainer which would fail if plugin already exists. This happens when Node reboots and keeps emptyDir, or if elasticsearch image already contains plugin
-  - In private environments where we replicate all the images, the test image cannot be pulled due it misses imagePullSecrets ([#497](https://github.com/mesosphere/kubernetes-base-addons/pull/497), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
 * Fluent-bit:
   - bump the fluent-bit app version to 1.5.6
     - aws: utils: fix mem leak in flb_imds_request
