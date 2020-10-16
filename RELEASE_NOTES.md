@@ -1,5 +1,52 @@
 # Release Notes
 
+## stable-1.16-2.5.0, stable-1.17-2.5.0, stable-1.18-2.5.0
+
+* Cert-manager
+  - use `delete` upgrade-strategy.
+* Fluent-bit:
+  - bump the fluent-bit app version to 1.5.6
+    - aws: utils: fix mem leak in flb_imds_request
+    - fix double free when destroying connections if the endpoint in unavailable
+    - remove noisy error introduced in v1.5.5
+    - fix deletion of pending connections in the destroy_queue ([#538](https://github.com/mesosphere/kubernetes-base-addons/pull/538), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - changes the update strategy to `delete`. ([#574](https://github.com/mesosphere/kubernetes-base-addons/pull/574), [@dkoshkin](https://github.com/dkoshkin))
+  - Upgrades fluent-bit to v1.5.7. See https://fluentbit.io/announcements/v1.5.7.
+  - Adds chart value `podLabels`.
+  - Fix fluentbit configuration to unblock output buffer. ([#590](https://github.com/mesosphere/kubernetes-base-addons/pull/590), [@branden](https://github.com/branden))
+* Nvidia
+  - No need to specify nvidia-driver tag when using the default AMI for GPU nodes.
+* Kibana
+  - Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
+
+### Preview
+* Istio
+  - Bug Fixes
+    - Fixed HTTP match request without headers conflict
+    - Fixed Istio operator to watch multiple namespaces (Istio &#35;26317)
+    - Fixed EDS cache when an endpoint appears after its service resource (Istio &#35;26983)
+    - Fixed istioctl remove-from-mesh not removing init containers on CNI installations.
+    - Fixed istioctl add-to-mesh and remove-from-mesh commands from affecting OwnerReferences (Istio &#35;26720)
+    - Fixed cleaning up of service information when the cluster secret is deleted
+    - Fixed egress gateway ports binding to 80⁄443 due to user permissions
+    - Fixed gateway listeners created with traffic direction outbound to be drained properly on exit
+    - Fixed headless services not updating listeners (Istio &#35;26617)
+    - Fixed inaccurate endpointsPendingPodUpdate metric
+    - Fixed ingress SDS from not getting secret update (Istio &#35;18912)
+    - Fixed ledger capacity size
+    - Fixed operator to update service monitor due to invalid permissions (Istio &#35;26961)
+    - Fixed regression in gateway name resolution (Istio 26264)
+    - Fixed rotated certificates not being stored to /etc/istio-certs VolumeMount (Istio &#35;26821)
+    - Fixed trust domain validation in transport socket level (Istio &#35;26435)
+  - Improvements
+    - Added istioctl analyzer to detect when Destination Rules do not specify caCertificates (Istio &#35;25652)
+    - Added missing telemetry.loadshedding.- options to mixer container arguments
+    - Improved specifying network for a cluster without meshNetworks also being configured
+    - Improved the cache readiness state with TTL (Istio &#35;26418)
+    - Updated SDS timeout to fetch workload certificates to 0s
+    - Updated app_containers to use comma separated values for container specification
+    - Updated default protocol sniffing timeout to 5s (Istio &#35;24379) ([#516](https://github.com/mesosphere/kubernetes-base-addons/pull/516), [@shaneutt](https://github.com/shaneutt))
+
 ## stable-1.15-2.4.0, stable-1.16-2.4.0, stable-1.17-2.4.0
 
 * Istio:
