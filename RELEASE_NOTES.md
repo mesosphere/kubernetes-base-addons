@@ -14,6 +14,8 @@
   - Upgrades fluent-bit to v1.5.7. See https://fluentbit.io/announcements/v1.5.7.
   - Adds chart value `podLabels`.
   - Fix fluentbit configuration to unblock output buffer. ([#590](https://github.com/mesosphere/kubernetes-base-addons/pull/590), [@branden](https://github.com/branden))
+* Nvidia
+  - No need to specify nvidia-driver tag when using the default AMI for GPU nodes.
 * Kibana
   - Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
 
