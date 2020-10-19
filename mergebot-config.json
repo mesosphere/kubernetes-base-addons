@@ -3,8 +3,10 @@
      "enabled": true,
      "interactive": false,
      "fix_version_map": {
-       "master": "K8s Base Addons 2.1.0",
-       "testing": "K8s Base Addons 2.0.0",
+       "master": "K8s Base Addons 3.0.0",
+       "release/3": "K8s Base Addons 3.0.0",
+       "release/2": "K8s Base Addons 2.6.0",
+       "testing": "K8s Base Addons 2.5.0"
      }
    }
 }
