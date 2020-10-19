@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: external-dns
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-2"
     appversion.kubeaddons.mesosphere.io/external-dns: "0.7.0"
-    values.chart.helm.kubeaddons.mesosphere.io/external-dns: "https://raw.githubusercontent.com/helm/charts/b9191a5b526d4988b7938be2049370a1687037a0/stable/external-dns/values-production.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/external-dns: "https://raw.githubusercontent.com/bitnami/charts/9eca03cb2f4b9d4a5b7e877711f810f9151ea2a3/bitnami/external-dns/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -24,7 +24,8 @@ spec:
     - name: none
       enabled: false
   chartReference:
-    chart: stable/external-dns
+    repo: https://charts.bitnami.com/bitnami
+    chart: bitnami/external-dns
     version: 2.20.4
     values: |
       rbac:
