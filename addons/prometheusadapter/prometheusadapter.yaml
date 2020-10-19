@@ -27,7 +27,8 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: prometheus
   chartReference:
-    chart: stable/prometheus-adapter
+    chart: prometheus-community/prometheus-adapter
+    repo: https://prometheus-community.github.io/helm-charts
     version: 2.5.1
     values: |
       ---
