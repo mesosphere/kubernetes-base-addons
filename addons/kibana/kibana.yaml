@@ -29,7 +29,7 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
-    chart: elastic/kibana
+    chart: kibana
     repo: https://helm.elastic.co
     version: 6.8.12
     valuesRemap:
