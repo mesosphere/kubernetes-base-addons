@@ -33,9 +33,9 @@ ambassador:
 # Addons related to backup and restore tools are tested as part of this group.
 # ------------------------------------------------------------------------------
 backups:
+    - "cert-manager"
     - "konvoyconfig"
     - "metallb"
-    - "cert-manager"
     - "traefik"
     - "velero"
 
@@ -76,9 +76,9 @@ elasticsearch:
 # All Prometheus related addons should be tested as a part of this group
 # ------------------------------------------------------------------------------
 prometheus:
+    - "opsportal"
     - "prometheus"
     - "prometheusadapter"
-    - "opsportal"
 
 # ------------------------------------------------------------------------------
 # Istio
@@ -88,11 +88,11 @@ prometheus:
 # NOTE: Istio is currently in PREVIEW
 # ------------------------------------------------------------------------------
 istio:
+    - "opsportal"
+    - "cert-manager"
     - "prometheus"
     - "prometheusadapter"
     - "metallb"
-    - "opsportal"
-    - "cert-manager"
     - "istio"
     - "flagger"
 
