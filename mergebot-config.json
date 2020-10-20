@@ -6,7 +6,6 @@
        "master": "K8s Base Addons 3.0.0",
        "release/3": "K8s Base Addons 3.0.0",
        "release/2": "K8s Base Addons 2.6.0",
-       "testing": "K8s Base Addons 2.5.0"
      }
    }
 }
