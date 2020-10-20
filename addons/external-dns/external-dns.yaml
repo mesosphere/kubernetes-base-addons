@@ -25,7 +25,7 @@ spec:
       enabled: false
   chartReference:
     repo: https://charts.bitnami.com/bitnami
-    chart: bitnami/external-dns
+    chart: external-dns
     version: 2.20.4
     values: |
       rbac:
