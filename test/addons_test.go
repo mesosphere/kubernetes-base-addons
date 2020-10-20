@@ -438,6 +438,7 @@ configInline:
 	"elasticsearch": `
 ---
 # Reduce resource limits so elasticsearch will deploy on a kind cluster with limited memory.
+antiAffinity: "soft"
 client:
   heapSize: 256m
   resources:
