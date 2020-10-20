@@ -36,8 +36,6 @@ spec:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
-      image:
-        tag: 6.8.10
       files:
         kibana.yml:
           ## Default Kibana configuration from kibana-docker.
