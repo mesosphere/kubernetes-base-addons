@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: cert-manager-setup
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.2.4
+    version: 0.2.5
     values: |
       ---
       upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.3.1"
