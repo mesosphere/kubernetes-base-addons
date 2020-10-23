@@ -29,3 +29,6 @@ spec:
     values: |
       rbac:
         create: true
+      service:
+        labels:
+          servicemonitor.kubeaddons.mesosphere.io/path: metrics
