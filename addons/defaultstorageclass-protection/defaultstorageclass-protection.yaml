@@ -28,7 +28,7 @@ spec:
   chartReference:
     chart: defaultstorageclass
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.0.3
+    version: 0.0.4
     values: |
       ---
       issuer:
