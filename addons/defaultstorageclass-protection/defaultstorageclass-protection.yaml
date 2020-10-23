@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: defaultstorageclass-protection
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.3-1"
-    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-1"
+    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.4"
 spec:
   requires:
     - matchLabels:
