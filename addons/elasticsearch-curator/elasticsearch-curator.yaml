@@ -7,9 +7,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearch-curator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-3"
     appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.8.1"
-    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/helm/charts/506eedd/stable/elasticsearch-curator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch-curator/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -28,7 +28,8 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
-    chart: stable/elasticsearch-curator
+    chart: elasticsearch-curator
+    repo: https://mesosphere.github.io/charts/stable
     version: 2.2.1
     values: |
       ---
