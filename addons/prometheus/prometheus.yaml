@@ -94,6 +94,8 @@ spec:
                 interval: 30s
               - port: monitoring
                 interval: 30s
+              - port: http
+                interval: 30s
               # Service port for Thanos Querier, running in Kommander.
               # If we ever add a Kommander-specific Prometheus, this
               # endpoint should be removed and added to that Prometheus's
