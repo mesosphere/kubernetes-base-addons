@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-16"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-17"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -93,6 +93,9 @@ spec:
               - port: metrics
                 interval: 30s
               - port: monitoring
+                interval: 30s
+              # Service port for external-dns
+              - targetPort: 7979
                 interval: 30s
               # Service port for Thanos Querier, running in Kommander.
               # If we ever add a Kommander-specific Prometheus, this
