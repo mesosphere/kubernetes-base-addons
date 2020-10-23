@@ -100,6 +100,24 @@ spec:
               # configuration.
               - targetPort: 10902
                 interval: 30s
+          - name: kubeaddons-service-monitor-metrics-defaultstorageclass
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "defaultstorageclass"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  caFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/ca.crt"
+                  certFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.crt"
+                  keyFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.key"
+                  insecureSkipVerify: true
           - name: kubeaddons-service-monitor-api-v1-metrics-prometheus
             selector:
               matchLabels:
@@ -243,6 +261,7 @@ spec:
           walCompression: true
           secrets:
             - etcd-certs
+            - dstorageclass-webhook-server-cert
           externalUrl: "/ops/portal/prometheus"
           storageSpec:
             volumeClaimTemplate:
