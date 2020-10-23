@@ -118,6 +118,24 @@ spec:
                   certFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.crt"
                   keyFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.key"
                   insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-dex-controller
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "dex-controller"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  caFile: "/etc/prometheus/secrets/dex/ca.crt"
+                  certFile: "/etc/prometheus/secrets/dex/tls.crt"
+                  keyFile: "/etc/prometheus/secrets/dex/tls.key"
+                  insecureSkipVerify: true
           - name: kubeaddons-service-monitor-api-v1-metrics-prometheus
             selector:
               matchLabels:
@@ -262,6 +280,7 @@ spec:
           secrets:
             - etcd-certs
             - dstorageclass-webhook-server-cert
+            - dex
           externalUrl: "/ops/portal/prometheus"
           storageSpec:
             volumeClaimTemplate:
