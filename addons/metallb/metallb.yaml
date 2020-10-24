@@ -53,3 +53,8 @@ spec:
         requests:
           cpu: 100m
           memory: 100Mi
+      prometheus:
+        metrics:
+          enabled: true
+          labels:
+            servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
