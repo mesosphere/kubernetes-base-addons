@@ -89,7 +89,6 @@ spec:
                 - kubeaddons
                 - kommander
                 - velero
-                - konvoy
             endpoints:
               - port: metrics
                 interval: 30s
@@ -157,6 +156,36 @@ spec:
                   certFile: "/etc/prometheus/secrets/dex/tls.crt"
                   keyFile: "/etc/prometheus/secrets/dex/tls.key"
                   insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-auto-prov
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                konvoy.mesosphere.io/name: "auto-provisioning"
+            namespaceSelector:
+              matchNames:
+                - konvoy
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-yakcl
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kommander.mesosphere.io/name: "yakcl"
+            namespaceSelector:
+              matchNames:
+                - kommander
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  insecureSkipVerify: true                  
         prometheusSpec:
           image:
             tag: v2.19.2
@@ -390,3 +419,4 @@ spec:
           # containerd mirror functionality does not support pulling these images
           # TODO remove once https://github.com/containerd/containerd/issues/3756 is resolved
           repository: quay.io/coreos/kube-state-metrics
+ 
