@@ -203,7 +203,7 @@ spec:
                 scheme: https
                 bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
                 tlsConfig:
-                  insecureSkipVerify: true                  
+                  insecureSkipVerify: true
         prometheusSpec:
           image:
             tag: v2.19.2
@@ -438,4 +438,3 @@ spec:
           # containerd mirror functionality does not support pulling these images
           # TODO remove once https://github.com/containerd/containerd/issues/3756 is resolved
           repository: quay.io/coreos/kube-state-metrics
- 
