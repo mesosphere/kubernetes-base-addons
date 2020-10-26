@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-19"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-20"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -173,6 +173,36 @@ spec:
                   caFile: "/etc/prometheus/secrets/dex/ca.crt"
                   certFile: "/etc/prometheus/secrets/dex/tls.crt"
                   keyFile: "/etc/prometheus/secrets/dex/tls.key"
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-auto-prov
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                konvoy.mesosphere.io/name: "auto-provisioning"
+            namespaceSelector:
+              matchNames:
+                - konvoy
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-yakcl
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kommander.mesosphere.io/name: "yakcl"
+            namespaceSelector:
+              matchNames:
+                - kommander
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
                   insecureSkipVerify: true
         prometheusSpec:
           image:
