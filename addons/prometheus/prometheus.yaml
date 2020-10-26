@@ -89,6 +89,7 @@ spec:
                 - kubeaddons
                 - kommander
                 - velero
+                - konvoy
             endpoints:
               - port: metrics
                 interval: 30s
