@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-15"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-22"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -21,11 +21,12 @@ metadata:
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/00b45d97f179110629ebc46db00065d0e706ed55/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/d1c73bd0d/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -43,7 +44,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 9.3.1
+    version: 9.3.3
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -93,6 +94,9 @@ spec:
                 interval: 30s
               - port: monitoring
                 interval: 30s
+              # Service port for external-dns
+              - targetPort: 7979
+                interval: 30s
               # Service port for Thanos Querier, running in Kommander.
               # If we ever add a Kommander-specific Prometheus, this
               # endpoint should be removed and added to that Prometheus's
@@ -134,6 +138,72 @@ spec:
               - path: /_prometheus/metrics
                 targetPort: 5601
                 interval: 30s
+          - name: kubeaddons-service-monitor-metrics-defaultstorageclass
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "defaultstorageclass"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  caFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/ca.crt"
+                  certFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.crt"
+                  keyFile: "/etc/prometheus/secrets/dstorageclass-webhook-server-cert/tls.key"
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-dex-controller
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "dex-controller"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  caFile: "/etc/prometheus/secrets/dex/ca.crt"
+                  certFile: "/etc/prometheus/secrets/dex/tls.crt"
+                  keyFile: "/etc/prometheus/secrets/dex/tls.key"
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-auto-prov
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                konvoy.mesosphere.io/name: "auto-provisioning"
+            namespaceSelector:
+              matchNames:
+                - konvoy
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-yakcl
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kommander.mesosphere.io/name: "yakcl"
+            namespaceSelector:
+              matchNames:
+                - kommander
+            endpoints:
+              - port: https
+                interval: 30s
+                scheme: https
+                bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                tlsConfig:
+                  insecureSkipVerify: true
         prometheusSpec:
           image:
             tag: v2.19.2
@@ -242,6 +312,8 @@ spec:
           walCompression: true
           secrets:
             - etcd-certs
+            - dex
+            - dstorageclass-webhook-server-cert
           externalUrl: "/ops/portal/prometheus"
           storageSpec:
             volumeClaimTemplate:

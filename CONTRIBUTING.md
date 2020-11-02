@@ -6,6 +6,27 @@ See the [Kubeaddons Contributing Documentation](https://github.com/mesosphere/ku
 
 Additionally see the sections below for notes about other rules and considerations for contributions.
 
+## Addon Delete Upgrade Strategy
+
+It's possible to add an annotation to an Addon which will trigger a "delete style upgrade" (removal and reinstallation) for the addon under certain version conditions, e.g.:
+
+```yaml
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: dashboard
+    # versions of the dashboard older than v2 are not directly compatible and so a delete uprade is needed in this case to avoid conflicts with the older resources.
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+    # to maintain compatibility with older versions of the kubeaddons controller, please duplicate this with the old key:
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
+```
+
+As seen in the above example, if this upgrade strategy is required for any reason **it must be documented on the addon itself the reasoning/context as to why the delete strategy is used**.
+
+## Backporting
+
+Unless no longer supporting cert-manager v1alpha1 resources, all addon PRs that are opened against `master` must also have a backport PR opened against `release/2`. The addon chart or kudo operator must be written in a way that will support both cert-manager's v1alpha1 resource and also v1 resources.
+
 ## Testing
 
 There are three types of tests associated with this repository.
@@ -28,11 +49,4 @@ Once this is complete end users who are using older releases of `kubernetes-base
 
 For Addons, "revisions" are a reference to the application version with an added revision count which indicates the latest iteration on that version. This enables multiple different versions of an Addon which ultimately utilize the same underlying application version so that configuration and other aspects of the Addon can change without overriding a previously released Addon.
 
-The [Kubeaddons Catalog API](https://github.com/mesosphere/kubeaddons/tree/master/pkg/catalog) supports two different modes for addon repositories to host revisions:
-
-* single file mode: a single file for the addon exists at `addons/<addon-name>/<addon-name>.yaml` and the revision for that addon must be adjusted forward when any changes are made
-* multi file mode: each new revision is a separate file, and you can structure this like `addons/<addon-name>/<app-version>/<addon-name>-<revision>.yaml`. However, there's no obligation to follow this pattern as the Kubeaddons controller will consider every valid Addon manifest it finds in the directory hierarchy.
-
-In this repository we use single file mode because that Catalog API is not used in such a way that we need to bother searching the historical revisions (this repository is predominantly used by Konvoy which does it's versioning for Addons based on Git).
-
-You may find in other repositories (such as [mesosphere/kubeaddons-enterprise](https://github.com/mesosphere/kubeaddons-enterprise)) that multi-file mode is used to support flat searching of the Addon revision history.
+A single file for the addon exists at `addons/<addon-name>/<addon-name>.yaml` and the revision for that addon must be adjusted forward when any changes are made.
