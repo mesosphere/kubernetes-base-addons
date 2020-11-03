@@ -171,6 +171,7 @@ github.com/datawire/ambassador v1.7.2 h1:uNW1mdIr9J8pXDUXQ73JQ7Vev2djk/AkAeIKV2g
 github.com/datawire/ambassador v1.7.2/go.mod h1:pRUTzLAC1Rl1iF7qFxBtMyFGPnC0NT4aDZMA7ipQR2I=
 github.com/datawire/ambassador v1.7.3 h1:UPenO2vzudAT0Y7FjsmTPkJk42yFqqFS3j9t0k+mITA=
 github.com/datawire/ambassador v1.7.3/go.mod h1:pRUTzLAC1Rl1iF7qFxBtMyFGPnC0NT4aDZMA7ipQR2I=
+github.com/datawire/ambassador v1.8.1/go.mod h1:pRUTzLAC1Rl1iF7qFxBtMyFGPnC0NT4aDZMA7ipQR2I=
 github.com/datawire/pf v0.0.0-20180510150411-31a823f9495a/go.mod h1:H8uUmE8qqo7z9u30MYB9riLyRckPHOPBk9ZdCuH+dQQ=
 github.com/davecgh/go-spew v0.0.0-20151105211317-5215b55f46b2/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
