@@ -6,7 +6,7 @@ metadata:
     kubeaddons.mesosphere.io/name: cert-manager
     kubeaddons.mesosphere.io/cert-manager: v1
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.3-5"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.3-6"
     appversion.kubeaddons.mesosphere.io/cert-manager: "1.0.3"
     docs.kubeaddons.mesosphere.io/cert-manager: "https://cert-manager.io/docs/release-notes/release-notes-1.0/"
     values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/57880c4/stable/cert-manager-setup/values.yaml"
@@ -32,7 +32,7 @@ spec:
     version: 0.2.5
     values: |
       ---
-      upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.4.1"
+      upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.4.2"
       issuers:
         - name: kubernetes-root-issuer
           secretName: kubernetes-root-ca
