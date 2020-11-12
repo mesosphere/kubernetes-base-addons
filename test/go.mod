@@ -1,4 +1,4 @@
-module github.com/mesosphere/kubeaddons-base-addons/test
+module github.com/mesosphere/kubeaddons vbump
 
 go 1.15
 
