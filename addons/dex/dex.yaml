@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-11"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-12"
     appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
     values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/5862483/stable/dex/values.yaml"
 spec:
@@ -26,6 +26,9 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/provides: ingresscontroller
+    - matchLabels:
+        kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/cert-manager: v1
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
