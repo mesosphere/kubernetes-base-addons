@@ -32,7 +32,7 @@ spec:
     version: 0.2.5
     values: |
       ---
-      upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.4.0"
+      upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.4.1"
       issuers:
         - name: kubernetes-root-issuer
           secretName: kubernetes-root-ca
