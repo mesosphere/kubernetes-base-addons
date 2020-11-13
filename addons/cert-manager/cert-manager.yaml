@@ -6,10 +6,10 @@ metadata:
     kubeaddons.mesosphere.io/name: cert-manager
     kubeaddons.mesosphere.io/cert-manager: v1
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.3-6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.3-7"
     appversion.kubeaddons.mesosphere.io/cert-manager: "1.0.3"
     docs.kubeaddons.mesosphere.io/cert-manager: "https://cert-manager.io/docs/release-notes/release-notes-1.0/"
-    values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/57880c4/stable/cert-manager-setup/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/cert-manager: "https://raw.githubusercontent.com/mesosphere/charts/5701849/stable/cert-manager-setup/values.yaml"
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.2.0\", \"strategy\": \"delete\"}]"
 spec:
   namespace: cert-manager
@@ -29,7 +29,7 @@ spec:
   chartReference:
     chart: cert-manager-setup
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.2.5
+    version: 0.2.6
     values: |
       ---
       upgradeImage: "mesosphere/kubeaddons-addon-initializer:v0.4.2"
