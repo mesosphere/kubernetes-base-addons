@@ -32,8 +32,9 @@
   - Fixes regression from [helm/charts&#35;17643](https://github.com/helm/charts/pull/17643) where the explicit selectors do match the previously implicit selectors.
   - Fix plugin install initcontainer which would fail if plugin already exists. This happens when Node reboots and keeps emptyDir, or if elasticsearch image already contains plugin
   - In private environments where we replicate all the images, the test image cannot be pulled due it misses imagePullSecrets ([#497](https://github.com/mesosphere/kubernetes-base-addons/pull/497))
-- Kibana
-  -  Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
+
+- External-dns
+  - Add servicemonitor label to enable metrics collection by Prometheus ([#617](https://github.com/mesosphere/kubernetes-base-addons/pull/617), [@gracedo](https://github.com/gracedo))
 
 - Fluent-bit:
   - bump the fluent-bit app version to 1.5.6
@@ -45,9 +46,6 @@
   - Upgrades fluent-bit to v1.5.7. See https://fluentbit.io/announcements/v1.5.7.
   - Adds chart value `podLabels`. ([#584](https://github.com/mesosphere/kubernetes-base-addons/pull/584))
   - configuration to unblock output buffer. ([#589](https://github.com/mesosphere/kubernetes-base-addons/pull/589), [@alejandroEsc](https://github.com/alejandroEsc))
-
-- External-dns
-  - Add servicemonitor label to enable metrics collection by Prometheus ([#617](https://github.com/mesosphere/kubernetes-base-addons/pull/617), [@gracedo](https://github.com/gracedo))
 
 - Istio
   - Bug Fixes
@@ -75,6 +73,9 @@
     - Updated SDS timeout to fetch workload certificates to 0s
     - Updated app_containers to use comma separated values for container specification
     - Updated default protocol sniffing timeout to 5s (Istio &#35;24379) ([#516](https://github.com/mesosphere/kubernetes-base-addons/pull/516), [@shaneutt](https://github.com/shaneutt))
+
+- Kibana
+  -  Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
 
 - Metallb
   - Enable metrics collection ([#623](https://github.com/mesosphere/kubernetes-base-addons/pull/623))
