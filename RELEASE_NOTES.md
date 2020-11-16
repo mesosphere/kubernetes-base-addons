@@ -1,5 +1,89 @@
 # Release Notes
 
+## stable-1.18-3.0.0
+
+- Ambassador
+  - added Ambassador addon ([#524](https://github.com/mesosphere/kubernetes-base-addons/pull/524), [@shaneutt](https://github.com/shaneutt))
+
+- Cert-manager:
+  - v1 API
+  - Renaming our API group from certmanager.k8s.io to cert-manager.io
+  - Removal of the v1alpha API
+  - kubectl cert-manager status command to help with investigating issues
+  - Using new and stable Kubernetes APIs
+  - Improved logging
+  - ACME improvements
+  - kubectl cert-manager create certificaterequest for signing local certificates
+  - General Availability of JKS and PKCS&#35;12 keystore support
+  - kubectl cert-manager CLI plugin allowing manual renewal and API version conversion
+  - ACME External Account Binding support
+  - Support for full set of x509 ‘subject’ parameters ([#542](https://github.com/mesosphere/kubernetes-base-addons/pull/542), [@jr0d](https://github.com/jr0d))
+  - The Deployment selectors were changed, use `delete` `upgrade-strategy`.
+  - support being upgraded from v0.10 to v1.0.3. ([#594](https://github.com/mesosphere/kubernetes-base-addons/pull/594), [@jr0d](https://github.com/jr0d))
+  - support upgrading from v0.10.1 to v1.0.3 ([#656](https://github.com/mesosphere/kubernetes-base-addons/pull/656), [@jr0d](https://github.com/jr0d))
+
+- Default StorageClass Protection
+  - Add servicemonitor labels to enable metrics collection ([#619](https://github.com/mesosphere/kubernetes-base-addons/pull/619), [@gracedo](https://github.com/gracedo))
+
+- Dex
+  - Fix to enable dex-controller metrics collection ([#621](https://github.com/mesosphere/kubernetes-base-addons/pull/621), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+
+- Elasticsearch:
+  - Fixes regression from [helm/charts&#35;17643](https://github.com/helm/charts/pull/17643) where the explicit selectors do match the previously implicit selectors.
+  - Fix plugin install initcontainer which would fail if plugin already exists. This happens when Node reboots and keeps emptyDir, or if elasticsearch image already contains plugin
+  - In private environments where we replicate all the images, the test image cannot be pulled due it misses imagePullSecrets ([#497](https://github.com/mesosphere/kubernetes-base-addons/pull/497), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+- Kibana
+  -  Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
+
+- Fluent-bit:
+  - bump the fluent-bit app version to 1.5.6
+    - aws: utils: fix mem leak in flb_imds_request
+    - fix double free when destroying connections if the endpoint in unavailable
+    - remove noisy error introduced in v1.5.5
+    - fix deletion of pending connections in the destroy_queue ([#538](https://github.com/mesosphere/kubernetes-base-addons/pull/538), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - The Deployment selectors were changed, use `delete` `upgrade-strategy`. ([#574](https://github.com/mesosphere/kubernetes-base-addons/pull/574), [@dkoshkin](https://github.com/dkoshkin))
+  - Upgrades fluent-bit to v1.5.7. See https://fluentbit.io/announcements/v1.5.7.
+  - Adds chart value `podLabels`. ([#584](https://github.com/mesosphere/kubernetes-base-addons/pull/584), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - configuration to unblock output buffer. ([#589](https://github.com/mesosphere/kubernetes-base-addons/pull/589), [@alejandroEsc](https://github.com/alejandroEsc))
+
+- External-dns
+  - Add servicemonitor label to enable metrics collection by Prometheus ([#617](https://github.com/mesosphere/kubernetes-base-addons/pull/617), [@gracedo](https://github.com/gracedo))
+
+- Istio
+  - Bug Fixes
+    - Fixed HTTP match request without headers conflict
+    - Fixed Istio operator to watch multiple namespaces (Istio &#35;26317)
+    - Fixed EDS cache when an endpoint appears after its service resource (Istio &#35;26983)
+    - Fixed istioctl remove-from-mesh not removing init containers on CNI installations.
+    - Fixed istioctl add-to-mesh and remove-from-mesh commands from affecting OwnerReferences (Istio &#35;26720)
+    - Fixed cleaning up of service information when the cluster secret is deleted
+    - Fixed egress gateway ports binding to 80⁄443 due to user permissions
+    - Fixed gateway listeners created with traffic direction outbound to be drained properly on exit
+    - Fixed headless services not updating listeners (Istio &#35;26617)
+    - Fixed inaccurate endpointsPendingPodUpdate metric
+    - Fixed ingress SDS from not getting secret update (Istio &#35;18912)
+    - Fixed ledger capacity size
+    - Fixed operator to update service monitor due to invalid permissions (Istio &#35;26961)
+    - Fixed regression in gateway name resolution (Istio 26264)
+    - Fixed rotated certificates not being stored to /etc/istio-certs VolumeMount (Istio &#35;26821)
+    - Fixed trust domain validation in transport socket level (Istio &#35;26435)
+  - Improvements
+    - Added istioctl analyzer to detect when Destination Rules do not specify caCertificates (Istio &#35;25652)
+    - Added missing telemetry.loadshedding.- options to mixer container arguments
+    - Improved specifying network for a cluster without meshNetworks also being configured
+    - Improved the cache readiness state with TTL (Istio &#35;26418)
+    - Updated SDS timeout to fetch workload certificates to 0s
+    - Updated app_containers to use comma separated values for container specification
+    - Updated default protocol sniffing timeout to 5s (Istio &#35;24379) ([#516](https://github.com/mesosphere/kubernetes-base-addons/pull/516), [@shaneutt](https://github.com/shaneutt))
+
+- Metallb
+  - Enable metrics collection ([#623](https://github.com/mesosphere/kubernetes-base-addons/pull/623), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+
+- Prometheus
+  - Scrape external-dns metrics ([#618](https://github.com/mesosphere/kubernetes-base-addons/pull/618), [@gracedo](https://github.com/gracedo))
+  - Scrape defaultstorageclass metrics ([#620](https://github.com/mesosphere/kubernetes-base-addons/pull/620), [@gracedo](https://github.com/gracedo))
+  - Scrape dex-controller metrics ([#622](https://github.com/mesosphere/kubernetes-base-addons/pull/622), [@gracedo](https://github.com/gracedo))
+
 ## stable-1.15-2.4.0, stable-1.16-2.4.0, stable-1.17-2.4.0
 
 * Istio:
