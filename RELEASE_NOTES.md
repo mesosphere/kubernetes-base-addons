@@ -19,8 +19,7 @@
   - ACME External Account Binding support
   - Support for full set of x509 ‘subject’ parameters ([#542](https://github.com/mesosphere/kubernetes-base-addons/pull/542), [@jr0d](https://github.com/jr0d))
   - The Deployment selectors were changed, use `delete` `upgrade-strategy`.
-  - support being upgraded from v0.10 to v1.0.3. ([#594](https://github.com/mesosphere/kubernetes-base-addons/pull/594), [@jr0d](https://github.com/jr0d))
-  - support upgrading from v0.10.1 to v1.0.3 ([#656](https://github.com/mesosphere/kubernetes-base-addons/pull/656), [@jr0d](https://github.com/jr0d))
+  - support being upgraded from v0.10 to v1.0.3. ([#594](https://github.com/mesosphere/kubernetes-base-addons/pull/594), [@jr0d](https://github.com/jr0d)), ([#656](https://github.com/mesosphere/kubernetes-base-addons/pull/656), [@jr0d](https://github.com/jr0d))
 
 - Default StorageClass Protection
   - Add servicemonitor labels to enable metrics collection ([#619](https://github.com/mesosphere/kubernetes-base-addons/pull/619), [@gracedo](https://github.com/gracedo))
