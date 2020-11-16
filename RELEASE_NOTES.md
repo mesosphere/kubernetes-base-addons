@@ -26,12 +26,12 @@
   - Add servicemonitor labels to enable metrics collection ([#619](https://github.com/mesosphere/kubernetes-base-addons/pull/619), [@gracedo](https://github.com/gracedo))
 
 - Dex
-  - Fix to enable dex-controller metrics collection ([#621](https://github.com/mesosphere/kubernetes-base-addons/pull/621), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - Fix to enable dex-controller metrics collection ([#621](https://github.com/mesosphere/kubernetes-base-addons/pull/621))
 
 - Elasticsearch:
   - Fixes regression from [helm/charts&#35;17643](https://github.com/helm/charts/pull/17643) where the explicit selectors do match the previously implicit selectors.
   - Fix plugin install initcontainer which would fail if plugin already exists. This happens when Node reboots and keeps emptyDir, or if elasticsearch image already contains plugin
-  - In private environments where we replicate all the images, the test image cannot be pulled due it misses imagePullSecrets ([#497](https://github.com/mesosphere/kubernetes-base-addons/pull/497), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - In private environments where we replicate all the images, the test image cannot be pulled due it misses imagePullSecrets ([#497](https://github.com/mesosphere/kubernetes-base-addons/pull/497))
 - Kibana
   -  Fixes an issue that causes Kibana to deploy without an audit log dashboard. ([#511](https://github.com/mesosphere/kubernetes-base-addons/pull/511), [@branden](https://github.com/branden))
 
@@ -40,10 +40,10 @@
     - aws: utils: fix mem leak in flb_imds_request
     - fix double free when destroying connections if the endpoint in unavailable
     - remove noisy error introduced in v1.5.5
-    - fix deletion of pending connections in the destroy_queue ([#538](https://github.com/mesosphere/kubernetes-base-addons/pull/538), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+    - fix deletion of pending connections in the destroy_queue ([#538](https://github.com/mesosphere/kubernetes-base-addons/pull/538))
   - The Deployment selectors were changed, use `delete` `upgrade-strategy`. ([#574](https://github.com/mesosphere/kubernetes-base-addons/pull/574), [@dkoshkin](https://github.com/dkoshkin))
   - Upgrades fluent-bit to v1.5.7. See https://fluentbit.io/announcements/v1.5.7.
-  - Adds chart value `podLabels`. ([#584](https://github.com/mesosphere/kubernetes-base-addons/pull/584), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - Adds chart value `podLabels`. ([#584](https://github.com/mesosphere/kubernetes-base-addons/pull/584))
   - configuration to unblock output buffer. ([#589](https://github.com/mesosphere/kubernetes-base-addons/pull/589), [@alejandroEsc](https://github.com/alejandroEsc))
 
 - External-dns
@@ -77,7 +77,7 @@
     - Updated default protocol sniffing timeout to 5s (Istio &#35;24379) ([#516](https://github.com/mesosphere/kubernetes-base-addons/pull/516), [@shaneutt](https://github.com/shaneutt))
 
 - Metallb
-  - Enable metrics collection ([#623](https://github.com/mesosphere/kubernetes-base-addons/pull/623), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - Enable metrics collection ([#623](https://github.com/mesosphere/kubernetes-base-addons/pull/623))
 
 - Prometheus
   - Scrape external-dns metrics ([#618](https://github.com/mesosphere/kubernetes-base-addons/pull/618), [@gracedo](https://github.com/gracedo))
@@ -130,7 +130,7 @@
 
 * Traefik-forward-auth:
   - Update traefik-foward-auth to 0.2.14
-  - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456))
 
 * Fixed an upgrade issue for several addons which would cause them to not be properly targeted for upgrade ([#492](https://github.com/mesosphere/kubernetes-base-addons/pull/492), [@shaneutt](https://github.com/shaneutt))
 
@@ -146,7 +146,7 @@
   - Fixed bug causing `certificate-authority=`  option to be added to token instructions on the windows tab when it should have been omitted. ([#436](https://github.com/mesosphere/kubernetes-base-addons/pull/436), [@jr0d](https://github.com/jr0d))
 - Elasticsearch-curator:
   - version 5.8.1 ([#374](https://github.com/mesosphere/kubernetes-base-addons/pull/374), [@sebbrandt87](https://github.com/sebbrandt87))
-  - Added value `cronjob.startingDeadlineSeconds`: Amount of time to try reschedule job if we can't run on time ([#447](https://github.com/mesosphere/kubernetes-base-addons/pull/447), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+  - Added value `cronjob.startingDeadlineSeconds`: Amount of time to try reschedule job if we can't run on time ([#447](https://github.com/mesosphere/kubernetes-base-addons/pull/447))
 - Elasticsearch-exporter:
   - updated from 2.11 to 3.7.0
     - Add a parameter for the elasticsearch-exporter: es.indices_settings as it is supported since version 1.0.4 (the elasticsearch-exporter chart is supporting the version 1.1.0)
@@ -158,7 +158,7 @@
     - Add the serviceMonitor targetLabels key as documented in the Prometheus Operator API
     - Add log.level and log.format configs
     - Add the ServiceMonitor metricRelabelings key as documented in the Prometheus Operator API
-    - Add sampleLimit configuration option ([#449](https://github.com/mesosphere/kubernetes-base-addons/pull/449), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+    - Add sampleLimit configuration option ([#449](https://github.com/mesosphere/kubernetes-base-addons/pull/449))
 - Fluent-bit:
   - Three different elasticsearch indicies created
     - kubernetes_cluster-- (for container logs)
@@ -171,7 +171,7 @@
   - the "kubernetes-service-monitor" service monitor has been removed. ([#483](https://github.com/mesosphere/kubernetes-base-addons/pull/483), [@gracedo](https://github.com/gracedo))
 - Traefik-foward-auth:
   - update to 0.2.14
-    - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456), [@d2iq-dispatch](https://github.com/d2iq-dispatch))
+    - Add an option to bypass tfa deployment ([#456](https://github.com/mesosphere/kubernetes-base-addons/pull/456))
 - Kibana:
     - version 6.8.10 ([#373](https://github.com/mesosphere/kubernetes-base-addons/pull/373), [@sebbrandt87](https://github.com/sebbrandt87))
 - Ops-portal:
