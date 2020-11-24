@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-24"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-25"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.22.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -215,6 +215,19 @@ spec:
             endpoints:
               - port: http
                 interval: 30s
+        additionalPodMonitors:
+          - name: kubeaddons-pod-monitor-metrics-flagger
+            selector:
+              matchLabels:
+                podmonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "flagger"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons-flagger
+            podMetricsEndpoints:
+              - port: http
+                interval: 30s
+                scheme: http
         prometheusSpec:
           image:
             tag: v2.22.2
