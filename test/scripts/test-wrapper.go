@@ -102,7 +102,7 @@ func getModifiedAddons() ([]addonName, error) {
 
 func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
 	for _, addonName := range namesOfModifiedAddons {
-		fmt.Printf("INFO: ensuring revision was updated for modified addon %s\n", addonName)
+		fmt.Fprintf(os.Stderr, "INFO: ensuring revision was updated for modified addon %s\n", addonName)
 
 		modifiedAddonRevisions, err := repo.GetAddon(string(addonName))
 		if err != nil {
@@ -130,7 +130,7 @@ func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName,
 			return fmt.Errorf("the revision for addons %s was not properly updated (current: %s, previous from branch %s: %s). Please update the revision for any addons which you modify (see CONTRIBUTING.md)", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
 		}
 
-		fmt.Printf("INFO: addon %s has an updated revision %s (upstream branch %s: %s)\n", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
+		fmt.Fprintf(os.Stderr, "INFO: addon %s has an updated revision %s (upstream branch %s: %s)\n", addonName, modifiedVersion, upstreamBranch, upstreamVersion)
 	}
 
 	return nil

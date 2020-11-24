@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-22"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-23"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
@@ -204,6 +204,17 @@ spec:
                 bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
                 tlsConfig:
                   insecureSkipVerify: true
+          - name: kubeaddons-service-monitor-metrics-flagger-loadtester
+            selector:
+              matchLabels:
+                servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
+                kubeaddons.mesosphere.io/name: "flagger-loadtester"
+            namespaceSelector:
+              matchNames:
+                - kubeaddons-flagger
+            endpoints:
+              - port: http
+                interval: 30s
         prometheusSpec:
           image:
             tag: v2.19.2
