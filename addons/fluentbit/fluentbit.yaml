@@ -71,7 +71,7 @@ spec:
           fieldRef:
             fieldPath: spec.nodeName
       extraVolumes:
-      # we create this to have a persistend tail-db directory an all nodes
+      # we create this to have a persistent tail-db directory an all nodes
       # otherwise a restarted fluent-bit would rescrape all tails
       - name: tail-db
         hostPath:
