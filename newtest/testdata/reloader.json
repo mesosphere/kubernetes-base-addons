@@ -1,0 +1,26 @@
+{
+  "apiVersion": "kubeaddons.mesosphere.io/v1beta1",
+  "kind": "Addon",
+  "metadata": {
+    "name": "reloader",
+    "labels": {
+      "kubeaddons.mesosphere.io/name": "reloader"
+    },
+    "annotations": {
+      "catalog.kubeaddons.mesosphere.io/addon-revision": "0.0.69-2",
+      "appversion.kubeaddons.mesosphere.io/reloader": "0.0.69",
+      "values.chart.helm.kubeaddons.mesosphere.io/reloader": "https://raw.githubusercontent.com/stakater/Reloader/422c291/deployments/kubernetes/chart/reloader/values.yaml"
+    }
+  },
+  "spec": {
+    "kubernetes": {
+      "minSupportedVersion": "v1.15.6"
+    },
+    "chartReference": {
+      "chart": "reloader",
+      "repo": "https://stakater.github.io/stakater-charts",
+      "version": "v0.0.69",
+      "values": "---\nreloader:\n  logFormat: json\n  deployment:\n    resources:\n      limits:\n        cpu: \"100m\"\n        memory: \"512Mi\"\n      requests:\n        cpu: \"100m\"\n        memory: \"128Mi\"\n"
+    }
+  }
+}
