@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.4-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.4-4"
     appversion.kubeaddons.mesosphere.io/gatekeeper: "3.0.4-beta.1"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
     values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/f52ab9415b53aee946ff8e55a60b50be193b7ea7/staging/gatekeeper/values.yaml"
@@ -17,6 +17,7 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/cert-manager: v1
   cloudProvider:
     - name: aws
       enabled: true

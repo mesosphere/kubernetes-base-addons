@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kube-oidc-proxy
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-2"
     appversion.kubeaddons.mesosphere.io/kube-oidc-proxy: "v0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/8f43d8c479a61863c34fdfdb5ae56b9e3f81bbce/staging/kube-oidc-proxy/values.yaml"
 spec:
@@ -29,6 +29,7 @@ spec:
         kubeaddons.mesosphere.io/provides: ingresscontroller
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/cert-manager: v1
     - matchLabels:
         kubeaddons.mesosphere.io/name: dex
   chartReference:
