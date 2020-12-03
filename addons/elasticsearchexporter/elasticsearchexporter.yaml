@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearchexporter
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-4"
     appversion.kubeaddons.mesosphere.io/elasticsearchexporter: "1.1.0"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearchexporter: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch-exporter/values.yaml"
 spec:
@@ -27,11 +27,16 @@ spec:
     - matchLabels:
         kubeaddons.mesosphere.io/name: elasticsearch
   chartReference:
-    chart: elasticsearch-exporter
-    repo: https://mesosphere.github.io/charts/stable
-    version: 3.7.0
+    chart: prometheus-elasticsearch-exporter
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 4.0.0
     values: |
       ---
+      # As defined in the readme file when migrating from old chart to new chart
+      # https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-elasticsearch-exporter
+      # we should override the full name and name in order to do upgrades for services and deployments
+      fullnameOverride: elasticsearchexporter-kubeaddons-elasticsearch-exporter
+      nameOverride: elasticsearch-exporter
       es:
         uri: http://elasticsearch-kubeaddons-client:9200
       service:
