@@ -172,7 +172,7 @@ spec:
               Record host ${FLUENT_BIT_NODE_NAME}
           # We are adding the following filters here to have the workaround for
           # labels kubernetes.label.app=foobar.
-          # Elasticsearch cannot accept single strings and beneath it new objects,
+          # Elasticsearch cannot accept single strings and beneath its new objects,
           # so it will reject all new entries when there is any kubernetes.label.app=foobar
           # entry already present. So what we do is that we remap / modify the kubernetes.label.app
           # to be kubernetes.label.app.kubernetes.io/name.
