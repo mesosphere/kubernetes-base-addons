@@ -9,10 +9,10 @@ metadata:
     kubeaddons.mesosphere.io/name: ambassador
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.0-1"
-    appversion.kubeaddons.mesosphere.io/ambassador: "1.8.0"
-    docs.kubeaddons.mesosphere.io/ambassador: "https://www.getambassador.io/docs/1.8/"
-    values.chart.helm.kubeaddons.mesosphere.io/ambassador: "https://raw.githubusercontent.com/datawire/ambassador-chart/d6d25e1/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.9.1-1"
+    appversion.kubeaddons.mesosphere.io/ambassador: "1.9.1"
+    docs.kubeaddons.mesosphere.io/ambassador: "https://www.getambassador.io/docs/1.9/"
+    values.chart.helm.kubeaddons.mesosphere.io/ambassador: "https://raw.githubusercontent.com/datawire/ambassador-chart/54849e6/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.17.11
@@ -34,7 +34,7 @@ spec:
   chartReference:
     chart: ambassador
     repo: https://getambassador.io
-    version: 6.5.9
+    version: 6.5.13
     values: |
       enableAES: false # use the OSS features
       image:
