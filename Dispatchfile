@@ -1,6 +1,6 @@
 #!mesosphere/dispatch-starlark:v0.6
 # vi:syntax=python
-load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
+load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "make_kind_cluster_claim", "release_claim", "make_kind_cluster", "fetch_kubeconfig", "cleanup")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
@@ -8,7 +8,7 @@ load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "p
 load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bump_charts")
 
 git_clone_dirname = "kba-git-src"
-kind_cluster_name = "kba-kind-cluster"
+kind_cluster_name = "kba-kind"
 
 resource("artifacts", type="storage", params={
     "type": "gcs",
@@ -23,6 +23,29 @@ git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="
 
 kind_cluster = make_kind_cluster(kind_cluster_name, git_clone_dirname)
 
+kind_cluster_elastic = make_kind_cluster_claim(kind_cluster_name+"-elastic")
+
+
+task("test-elastic-group",
+   inputs=[git_clone_dirname],
+   deps=[kind_cluster_elastic],
+   steps=[
+    fetch_kubeconfig(kind_cluster_elastic, git_clone_dirname),
+    k8s.corev1.Container(
+      name="dispatch-integration-test",
+      workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+      command=["/bin/bash", "-c"],
+      args=[
+      """
+        ./scripts/ci/setup_ssh.sh
+        make elasticsearch-group-test
+      """
+      ],
+      image="mesosphere/kubeaddons-ci:latest",
+      env=[
+        k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))],
+   )]
+)
 
 dindTask("dispatch-integration-test",
          inputs=[git_clone_dirname],
@@ -74,6 +97,7 @@ dindTask("lint-yaml",
          )
 
 clean_kind = cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
+clean_elastic_kind = release_claim(kind_cluster_elastic, "test-elastic-group")
 
 # Robot Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request())
@@ -82,6 +106,7 @@ action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
 # Chatops Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint", "test"]))
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
+action(tasks=["test-elastic-group", ], on=pull_request(chatops=["test-es-group"]))
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
