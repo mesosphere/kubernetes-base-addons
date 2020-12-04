@@ -208,18 +208,21 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	var err error
 	t.Logf("testing group %s", groupname)
 
-	u := uuid.New()
-
+	_, ok := os.LookupEnv("KBA_KUBECONFIG")
 	node := v1alpha4.Node{}
-	if err := createNodeVolumes(3, u.String(), &node); err != nil {
-		return err
-	}
-	defer func() {
-		if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
-			t.Logf("error: %s", err)
-		}
-	}()
+	if !ok {
 
+		u := uuid.New()
+
+		if err := createNodeVolumes(3, u.String(), &node); err != nil {
+			return err
+		}
+		defer func() {
+			if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
+				t.Logf("error: %s", err)
+			}
+		}()
+	}
 	t.Logf("setting up cluster for test group %s", groupname)
 	tcluster, err := newCluster(groupname, version, node, t)
 	if err != nil {

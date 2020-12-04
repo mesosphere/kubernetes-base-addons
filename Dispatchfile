@@ -32,6 +32,16 @@ task("test-elastic-group",
    steps=[
     fetch_kubeconfig(kind_cluster_elastic, git_clone_dirname),
     k8s.corev1.Container(
+      name="fetch-master",
+      workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+      image="mesosphere/kubeaddons-ci:latest",
+      command=["/bin/bash", "-c"],
+      args=["""
+        git fetch origin master
+      """
+      ]
+    ),
+    k8s.corev1.Container(
       name="dispatch-integration-test",
       workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
       command=["/bin/bash", "-c"],
@@ -106,7 +116,7 @@ action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
 # Chatops Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint", "test"]))
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
-action(tasks=["test-elastic-group", ], on=pull_request(chatops=["test-es-group"]))
+action(tasks=["test-elastic-group", clean_elastic_kind], on=pull_request(chatops=["test-es-group"]))
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
