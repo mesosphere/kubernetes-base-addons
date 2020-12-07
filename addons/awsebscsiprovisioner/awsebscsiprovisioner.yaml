@@ -9,7 +9,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-1"
     appversion.kubeaddons.mesosphere.io/awsebscsiprovisioner: "0.7.0"
-    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/957337e/stable/awsebscsiprovisioner/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/ccf4f8a/stable/awsebscsiprovisioner/values.yaml"
 spec:
   namespace: kube-system
   requires:
