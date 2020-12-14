@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -101,6 +102,8 @@ func getModifiedAddons() ([]addonName, error) {
 }
 
 func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
+	l := log.New(os.Stderr, "", 0)
+
 	for _, addonName := range namesOfModifiedAddons {
 		fmt.Fprintf(os.Stderr, "INFO: ensuring revision was updated for modified addon %s\n", addonName)
 
@@ -117,7 +120,7 @@ func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName,
 		upstreamAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", upstreamRemote, upstreamBranch, string(addonName))
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
-				fmt.Printf("%s is a new addon, revision check skipped", addonName)
+				l.Printf("%s is a new addon, revision check skipped", addonName)
 				continue
 			}
 			return err
