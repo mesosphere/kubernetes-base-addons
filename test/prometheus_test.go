@@ -28,7 +28,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		time.Sleep(time.Second * 120)
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
-			return fmt.Errorf("could not forward port to prometheus pod: %s", err)
+			return fmt.Errorf("could not forward port to prometheus pod: %w", err)
 		}
 		defer close(stop)
 
@@ -37,7 +37,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		path := "/api/v1/labels"
 		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
-			return fmt.Errorf("could not GET %s: %s", path, err)
+			return fmt.Errorf("could not GET %s: %w", path, err)
 		}
 
 		if resp.StatusCode != http.StatusOK {
@@ -47,7 +47,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		b, err := ioutil.ReadAll(resp.Body)
 		obj := map[string]interface{}{}
 		if err := json.Unmarshal(b, &obj); err != nil {
-			return fmt.Errorf("could not decode JSON response: %s", err)
+			return fmt.Errorf("could not decode JSON response: %w", err)
 		}
 
 		status, ok := obj["status"].(string)
