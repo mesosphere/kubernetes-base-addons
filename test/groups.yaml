@@ -106,6 +106,10 @@ localvolumeprovisioner:
     - "defaultstorageclass-protection"
     - "localvolumeprovisioner"
 
+#
+# The groups below run on Konvoy. See: https://github.com/mesosphere/kubernetes-base-addons/blob/4622b26850c1f994d28eeca711fec5309fd71d70/test/addons_test.go#L484
+#
+
 # ------------------------------------------------------------------------------
 # AWS
 #
