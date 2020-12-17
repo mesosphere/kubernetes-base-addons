@@ -38,9 +38,12 @@ const (
 	defaultKindestNodeImage = "kindest/node:v1.18.8"
 	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
-	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
-	comRepoRef    = "master"
-	comRepoRemote = "origin"
+	repoRef    = "release/2"
+	repoRemote = "origin"
+
+	communityRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
+	communityRepoRef    = "master"
+	communityRepoRemote = "origin"
 )
 
 var (
@@ -61,8 +64,8 @@ func init() {
 		panic(err)
 	}
 
-	fmt.Printf("initializing remote repository %s for test...\n", comRepoURL)
-	comRepo, err = git.NewRemoteRepository(comRepoURL, comRepoRef, comRepoRemote)
+	fmt.Printf("initializing remote repository %s for test...\n", communityRepoURL)
+	comRepo, err = git.NewRemoteRepository(communityRepoURL, communityRepoRef, communityRepoRemote)
 	if err != nil {
 		panic(err)
 	}
@@ -276,16 +279,16 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	addonUpgrades := testharness.Loadables{}
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", repoRemote, repoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
-				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), repoRef)
 				continue
 			}
 			return err
 		}
 		if oldAddon == nil {
-			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), repoRef)
 			continue // new addon, upgrade test not needed
 		}
 

@@ -19,7 +19,7 @@ import (
 
 const (
 	upstreamRemote = "origin"
-	upstreamBranch = "master"
+	upstreamBranch = "release/2"
 )
 
 type addonName string
@@ -78,7 +78,7 @@ func main() {
 func getModifiedAddons() ([]addonName, error) {
 	addonsModifiedMap := make(map[addonName]struct{})
 	stdout := new(bytes.Buffer)
-	cmd := exec.Command("git", "diff", "origin/master", "--name-only")
+	cmd := exec.Command("git", "diff", fmt.Sprintf("%s/%s", upstreamRemote, upstreamBranch), "--name-only")
 	cmd.Stdout = stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
