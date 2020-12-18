@@ -73,6 +73,8 @@ spec:
       schedules:
         default:
           schedule: "0 0 * * *"
+          template:
+            ttl: "240h"
       metrics:
         enabled: true
         service:
