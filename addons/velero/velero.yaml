@@ -51,8 +51,8 @@ spec:
         kubeaddons.mesosphere.io/provides: ingresscontroller
   chartReference:
     chart: velero
-    repo: https://mesosphere.github.io/charts/staging
-    version: 3.0.6
+    repo: https:/https://alejandroesc.github.io/charts-1/staging
+    version: 3.1.0
     values: |
       ---
       configuration:
