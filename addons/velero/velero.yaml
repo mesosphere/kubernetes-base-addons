@@ -31,7 +31,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.1-8"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-1"
     values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/51eb074b28fd5a8e5299d0041ce4ed38122e20d7/staging/velero/values.yaml"
 spec:
   namespace: velero
@@ -51,7 +51,7 @@ spec:
         kubeaddons.mesosphere.io/provides: ingresscontroller
   chartReference:
     chart: velero
-    repo: https:/https://alejandroesc.github.io/charts-1/staging
+    repo: https://alejandroEsc.github.io/charts-1/staging
     version: 3.1.0
     values: |
       ---
