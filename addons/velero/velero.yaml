@@ -58,14 +58,12 @@ spec:
       configuration:
         provider: "aws"
         backupStorageLocation:
-          name: "aws"
           bucket: "velero"
           config:
             region: "fallback"     # enables non-production fallback minio backend
             s3ForcePathStyle: true # allows usage of fallback backend
             s3Url: http://minio.velero.svc:9000
         volumeSnapshotLocation:
-          name: "aws"
           config:
             region: "fallback"
       credentials:
