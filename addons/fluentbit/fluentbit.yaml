@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.7-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.7-2"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.7"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/8b430b9/charts/fluent-bit/values.yaml"
     # the older versions were being deployed from stable/fluent-bit
@@ -16,11 +16,6 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
-  requires:
-    # This allows us to have fluentbit wait until ES is deployed and has the right configurations up, in particular
-    # setting up index templates
-    - matchLabels:
-        kubeaddons.mesosphere.io/name: elasticsearch
   cloudProvider:
     - name: aws
       enabled: true
