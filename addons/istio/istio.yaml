@@ -6,18 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.12-1"
-    appversion.kubeaddons.mesosphere.io/istio: "1.6.12"
-    appversion.kubeaddons.mesosphere.io/kiali: "1.18.0"
-    appversion.kubeaddons.mesosphere.io/jaeger: "1.16.0"
-    stage.kubeaddons.mesosphere.io/kiali: Preview
-    stage.kubeaddons.mesosphere.io/jaeger: Preview
-    endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
-    endpoint.kubeaddons.mesosphere.io/jaeger: "/ops/portal/jaeger"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.1-1"
+    appversion.kubeaddons.mesosphere.io/istio: "1.8.1"
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
-    docs.kubeaddons.mesosphere.io/kiali: "https://istio.io/docs/tasks/telemetry/kiali/"
-    docs.kubeaddons.mesosphere.io/jaeger: "https://istio.io/docs/tasks/telemetry/distributed-tracing/jaeger/"
-    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/a7d3c02bac8c4c3ae02854e60483b97cfb80b1b7/staging/istio/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/1079b3c/staging/istio/values.yaml"
 spec:
   namespace: istio-system
   requires:
@@ -42,14 +34,9 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.6.12
+    version: 1.8.2
     values: |
       istioOperator:
-        addonComponents:
-          kiali:
-            enabled: true
-          tracing:
-            enabled: true
         components:
           ingressGateways:
           - enabled: true
@@ -61,14 +48,3 @@ spec:
             k8s:
               hpaSpec:
                 minReplicas: 2
-        values:
-          kiali:
-            contextPath: /ops/portal/kiali
-            dashboard:
-              auth:
-                strategy: anonymous
-              grafanaInClusterURL: http://prometheus-kubeaddons-grafana.kubeaddons:3000
-              jaegerInClusterURL: http://tracing/jaeger
-            prometheusAddr: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
-          tracing:
-            contextPath: /ops/portal/jaeger
