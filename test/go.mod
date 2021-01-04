@@ -14,7 +14,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	github.com/go-logr/logr v0.2.1 // indirect
 	github.com/google/go-cmp v0.5.2
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.1.3
 	github.com/mesosphere/ksphere-testing-framework v0.2.3
 	github.com/mesosphere/kubeaddons v0.22.3
 	gopkg.in/yaml.v2 v2.3.0
