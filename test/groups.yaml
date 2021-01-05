@@ -95,6 +95,8 @@ istio:
     - "cert-manager"
     - "istio"
     - "flagger"
+    - "kiali"
+    - "jaeger"
 
 # ------------------------------------------------------------------------------
 # Local Volume Provisioner
