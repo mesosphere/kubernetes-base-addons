@@ -9,6 +9,7 @@ metadata:
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-3"
     appversion.kubeaddons.mesosphere.io/external-dns: "0.7.0"
     values.chart.helm.kubeaddons.mesosphere.io/external-dns: "https://raw.githubusercontent.com/mesosphere/charts/87aaac21e2833a3809323efd8787f71fa80ab023/stable/external-dns/values.yaml"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.20.4\", \"strategy\": \"delete\"}]"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
