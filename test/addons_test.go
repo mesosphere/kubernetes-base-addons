@@ -27,6 +27,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	"gopkg.in/yaml.v2"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
@@ -41,6 +42,8 @@ const (
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
 	comRepoRef    = "master"
 	comRepoRemote = "origin"
+
+	allAWSGroupName = "allAWS"
 )
 
 var (
@@ -74,10 +77,55 @@ func init() {
 	}
 
 	fmt.Println("finding addon test groups...")
-	groups, err = testgroups.AddonsForGroupsFile("groups.yaml", cat)
+	groupsMap, err := getGroupsMapFromFile("groups.yaml")
 	if err != nil {
 		panic(err)
 	}
+	appendDynamicToGroupsMap(groupsMap)
+	groups, err = testgroups.AddonsForGroups(groupsMap, cat)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func getGroupsMapFromFile(f string) (testgroups.Groups, error) {
+	b, err := ioutil.ReadFile(f)
+	if err != nil {
+		return nil, err
+	}
+
+	g := make(testgroups.Groups)
+	if err := yaml.Unmarshal(b, &g); err != nil {
+		return nil, err
+	}
+	return g, nil
+}
+
+// appends all AWS related addons to the groupsMap as allAWSGroupName
+func appendDynamicToGroupsMap(groupsMap testgroups.Groups) {
+	addonRevisionsList, err := cat.ListAddons(func(addon v1beta2.AddonInterface) bool {
+		// https://github.com/mesosphere/konvoy/blob/94899699aa49ce8344a9d000300d9fa37ebbbf48/pkg/addons/addons.go#L97-L99
+		if len(addon.GetAddonSpec().CloudProvider) == 0 {
+			return true
+		}
+		for _, cloudProvider := range addon.GetAddonSpec().CloudProvider {
+			if cloudProvider.Name == "aws" && cloudProvider.Enabled {
+				return true
+			}
+		}
+		return false
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("\nAdding the following addons to Dynamic Group, %v:\n", allAWSGroupName)
+	for _, addonRevisons := range addonRevisionsList {
+		addonName := addonRevisons[0].GetName()
+		fmt.Println(addonName)
+		groupsMap[allAWSGroupName] = append(groupsMap[allAWSGroupName], testgroups.AddonName(addonName))
+	}
+	fmt.Println("")
 }
 
 func TestValidateUnhandledAddons(t *testing.T) {
@@ -481,9 +529,13 @@ kubeEtcd:
 }
 
 func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
-	if groupname == "aws" || groupname == "azure" || groupname == "gcp" {
+	if groupname == "aws" || groupname == "azure" || groupname == "gcp" || groupname == allAWSGroupName {
+		provisioner := groupname
+		if groupname == allAWSGroupName {
+			provisioner = "aws"
+		}
 		path, _ := os.Getwd()
-		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), groupname)
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisioner)
 	}
 
 	path, ok := os.LookupEnv("KBA_KUBECONFIG")

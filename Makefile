@@ -34,6 +34,24 @@ test:
 kubeaddons-tests:
 	git clone --depth 1 https://github.com/mesosphere/kubeaddons-tests.git --branch master --single-branch
 
+.PHONY: test-nightly
+test-nightly:
+	cd test; go test -tags experimental,nightly -timeout 60m -race -v -run TestUnmarshallPrometheusMetricNames
+	cd test; go test -tags experimental,nightly -timeout 60m -race -v -run TestNightlyGroup
+
+.PHONY: ci.test-nightly
+ci.test-nightly:
+	# go tests
+	git config --global url."https://$$GITHUB_TOKEN:@github.com/".insteadOf "https://github.com/"
+	git fetch
+
+	# docker login to get around rate limit issues, e.g. 'failed to pull image "kindest/node [...] failed with error: exit status 1'
+	docker login -u $$DOCKERHUB_ROBOT_USERNAME -p $$DOCKERHUB_ROBOT_TOKEN
+
+	cd test; ./scripts/setup-konvoy.sh
+
+	make test-nightly
+
 .PHONY: kind-test
 kind-test: kubeaddons-tests
 	make -f kubeaddons-tests/Makefile kind-test KUBEADDONS_REPO=kubernetes-base-addons
