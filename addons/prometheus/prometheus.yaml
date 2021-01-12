@@ -42,7 +42,7 @@ spec:
     - name: none
       enabled: true
   chartReference:
-    chart: kube-prometheus-stack
+    chart: prometheus-operator
     repo: https://alejandroesc.github.io/charts-1/staging
     version: 12.11.3
     valuesRemap:
@@ -51,7 +51,6 @@ spec:
       "grafana.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
-      nameOverride: prometheus-operator
       defaultRules:
         rules:
           etcd: false
