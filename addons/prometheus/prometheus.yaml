@@ -51,6 +51,7 @@ spec:
       "grafana.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
+      nameOverride: prometheus-operator
       defaultRules:
         rules:
           etcd: false
