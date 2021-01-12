@@ -236,7 +236,7 @@ spec:
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
-            - name: prometheus-config-reloader
+            - name: config-reloader
               envFrom:
               - configMapRef:
                   name: cluster-info-configmap
