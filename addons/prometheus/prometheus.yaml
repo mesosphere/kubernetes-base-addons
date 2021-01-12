@@ -230,7 +230,7 @@ spec:
                 scheme: http
         prometheusSpec:
           image:
-            tag: v2.19.2
+            tag: v2.22.1
           thanos:
             version: v0.8.1
           externalLabels:
