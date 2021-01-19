@@ -12,7 +12,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-1"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
-    appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
+    appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
     appversion.kubeaddons.mesosphere.io/grafana: "6.1.17"
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
