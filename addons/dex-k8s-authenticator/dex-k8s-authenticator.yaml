@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex-k8s-authenticator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.2-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.2-5"
     appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.2"
     values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/f44c645c6bc843b254bb0f4f97d516f2cfee4707/staging/dex-k8s-authenticator/values.yaml"
 spec:
@@ -19,6 +19,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: true

@@ -95,6 +95,8 @@ istio:
     - "cert-manager"
     - "istio"
     - "flagger"
+    - "kiali"
+    - "jaeger"
 
 # ------------------------------------------------------------------------------
 # Local Volume Provisioner
@@ -147,3 +149,5 @@ disabled:
     # TODO: Konvoy doesn't fully support GCP just yet
     - "gcpdisk-csi-driver"
     - "gcpdiskprovisioner"
+    # We don't have yet a vSphere setup for general test usage
+    - "vsphere-csi-driver"

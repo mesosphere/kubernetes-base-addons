@@ -1,0 +1,72 @@
+# ------------------------------------------------------------------------------
+# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
+# ------------------------------------------------------------------------------
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: kiali
+  labels:
+    kubeaddons.mesosphere.io/name: kiali
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.28.1-1"
+    appversion.kubeaddons.mesosphere.io/kiali-operator: "1.28.1"
+    appversion.kubeaddons.mesosphere.io/kiali: "1.28.1"
+    stage.kubeaddons.mesosphere.io/kiali: Preview
+    endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
+    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.28/"
+    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/850b7287d1bd38efb59674b6c06fe57b7f5796cf/kiali-operator/values.yaml"
+spec:
+  namespace: istio-system
+  kubernetes:
+    minSupportedVersion: v1.19.0
+  cloudProvider:
+    - name: aws
+      enabled: false
+    - name: gcp
+      enabled: false
+    - name: azure
+      enabled: false
+    - name: docker
+      enabled: false
+    - name: vsphere
+      enabled: false
+  chartReference:
+    chart: kiali-operator
+    repo: https://kiali.org/helm-charts/
+    version: 1.28.1
+    values: |
+      image:
+        repo: quay.io/kiali/kiali-operator
+        tag: v1.28.1
+
+      cr:
+        create: true
+        namespace: "istio-system"
+        spec:
+          auth:
+            strategy: anonymous
+          server:
+            web_root: /ops/portal/kiali
+          external_services:
+            grafana:
+              in_cluster_url: http://prometheus-kubeaddons-grafana.kubeaddons:3000
+            prometheus:
+              url: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
+            tracing:
+              in_cluster_url: http://jaeger-kubeaddons-jaeger-operator-jaeger-query:16686
+          deployment:
+            accessible_namespaces:
+            - '**'
+            ingress_enabled: true
+            override_ingress_yaml:
+              metadata:
+                annotations:
+                  kubernetes.io/ingress.class: traefik
+              spec:
+                rules:
+                - http:
+                    paths:
+                    - path:  /ops/portal/kiali
+                      backend:
+                        serviceName: kiali
+                        servicePort: 20001

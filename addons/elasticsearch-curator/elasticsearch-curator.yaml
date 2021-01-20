@@ -7,7 +7,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearch-curator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "5.8.1-4"
     appversion.kubeaddons.mesosphere.io/elasticsearch-curator: "5.8.1"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch-curator: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch-curator/values.yaml"
 spec:
@@ -19,6 +19,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: false
