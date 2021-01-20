@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: external-dns
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.0-4"
     appversion.kubeaddons.mesosphere.io/external-dns: "0.7.0"
     values.chart.helm.kubeaddons.mesosphere.io/external-dns: "https://raw.githubusercontent.com/mesosphere/charts/87aaac21e2833a3809323efd8787f71fa80ab023/stable/external-dns/values.yaml"
 spec:
@@ -18,6 +18,8 @@ spec:
     - name: azure
       enabled: false
     - name: gcp
+      enabled: false
+    - name: vsphere
       enabled: false
     - name: docker
       enabled: false
