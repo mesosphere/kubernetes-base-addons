@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-11"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-12"
     appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
@@ -20,6 +20,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: false
