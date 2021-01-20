@@ -44,6 +44,8 @@ spec:
       enabled: true
     - name: gcp
       enabled: true
+    - name: vsphere
+      enabled: true
     - name: none
       enabled: true
   requires:

@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-8"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-9"
     appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch/values.yaml"
 spec:
@@ -22,6 +22,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: false

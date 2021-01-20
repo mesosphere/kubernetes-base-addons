@@ -8,7 +8,7 @@ metadata:
   annotations:
     sidecar.istio.io/inject: "false"
     appversion.kubeaddons.mesosphere.io/flagger: "0.19.0"
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.19.0-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.19.0-4"
     docs.kubeaddons.mesosphere.io/flagger: "https://docs.flagger.app/"
     values.chart.helm.kubeaddons.mesosphere.io/flagger: "https://raw.githubusercontent.com/mesosphere/charts/f4105ebb01fc758a4af356069a8ceae043201057/staging/flagger/values.yaml"
 spec:
@@ -21,6 +21,8 @@ spec:
     - name: azure
       enabled: false
     - name: gcp
+      enabled: false
+    - name: vsphere
       enabled: false
     - name: docker
       enabled: false
