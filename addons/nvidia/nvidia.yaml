@@ -8,7 +8,7 @@ metadata:
     kubeaddons.mesosphere.io/name: nvidia
     kubeaddons.mesosphere.io/provides: nvidia
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-7"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-8"
     appversion.kubeaddons.mesosphere.io/nvidia: "0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/master/staging/nvidia/values.yaml"
     # The nvidia addon requires its underlying driver to be completely removed before adding an upgraded one, as two versions of the driver can no cleanly
@@ -39,10 +39,6 @@ spec:
         enabled: true
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
-        initContainers:
-        - name: init-wait
-          image: busybox
-          command: ['sh', '-c', 'sleep 200']
       nvidia-device-plugin:
         enabled: true
         image:
@@ -56,12 +52,8 @@ spec:
              memory: 128Mi
         nodeSelector:
           konvoy.mesosphere.com/gpu-provider: NVIDIA
-        initContainers:
-        - name: init-wait
-          image: busybox
-          command: ['sh', '-c', 'sleep 180']
       nvidia-driver:
-        enabled: true
+        enabled: false
         image:
           tag: "418.87.01-centos7"
         resources:

@@ -149,3 +149,5 @@ disabled:
     # TODO: Konvoy doesn't fully support GCP just yet
     - "gcpdisk-csi-driver"
     - "gcpdiskprovisioner"
+    # We don't have yet a vSphere setup for general test usage
+    - "vsphere-csi-driver"
