@@ -6,11 +6,11 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.10-12"
-    appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "7.9.3-1"
+    appversion.kubeaddons.mesosphere.io/kibana: "7.9.3"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
-    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
-    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/kibana/values.yaml"
+    docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/7.9/index.html"
+    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/mesosphere/charts/8730849/stable/kibana/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,19 +33,23 @@ spec:
   chartReference:
     chart: kibana
     repo: https://mesosphere.github.io/charts/stable
-    version: 3.2.7
+    version: 3.3.0
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
       image:
-        tag: 6.8.10
+        name: docker.elastic.co/kibana/kibana-oss
+        tag: 7.9.3
       files:
         kibana.yml:
           ## Default Kibana configuration from kibana-docker.
-          elasticsearch.url: http://elasticsearch-kubeaddons-client:9200
+          elasticsearch.hosts: ["http://elasticsearch-kubeaddons-client:9200"]
           ## Ref: https://www.elastic.co/guide/en/kibana/current/settings.html
+          server.rewriteBasePath: false
           server.basePath: /ops/portal/kibana
+          server.port: 5601
+          server.host: "0.0.0.0"
       serviceAccount:
         create: true
       service:
@@ -66,7 +70,7 @@ spec:
         # https://github.com/mesosphere/kubeaddons-sidecars
         enabled: false
         values:
-          - kibana-prometheus-exporter,6.8.10,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/6.8.10/kibana-prometheus-exporter-6.8.10.zip
+          - kibana-prometheus-exporter,7.9.3,https://github.com/pjhampton/kibana-prometheus-exporter/releases/download/7.9.3/kibana-prometheus-exporter-7.9.3.zip
       extraContainers: |
         - name: create-index-patterns
           image: curlimages/curl
@@ -102,7 +106,7 @@ spec:
       initContainers:
         # from https://github.com/mesosphere/kubeaddons-sidecars
         - name: kibana-plugins-install
-          image: mesosphere/kibana-plugins:v6.8.10
+          image: mesosphere/kibana-plugins:v7.9.3
           command: ["/bin/sh", "-c", "cp -a /usr/share/kibana/plugins/. /usr/share/kibana/shared-plugins/"]
           volumeMounts:
           - name: plugins
