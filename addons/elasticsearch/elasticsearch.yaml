@@ -13,6 +13,8 @@ metadata:
     catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-7"
     appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/helm/charts/6bfbc8018cd4440637b07c7559d5812e4d9db34d/stable/elasticsearch/values.yaml"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=6.8.2\", \"strategy\": \"delete\"}]"
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=6.8.2\", \"strategy\": \"delete\"}]"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.0
