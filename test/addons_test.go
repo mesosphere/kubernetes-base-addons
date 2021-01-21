@@ -3,9 +3,11 @@ package test
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -44,6 +46,11 @@ const (
 	communityRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
 	communityRepoRef    = "master"
 	communityRepoRemote = "origin"
+
+	tempDir = "/tmp/kubernetes-base-addons"
+
+	kubeaddonsControllerNamespace = "kubeaddons"
+	kubeaddonsControllerPodPrefix = "kubeaddons-controller-manager-"
 )
 
 var (
@@ -217,6 +224,14 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		}
 	}()
 
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return err
+	}
+	dir, err := ioutil.TempDir(tempDir, groupname+"-")
+	if err != nil {
+		return err
+	}
+
 	t.Logf("setting up cluster for test group %s", groupname)
 	tcluster, err := newCluster(groupname, version, node, t)
 	if err != nil {
@@ -231,21 +246,17 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	}
 	defer tcluster.Cleanup()
 
-	f, err := ioutil.TempFile(os.TempDir(), "konvoy-test-")
-	if err != nil {
-		return err
-	}
-
 	kubeConfig, err := tcluster.ConfigYAML()
 	if err != nil {
 		return err
 	}
 
-	if _, err := f.Write(kubeConfig); err != nil {
+	kubeConfigPath := filepath.Join(dir, "kubeconfig")
+	if err := ioutil.WriteFile(kubeConfigPath, kubeConfig, 0644); err != nil {
 		return err
 	}
 
-	if err := kubectl("--kubeconfig", f.Name(), "apply", "-f", controllerBundle); err != nil {
+	if err := kubectl("--kubeconfig", kubeConfigPath, "apply", "-f", controllerBundle); err != nil {
 		return err
 	}
 
@@ -330,6 +341,30 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	)
 	th.Load(addonUpgrades...)
 	th.Load(addonCleanup)
+
+	// Collect kubeaddons controller logs during cleanup.
+	th.Load(testharness.Loadable{
+		Plan: testharness.CleanupPlan,
+		Jobs: testharness.Jobs{func(t *testing.T) error {
+			logFilePath := filepath.Join(dir, "kubeaddons-controller-log.txt")
+			t.Logf("INFO: writing kubeaddons controller logs to %s", logFilePath)
+
+			logFile, err := os.Create(logFilePath)
+			if err != nil {
+				return err
+			}
+			defer logFile.Close()
+
+			logs, err := logsFromPodWithPrefix(tcluster, kubeaddonsControllerNamespace, kubeaddonsControllerPodPrefix)
+			if err != nil {
+				return err
+			}
+			defer logs.Close()
+
+			_, err = io.Copy(logFile, logs)
+			return err
+		}},
+	})
 
 	for _, job := range jobs {
 		th.Load(testharness.Loadable{
