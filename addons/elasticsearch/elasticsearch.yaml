@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-10"
     appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch/values.yaml"
     # Some StatefulSet changes can't be applied, so we need to delete and recreate.
