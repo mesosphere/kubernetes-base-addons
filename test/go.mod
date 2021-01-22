@@ -15,7 +15,7 @@ require (
 	github.com/google/go-cmp v0.5.4
 	github.com/google/uuid v1.1.4
 	github.com/mesosphere/ksphere-testing-framework v0.2.3
-	github.com/mesosphere/kubeaddons v0.23.11
+	github.com/mesosphere/kubeaddons v0.23.12
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.19.5
 	k8s.io/apimachinery v0.19.5
