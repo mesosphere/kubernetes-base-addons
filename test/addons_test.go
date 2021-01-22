@@ -686,10 +686,10 @@ kubeEtcd:
 `,
 }
 
-func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
-	if groupname == "aws" || groupname == "azure" || groupname == "gcp" || groupname == allAWSGroupName || group == "elasticsearch" {
-		provisioner := groupname
-		if groupname == allAWSGroupName || groupname == "elasticsearch" {
+func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
+	if groupName == "aws" || groupName == "azure" || groupName == "gcp" || groupName == allAWSGroupName || groupName == "elasticsearch" {
+		provisioner := groupName
+		if groupName == allAWSGroupName || groupName == "elasticsearch" {
 			provisioner = "aws"
 		}
 		path, _ := os.Getwd()
