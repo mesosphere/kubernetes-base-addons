@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-3"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.6.8"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/86e50f1/charts/fluent-bit/values.yaml"
     # the older versions were being deployed from stable/fluent-bit
