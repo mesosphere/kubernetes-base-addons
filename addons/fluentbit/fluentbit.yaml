@@ -16,11 +16,6 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
-  requires:
-    # This allows us to have fluentbit wait until ES is deployed and has the right configurations up, in particular
-    # setting up index templates
-    - matchLabels:
-        kubeaddons.mesosphere.io/name: elasticsearch
   cloudProvider:
     - name: aws
       enabled: true

@@ -10,9 +10,12 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-10"
     appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch/values.yaml"
+    # Some StatefulSet changes can't be applied, so we need to delete and recreate.
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=6.8.2\", \"strategy\": \"delete\"}]"
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=6.8.2\", \"strategy\": \"delete\"}]"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.0
@@ -35,6 +38,11 @@ spec:
     version: 1.32.0
     values: |
       ---
+      cluster:
+        config:
+          # Disable automatic creation of audit log indexes.
+          # This is intended to reject audit logs until their index template has been created. See data.hooks.postStart.
+          action.auto_create_index: "-kubernetes_audit*"
       client:
         heapSize: 1024m
         resources:
@@ -88,6 +96,16 @@ spec:
                 echo "Error within _template 'kubernetes_audit' creation - exiting"
                 exit 1
               fi
+            fi
+
+            # Enable automatic creation of all indexes.
+            # This re-enables the creation of audit log indexes now that their index template exists. See cluster.config.
+            RES_SETTINGS=$(curl -XPUT -s -o /dev/null -w '%{http_code}' ${CLIENT_URL}/_cluster/settings \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -d '{"persistent": {"action.auto_create_index": "true"}}')
+            if [[ "${RES_SETTINGS}" != "200" ]]; then
+              echo "Error applying cluster settings - exiting"
+              exit 1
             fi
         heapSize: 3072m
         resources:

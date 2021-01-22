@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"io"
 	"strings"
 
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
@@ -20,6 +21,20 @@ func portForwardPodWithPrefix(cluster testcluster.Cluster, ns, prefix, port stri
 		return 0, nil, fmt.Errorf("pod %s is not running, it's in phase %s", pod.Name, pod.Status.Phase)
 	}
 	return networkutils.PortForward(cluster.Config(), pod.Namespace, pod.Name, port)
+}
+
+func logsFromPodWithPrefix(cluster testcluster.Cluster, ns, prefix string) (io.ReadCloser, error) {
+	pod, err := findPodWithPrefix(cluster, ns, prefix)
+	if err != nil {
+		return nil, fmt.Errorf("could not find pod with prefix %s: %s", prefix, err)
+	}
+
+	logs, err := cluster.Client().CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{}).Stream(context.TODO())
+	if err != nil {
+		return nil, fmt.Errorf("could not request logs for pod %s/%s: %s", pod.Namespace, pod.Name, err)
+	}
+
+	return logs, nil
 }
 
 func findPodWithPrefix(cluster testcluster.Cluster, ns, prefix string) (*corev1.Pod, error) {
