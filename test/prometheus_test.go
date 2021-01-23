@@ -25,7 +25,8 @@ const (
 
 func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		time.Sleep(time.Second * 240)
+		time.Sleep(time.Minute * 5)
+		t.Logf("INFO: starting to test prometheus")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to prometheus pod: %w", err)
@@ -65,6 +66,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 
 func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		t.Logf("INFO: starting to test alertmanager")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", alertmanagerPodPrefix, alertmanagerPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to alertmanager pod: %s", err)
@@ -108,6 +110,7 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 
 func grafanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		t.Logf("INFO: starting to test grafana")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", grafanaPodPrefix, grafanaPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to grafana pod: %s", err)
