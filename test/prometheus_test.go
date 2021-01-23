@@ -25,7 +25,7 @@ const (
 
 func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		time.Sleep(time.Second * 120)
+		time.Sleep(time.Second * 240)
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to prometheus pod: %w", err)
