@@ -73,9 +73,10 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 		}
 		defer close(stop)
 
-		// Check alertmanager status is ready.
+		// Alertmanager readiness check
+		// https://prometheus.io/docs/alerting/latest/management_api/#readiness-check
 		var resp *http.Response
-		path := "/api/v2/status"
+		path := "/-/ready"
 		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
 			return fmt.Errorf("could not GET %s: %s", path, err)
@@ -83,24 +84,6 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 
 		if resp.StatusCode != http.StatusOK {
 			return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
-		}
-
-		b, err := ioutil.ReadAll(resp.Body)
-		obj := map[string]interface{}{}
-		if err := json.Unmarshal(b, &obj); err != nil {
-			return fmt.Errorf("could not decode JSON response: %s", err)
-		}
-
-		clusterObj, ok := obj["cluster"].(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("JSON response missing key cluster with object value")
-		}
-		status, ok := clusterObj["status"].(string)
-		if !ok {
-			return fmt.Errorf("cluster missing key status with string value")
-		}
-		if status != "ready" {
-			return fmt.Errorf("expected status ready, got %s", status)
 		}
 
 		t.Logf("INFO: successfully tested alertmanager")
