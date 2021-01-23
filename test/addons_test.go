@@ -674,6 +674,39 @@ configInline:
     addresses:
     - "172.17.1.200-172.17.1.250"
 `,
+	"elasticsearch": `
+---
+# Reduce resource limits so elasticsearch will deploy on a kind cluster with limited memory.
+client:
+  heapSize: 256m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+master:
+  heapSize: 256m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+data:
+  persistence:
+    size: 4Gi
+  heapSize: 1024m
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1536Mi
+    requests:
+      cpu: 100m
+      memory: 1024Mi
+`,
 	"prometheus": `
 ---
 # Remove dependency on persistent volumes and Konvoy's "etcd-certs" secret.
@@ -686,10 +719,10 @@ kubeEtcd:
 `,
 }
 
-func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
-	if groupName == "aws" || groupName == "azure" || groupName == "gcp" || groupName == allAWSGroupName || groupName == "elasticsearch" {
-		provisioner := groupName
-		if groupName == allAWSGroupName || groupName == "elasticsearch" {
+func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
+	if groupname == "aws" || groupname == "azure" || groupname == "gcp" || groupname == allAWSGroupName {
+		provisioner := groupname
+		if groupname == allAWSGroupName {
 			provisioner = "aws"
 		}
 		path, _ := os.Getwd()
