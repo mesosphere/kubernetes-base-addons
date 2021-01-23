@@ -539,7 +539,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		return err
 	}
 
-
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
