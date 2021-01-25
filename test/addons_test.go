@@ -263,11 +263,15 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	var err error
 	t.Logf("testing deployment group %s", groupname)
 
+	t.Logf("=== Running INSTALL job")
+
 	// TODO these happen sequentially, we should do so in parallel when we have enough confidence
 	err = testGroupDeployment(t, groupname, version, jobs)
 	if err != nil {
 		return err
 	}
+
+	t.Logf("=== Running UPGRADE job")
 
 	t.Logf("testing upgrade group %s", groupname)
 	err = testGroupUpgrades(t, groupname, version, jobs)
@@ -511,14 +515,14 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 			return err
 		}
 
-		t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
-		if oldVersion.GT(newVersion) {
-			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
-		}
-		if !newVersion.GT(oldVersion) {
+		if newVersion.EQ(oldVersion) {
 			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
 			addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
 			continue
+		} else if oldVersion.GT(newVersion) {
+			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		} else {
+			t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
 		}
 
 		t.Logf("INFO: addon %s was modified and will be upgrade tested", newAddon.GetName())
