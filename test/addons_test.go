@@ -543,6 +543,12 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		return err
 	}
 
+	if len(addonUpgrades) == 0 {
+		t.Logf("INFO: NO UPGRADES to be tested, EXITING")
+		close(stop)
+		return nil
+	}
+
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
@@ -585,11 +591,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	})
 
 	defer th.Cleanup()
-
-	if len(addonUpgrades) == 0 {
-		t.Logf("INFO: NO UPGRADES to be tested, EXITING")
-		return nil
-	}
 
 	th.Validate()
 	th.Deploy()
