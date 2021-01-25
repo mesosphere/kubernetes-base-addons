@@ -550,6 +550,14 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		addonDefaults,
 	)
 	th.Load(addonUpgrades...)
+
+	for _, job := range jobs {
+		th.Load(testharness.Loadable{
+			Plan: testharness.DefaultPlan,
+			Jobs: testharness.Jobs{job(t, tcluster)},
+		})
+	}
+
 	th.Load(addonCleanup)
 
 	// Collect kubeaddons controller logs during cleanup.
@@ -575,13 +583,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 			return err
 		}},
 	})
-
-	for _, job := range jobs {
-		th.Load(testharness.Loadable{
-			Plan: testharness.DefaultPlan,
-			Jobs: testharness.Jobs{job(t, tcluster)},
-		})
-	}
 
 	defer th.Cleanup()
 	th.Validate()
