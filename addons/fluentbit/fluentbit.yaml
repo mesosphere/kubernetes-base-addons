@@ -207,6 +207,102 @@ spec:
               Name                modify
               Match               kube.*
               Remove_wildcard     kubernetes_
+          # Duplicate of above filters for requestObject audit.* only
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        requestObject
+              Add_prefix          requestObject_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        requestObject_metadata
+              Add_prefix          requestObject_metadata_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        requestObject_metadata_labels
+              Add_prefix          requestObject_metadata_labels_
+          [FILTER]
+              Name                modify
+              Match               audit.*
+              Hard_rename         requestObject_metadata_labels_app requestObject_metadata_labels_app.kubernetes.io/name
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            requestObject_metadata_labels_*
+              Nest_under          requestObject.metadata.labels
+              Remove_prefix       requestObject_metadata_labels_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            requestObject_metadata_*
+              Nest_under          requestObject.metadata
+              Remove_prefix       requestObject_metadata_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            requestObject_*
+              Nest_under          requestObject
+              Remove_prefix       requestObject_
+          [FILTER]
+              Name                modify
+              Match               audit.*
+              Remove_wildcard     requestObject_
+          # Duplicate of above filters for responseObject audit.* only
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        responseObject
+              Add_prefix          responseObject_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        responseObject_metadata
+              Add_prefix          responseObject_metadata_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           lift
+              Nested_under        responseObject_metadata_labels
+              Add_prefix          responseObject_metadata_labels_
+          [FILTER]
+              Name                modify
+              Match               audit.*
+              Hard_rename         responseObject_metadata_labels_app responseObject_metadata_labels_app.kubernetes.io/name
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            responseObject_metadata_labels_*
+              Nest_under          responseObject.metadata.labels
+              Remove_prefix       responseObject_metadata_labels_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            responseObject_metadata_*
+              Nest_under          responseObject.metadata
+              Remove_prefix       responseObject_metadata_
+          [FILTER]
+              Name                nest
+              Match               audit.*
+              Operation           nest
+              Wildcard            responseObject_*
+              Nest_under          responseObject
+              Remove_prefix       responseObject_
+          [FILTER]
+              Name                modify
+              Match               audit.*
+              Remove_wildcard     responseObject_
 
         ## https://docs.fluentbit.io/manual/pipeline/outputs
         outputs: |
@@ -222,7 +318,7 @@ spec:
               # A small fraction of audit logs will be rejected by Elasticsearch because values may have an inconsistent type.
               # We set a low retry limit here in order to prevent fluent-bit from backing up while it repeatedly retries flushing these logs.
               # See https://github.com/uken/fluent-plugin-elasticsearch#random-400---rejected-by-elasticsearch-is-occured-why.
-              Retry_Limit 1
+              Retry_Limit 3
               Buffer_Size 512KB
           [OUTPUT]
               Name es
