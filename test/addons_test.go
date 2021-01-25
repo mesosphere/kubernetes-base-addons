@@ -585,6 +585,12 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	})
 
 	defer th.Cleanup()
+
+	if len(addonUpgrades) == 0 {
+		t.Logf("INFO: NO UPGRADES to be tested, EXITING")
+		return nil
+	}
+
 	th.Validate()
 	th.Deploy()
 	th.Default()
