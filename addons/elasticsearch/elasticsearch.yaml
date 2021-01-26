@@ -10,8 +10,8 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.2-10"
-    appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.13-11"
+    appversion.kubeaddons.mesosphere.io/elasticsearch: "6.8.13"
     values.chart.helm.kubeaddons.mesosphere.io/elasticsearch: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/elasticsearch/values.yaml"
     # Some StatefulSet changes can't be applied, so we need to delete and recreate.
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=6.8.2\", \"strategy\": \"delete\"}]"
@@ -38,6 +38,14 @@ spec:
     version: 1.32.0
     values: |
       ---
+      # Default values for elasticsearch.
+      # This is a YAML-formatted file.
+      # Declare variables to be passed into your templates.
+      appVersion: "6.8.13"
+
+      image:
+        tag: "6.8.13"
+
       cluster:
         config:
           # Disable automatic creation of audit log indexes.
