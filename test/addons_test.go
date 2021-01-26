@@ -263,6 +263,9 @@ func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.Add
 			return false, nil, fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
 		}
 
+		t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
+		// for upgraded addons, add the oldAddon (running previous version) to deployments
+		addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
 		doUpgrade = true
 	}
 
@@ -540,7 +543,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		return err
 	}
 
-	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, deployments...)
+	waitForAddons, err := addontesters.WaitForAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
@@ -609,7 +612,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	th.Load(
 		addontesters.ValidateAddons(addons...),
 		addonDeployment,
-		addonDefaults,
+		waitForAddons,
 	)
 	th.Load(addonUpgrades...)
 
