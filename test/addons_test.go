@@ -239,6 +239,7 @@ func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.Add
 		}
 		if oldAddon == nil {
 			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
 			continue // new addon, upgrade test not needed
 		}
 
@@ -260,14 +261,9 @@ func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.Add
 			continue
 		} else if oldVersion.GT(newVersion) {
 			return false, nil, fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
-		} else {
-			t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
 		}
 
 		doUpgrade = true
-
-		// append old version to Deployments
-		addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
 	}
 
 	return doUpgrade, addonDeploymentsArray, nil
