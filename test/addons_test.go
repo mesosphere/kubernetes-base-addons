@@ -535,7 +535,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	go experimental.LoggingHook(t, tcluster, wg, stop)
 
 
-	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
+	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
@@ -608,6 +608,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
+		addonDeployment,
 		addonDefaults,
 	)
 	th.Load(addonUpgrades...)
