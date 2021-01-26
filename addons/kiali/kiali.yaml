@@ -1,6 +1,6 @@
-# ------------------------------------------------------------------------------
-# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: ClusterAddon
 metadata:
@@ -8,10 +8,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-2"
     appversion.kubeaddons.mesosphere.io/kiali-operator: "1.29.0"
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
-    stage.kubeaddons.mesosphere.io/kiali: Preview
+    stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
     docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.29/"
     values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/97f435/kiali-operator/values.yaml"

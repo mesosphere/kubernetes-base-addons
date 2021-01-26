@@ -1,6 +1,6 @@
-# ------------------------------------------------------------------------------
-# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: ClusterAddon
 metadata:
@@ -8,10 +8,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: jaeger
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-4"
     appversion.kubeaddons.mesosphere.io/jaeger-operator: "1.21.2"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.21.0"
-    stage.kubeaddons.mesosphere.io/jaeger: Preview
+    stage.kubeaddons.mesosphere.io/jaeger: Experimental
     endpoint.kubeaddons.mesosphere.io/jaeger: "/ops/portal/jaeger"
     docs.kubeaddons.mesosphere.io/jaeger: "https://www.jaegertracing.io/docs/1.21/"
     values.chart.helm.kubeaddons.mesosphere.io/jaeger: "https://raw.githubusercontent.com/jaegertracing/helm-charts/aa3b160/charts/jaeger-operator/values.yaml"
