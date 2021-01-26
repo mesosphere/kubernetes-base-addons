@@ -538,7 +538,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	stop := make(chan struct{})
 	go experimental.LoggingHook(t, tcluster, wg, stop)
 
-	addonDeploymentsArray := []v1beta2.AddonInterface{}
 
 	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
 	if err != nil {
@@ -558,7 +557,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
 				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
-				addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
 				continue
 			}
 			return err
@@ -582,7 +580,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 
 		if newVersion.EQ(oldVersion) {
 			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
-			addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
 			continue
 		} else if oldVersion.GT(newVersion) {
 			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
@@ -597,13 +594,11 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 			return err
 		}
 
-		// append old version to Deployments
-		addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
 		// append for upgrades
 		addonUpgrades = append(addonUpgrades, addonUpgrade)
 	}
 
-	addonDeployment, err := addontesters.DeployAddons(t, tcluster, addonDeploymentsArray...)
+	addonDeployment, err := addontesters.DeployAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
