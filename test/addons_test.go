@@ -326,13 +326,13 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		return err
 	}
 
-	doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupname)
+	doUpgrade, addons, err := checkIfUpgradeIsNeeded(t, groupname)
 
 	if doUpgrade {
 		t.Logf("=== Running UPGRADE job")
 
 		t.Logf("testing upgrade group %s", groupname)
-		err = testGroupUpgrades(t, groupname, version, jobs, addonDeployments)
+		err = testGroupUpgrades(t, groupname, version, jobs, addons)
 		if err != nil {
 			return err
 		}
