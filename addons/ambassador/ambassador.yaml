@@ -1,6 +1,6 @@
-# ------------------------------------------------------------------------------
-# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: ClusterAddon
 metadata:
@@ -9,7 +9,7 @@ metadata:
     kubeaddons.mesosphere.io/name: ambassador
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.0-2"
     appversion.kubeaddons.mesosphere.io/ambassador: "1.8.0"
     docs.kubeaddons.mesosphere.io/ambassador: "https://www.getambassador.io/docs/1.8/"
     values.chart.helm.kubeaddons.mesosphere.io/ambassador: "https://raw.githubusercontent.com/datawire/ambassador-chart/d6d25e1/values.yaml"
