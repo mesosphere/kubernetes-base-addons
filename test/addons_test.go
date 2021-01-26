@@ -214,6 +214,65 @@ func TestAzureGroup(t *testing.T) {
 // Private Functions
 // -----------------------------------------------------------------------------
 
+func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.AddonInterface, error) {
+	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
+
+	var doUpgrade bool
+	addons := groups[groupname]
+	for _, addon := range addons {
+		if err := overrides(addon); err != nil {
+			return false, nil, err
+		}
+	}
+
+	addonDeploymentsArray := []v1beta2.AddonInterface{}
+	for _, newAddon := range addons {
+		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		if err != nil {
+			if strings.Contains(err.Error(), "directory not found") {
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
+				continue
+			}
+			return false, nil, err
+		}
+		if oldAddon == nil {
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			continue // new addon, upgrade test not needed
+		}
+
+		t.Logf("determining old and new versions for upgrade testing addon %s", newAddon.GetName())
+		oldRev := oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		oldVersion, err := semver.Parse(strings.TrimPrefix(oldRev, "v"))
+		if err != nil {
+			return false, nil, err
+		}
+		newRev := newAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		newVersion, err := semver.Parse(strings.TrimPrefix(newRev, "v"))
+		if err != nil {
+			return false, nil, err
+		}
+
+		if newVersion.EQ(oldVersion) {
+			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
+			addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
+			continue
+		} else if oldVersion.GT(newVersion) {
+			return false, nil, fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		} else {
+			t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
+		}
+
+		doUpgrade = true
+
+		// append old version to Deployments
+		addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
+	}
+
+	return doUpgrade, addonDeploymentsArray, nil
+}
+
 func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
@@ -271,12 +330,18 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		return err
 	}
 
-	t.Logf("=== Running UPGRADE job")
+	doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupname)
 
-	t.Logf("testing upgrade group %s", groupname)
-	err = testGroupUpgrades(t, groupname, version, jobs)
-	if err != nil {
-		return err
+	if doUpgrade {
+		t.Logf("=== Running UPGRADE job")
+
+		t.Logf("testing upgrade group %s", groupname)
+		err = testGroupUpgrades(t, groupname, version, jobs, addonDeployments)
+		if err != nil {
+			return err
+		}
+	} else {
+		t.Logf("=== NO UPGRADE jobs to run")
 	}
 
 	return nil
@@ -410,7 +475,7 @@ func testGroupDeployment(t *testing.T, groupname string, version string, jobs []
 	return nil
 }
 
-func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []clusterTestJob) error {
+func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []clusterTestJob, deployments []v1beta2.AddonInterface) error {
 	var err error
 	t.Logf("testing group %s", groupname)
 
