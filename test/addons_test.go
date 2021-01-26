@@ -540,10 +540,10 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		return err
 	}
 
-	//addonDefaults, err := addontesters.WaitForAddons(t, tcluster, addons...)
-	//if err != nil {
-	//	return err
-	//}
+	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, deployments...)
+	if err != nil {
+		return err
+	}
 
 	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
 	addonUpgrades := testharness.Loadables{}
@@ -608,8 +608,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
-		addonDeployment,
-		//addonDefaults,
+		addonDefaults,
 	)
 	th.Load(addonUpgrades...)
 
