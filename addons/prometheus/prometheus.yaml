@@ -21,7 +21,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/1205915/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/1205915b6ef6da938e8170982f8bdeab0f7c9361/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
