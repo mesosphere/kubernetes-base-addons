@@ -224,6 +224,9 @@ spec:
               # See https://github.com/uken/fluent-plugin-elasticsearch#random-400---rejected-by-elasticsearch-is-occured-why.
               Retry_Limit 1
               Buffer_Size 512KB
+              # Audit logs may include resource labels, which may include dots. We replace them with underscores to
+              # prevent conflicts that will cause Elasticsearch to reject logs.
+              Replace_Dots On
           [OUTPUT]
               Name es
               Alias kubernetes_cluster
