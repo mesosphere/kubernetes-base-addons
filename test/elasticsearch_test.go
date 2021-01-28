@@ -64,6 +64,10 @@ func kibanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 			return fmt.Errorf("failed to check kibana dashboards: %s", err)
 		}
 
+		if err := checkKibanaMetrics(localport); err != nil {
+			return fmt.Errorf("failed to check kibana metrics endpoint: %s", err)
+		}
+
 		t.Logf("INFO: successfully tested kibana")
 		return nil
 	}
@@ -187,6 +191,23 @@ func checkKibanaDashboards(localport int) error {
 	}
 
 	return nil
+}
+
+// checkKibanaMetrics returns nil if Kibana metrics are exported, otherwise an error.
+func checkKibanaMetrics(localport int) error {
+		// Check that kibana exported prometheus metrics endpoint is reachable
+		var resp *http.Response
+		path := "/_prometheus/metrics"
+		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
+		if err != nil {
+			return fmt.Errorf("could not GET %s: %s", path, err)
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
+		}
+
+		return nil
 }
 
 // checkElasticsearchAvailable checks that the elasticsearch API is available on a local port.
