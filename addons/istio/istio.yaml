@@ -1,3 +1,6 @@
+# --------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
@@ -5,7 +8,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.2-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.8.2-2"
     appversion.kubeaddons.mesosphere.io/istio: "1.8.2"
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
     values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/2a68b97/staging/istio/values.yaml"

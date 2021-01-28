@@ -1,6 +1,6 @@
-# ------------------------------------------------------------------------------
-# PREVIEW: this addon is in preview mode and only intended for use in testing environments.
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
 apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: ClusterAddon
 metadata:
@@ -8,13 +8,13 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.28.1-1"
-    appversion.kubeaddons.mesosphere.io/kiali-operator: "1.28.1"
-    appversion.kubeaddons.mesosphere.io/kiali: "1.28.1"
-    stage.kubeaddons.mesosphere.io/kiali: Preview
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-2"
+    appversion.kubeaddons.mesosphere.io/kiali-operator: "1.29.0"
+    appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
+    stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
-    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.28/"
-    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/850b7287d1bd38efb59674b6c06fe57b7f5796cf/kiali-operator/values.yaml"
+    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.29/"
+    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/97f435/kiali-operator/values.yaml"
 spec:
   namespace: istio-system
   kubernetes:
@@ -33,18 +33,20 @@ spec:
   chartReference:
     chart: kiali-operator
     repo: https://kiali.org/helm-charts/
-    version: 1.28.1
+    version: 1.29.0
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       image:
         repo: quay.io/kiali/kiali-operator
-        tag: v1.28.1
+        tag: v1.29.0
 
       cr:
         create: true
         namespace: "istio-system"
         spec:
           auth:
-            strategy: anonymous
+            strategy: header
           server:
             web_root: /ops/portal/kiali
           external_services:
@@ -62,6 +64,9 @@ spec:
               metadata:
                 annotations:
                   kubernetes.io/ingress.class: traefik
+                  traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+                  traefik.ingress.kubernetes.io/auth-type: forward
+                  traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
               spec:
                 rules:
                 - http:
