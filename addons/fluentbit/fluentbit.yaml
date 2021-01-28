@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-3"
     appversion.kubeaddons.mesosphere.io/fluentbit: "1.6.8"
     values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/86e50f1/charts/fluent-bit/values.yaml"
     # the older versions were being deployed from stable/fluent-bit
@@ -224,6 +224,9 @@ spec:
               # See https://github.com/uken/fluent-plugin-elasticsearch#random-400---rejected-by-elasticsearch-is-occured-why.
               Retry_Limit 1
               Buffer_Size 512KB
+              # Audit logs may include resource labels, which may include dots. We replace them with underscores to
+              # prevent conflicts that will cause Elasticsearch to reject logs.
+              Replace_Dots On
           [OUTPUT]
               Name es
               Alias kubernetes_cluster
