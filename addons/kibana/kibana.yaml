@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.13-13"
-    appversion.kubeaddons.mesosphere.io/kibana: "6.8.13"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "6.8.13-14"
+    appversion.kubeaddons.mesosphere.io/kibana: "6.8.10"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/6.8/index.html"
     values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/mesosphere/charts/73fba37/stable/kibana/values.yaml"
@@ -39,7 +39,7 @@ spec:
     values: |
       ---
       image:
-        tag: 6.8.13
+        tag: 6.8.10
       files:
         kibana.yml:
           ## Default Kibana configuration from kibana-docker.
