@@ -1,4 +1,3 @@
----
 # ------------------------------------------------------------------------------
 # Velero
 #
@@ -32,7 +31,7 @@ metadata:
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.2-1"
-    values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/24860fab46d50bd1c8251bc0b70370cef3bec61d/staging/velero/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/34a717f/staging/velero/values.yaml"
     # minio StatefulSet changes too much to be updated
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=3.0.6\", \"strategy\": \"delete\"}]"
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=3.0.6\", \"strategy\": \"delete\"}]"
@@ -57,7 +56,7 @@ spec:
   chartReference:
     chart: velero
     repo: https://mesosphere.github.io/charts/staging
-    version: 3.1.0
+    version: 3.1.1
     values: |
       ---
       enableHelmHooks: false # handle helm install --atomic through kubeaddons
