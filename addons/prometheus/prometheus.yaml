@@ -63,6 +63,12 @@ spec:
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
           velero: false
+        homeDashboard:
+          cronJob:
+            image: apteno/alpine-jq:2021-01-19
+        hooks:
+          grafana:
+            image: apteno/alpine-jq:2021-01-19
       prometheus:
         ingress:
           enabled: true
