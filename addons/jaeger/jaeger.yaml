@@ -8,13 +8,13 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: jaeger
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-5"
     appversion.kubeaddons.mesosphere.io/jaeger-operator: "1.21.2"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.21.0"
     stage.kubeaddons.mesosphere.io/jaeger: Experimental
     endpoint.kubeaddons.mesosphere.io/jaeger: "/ops/portal/jaeger"
-    docs.kubeaddons.mesosphere.io/jaeger: "https://www.jaegertracing.io/docs/1.21/"
-    values.chart.helm.kubeaddons.mesosphere.io/jaeger: "https://raw.githubusercontent.com/jaegertracing/helm-charts/aa3b160/charts/jaeger-operator/values.yaml"
+    docs.kubeaddons.mesosphere.io/jaeger: "https://www.jaegertracing.io/docs/1.20/"
+    values.chart.helm.kubeaddons.mesosphere.io/jaeger: "https://raw.githubusercontent.com/jaegertracing/helm-charts/ba4e779/charts/jaeger-operator/values.yaml"
 spec:
   namespace: istio-system
   kubernetes:
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: jaeger-operator
     repo: https://jaegertracing.github.io/helm-charts/
-    version: 2.18.3
+    version: 2.18.4
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
