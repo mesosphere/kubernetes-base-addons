@@ -357,9 +357,9 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 	return nil
 }
 
-func testGroupDeployment(t *testing.T, groupname string, version string, jobs []clusterTestJob) error {
+func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
 	var err error
-	t.Logf("testing group %s", groupname)
+	t.Logf("testing group %s", groupName)
 
 	u := uuid.New()
 
@@ -376,13 +376,13 @@ func testGroupDeployment(t *testing.T, groupname string, version string, jobs []
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return err
 	}
-	dir, err := ioutil.TempDir(tempDir, groupname+"-")
+	dir, err := ioutil.TempDir(tempDir, groupName+"-")
 	if err != nil {
 		return err
 	}
 
-	t.Logf("setting up cluster for test group %s", groupname)
-	tcluster, err := newCluster(groupname, version, node, t)
+	t.Logf("setting up cluster for test group %s", groupName)
+	tcluster, err := newCluster(groupName, version, node, t)
 	if err != nil {
 		// try to clean up in case cluster was created and reference available
 		if tcluster != nil {
@@ -409,7 +409,7 @@ func testGroupDeployment(t *testing.T, groupname string, version string, jobs []
 		return err
 	}
 
-	addons := groups[groupname]
+	addons := groups[groupName]
 	for _, addon := range addons {
 		if err := overrides(addon); err != nil {
 			return err
