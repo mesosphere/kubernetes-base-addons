@@ -10,7 +10,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-5"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
@@ -21,7 +21,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/1205915b6ef6da938e8170982f8bdeab0f7c9361/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/822b1fd/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
@@ -46,7 +46,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 12.11.4
+    version: 12.11.6
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -63,6 +63,14 @@ spec:
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
           velero: false
+        homeDashboard:
+          cronJob:
+            image: apteno/alpine-jq:2021-01-19
+        hooks:
+          grafana:
+            image: apteno/alpine-jq:2021-01-19
+          prometheus:
+            kubectlImage: bitnami/kubectl:1.19.7
       prometheus:
         ingress:
           enabled: true
@@ -352,7 +360,7 @@ spec:
           resources:
             limits:
               cpu: 2000m
-              memory: 8192Mi
+              memory: 10922Mi
             requests:
               cpu: 1000m
               memory: 4000Mi
