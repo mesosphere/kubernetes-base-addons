@@ -768,28 +768,7 @@ kubeEtcd:
 }
 
 func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
-	path, ok := os.LookupEnv("KBA_KUBECONFIG")
-	if ok && path != "" {
-		t.Log("Using KBA_KUBECONFIG at", path)
-		// load the file from kubeconfig
-		kubeConfig, err := ioutil.ReadFile(path)
-		if err != nil {
-			return nil, err
-		}
-
-		provisioner, ok := os.LookupEnv("KBA_PROVISIONER")
-		if ok && provisioner != "" {
-			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
-		} else {
-			return nil, fmt.Errorf("required provisioner key %q, not found or empty", "KBA_PROVISIONER")
-		}
-
-		return testcluster.NewClusterFromKubeConfig(provisionerAWS, kubeConfig)
-	} else {
-		path, _ = os.Getwd()
-	}
-
-	path, _ = os.Getwd()
+	path, _ := os.Getwd()
 	switch groupName {
 	case provisionerAWS:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
@@ -802,6 +781,23 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 	case elasticSearchGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	default:
+		path, ok := os.LookupEnv("KBA_KUBECONFIG")
+		if ok && path != "" {
+			t.Log("Using KBA_KUBECONFIG at", path)
+			// load the file from kubeconfig
+			kubeConfig, err := ioutil.ReadFile(path)
+			if err != nil {
+				return nil, err
+			}
+
+			provisioner, ok := os.LookupEnv("KBA_PROVISIONER")
+			if !ok || provisioner == "" {
+				provisioner = provisionerKind
+			}
+
+			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+		}
+
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
 		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}))
 	}

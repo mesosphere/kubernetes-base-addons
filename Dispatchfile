@@ -43,7 +43,6 @@ dindTask("dispatch-integration-test",
 
                  env=[
                      k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="KBA_KUBECONFIG", value=""),
                      k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
                      k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
                      k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
