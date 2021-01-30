@@ -6,8 +6,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.22.0-12"
-    appversion.kubeaddons.mesosphere.io/dex: "2.22.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.27.0-1"
+    appversion.kubeaddons.mesosphere.io/dex: "2.27.0"
     values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/5862483/stable/dex/values.yaml"
 spec:
   kubernetes:
@@ -18,6 +18,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: true
@@ -36,9 +38,9 @@ spec:
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
-      # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.17.0-mesosphere/README.mesosphere.md
+      # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.27.0-d2iq/README.d2iq.md
       image: mesosphere/dex
-      imageTag: v2.22.0-2-g3657-d2iq
+      imageTag:  v2.27.0-2-ged3d-d2iq
       resources:
         requests:
           cpu: 100m

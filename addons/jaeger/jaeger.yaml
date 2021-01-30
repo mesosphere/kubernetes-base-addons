@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------------------------------
+# EXPERIMENTAL: this addon is in experimental mode and only intended for use in testing environments.
+# ---------------------------------------------------------------------------------------------------
+apiVersion: kubeaddons.mesosphere.io/v1beta2
+kind: ClusterAddon
+metadata:
+  name: jaeger
+  labels:
+    kubeaddons.mesosphere.io/name: jaeger
+  annotations:
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-4"
+    appversion.kubeaddons.mesosphere.io/jaeger-operator: "1.21.2"
+    appversion.kubeaddons.mesosphere.io/jaeger: "1.21.0"
+    stage.kubeaddons.mesosphere.io/jaeger: Experimental
+    endpoint.kubeaddons.mesosphere.io/jaeger: "/ops/portal/jaeger"
+    docs.kubeaddons.mesosphere.io/jaeger: "https://www.jaegertracing.io/docs/1.21/"
+    values.chart.helm.kubeaddons.mesosphere.io/jaeger: "https://raw.githubusercontent.com/jaegertracing/helm-charts/aa3b160/charts/jaeger-operator/values.yaml"
+spec:
+  namespace: istio-system
+  kubernetes:
+    minSupportedVersion: v1.19.0
+  cloudProvider:
+    - name: aws
+      enabled: false
+    - name: gcp
+      enabled: false
+    - name: azure
+      enabled: false
+    - name: docker
+      enabled: false
+    - name: vsphere
+      enabled: false
+  chartReference:
+    chart: jaeger-operator
+    repo: https://jaegertracing.github.io/helm-charts/
+    version: 2.18.3
+    valuesRemap:
+      "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
+    values: |
+      image:
+        repository: jaegertracing/jaeger-operator
+        tag: 1.21.2
+
+      jaeger:
+        create: true
+        spec:
+          strategy: allInOne
+          allInOne:
+            image: jaegertracing/all-in-one:1.21.0
+            options:
+              query:
+                base-path: /ops/portal/jaeger
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: "traefik"
+              traefik.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User,Authorization,Impersonate-User,Impersonate-Group
+              traefik.ingress.kubernetes.io/auth-type: forward
+              traefik.ingress.kubernetes.io/auth-url: http://traefik-forward-auth-kubeaddons.kubeaddons.svc.cluster.local:4181/
+            basePath: /ops/portal/jaeger
+
+      rbac:
+        create: true
+        clusterRole: true

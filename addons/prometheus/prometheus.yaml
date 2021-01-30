@@ -10,23 +10,23 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.38.1-27"
-    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.38.1"
-    appversion.kubeaddons.mesosphere.io/prometheus: "2.19.2"
-    appversion.kubeaddons.mesosphere.io/alertmanager: "0.20.0"
-    appversion.kubeaddons.mesosphere.io/grafana: "6.7.3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-5"
+    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
+    appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
+    appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
+    appversion.kubeaddons.mesosphere.io/grafana: "6.1.17"
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
     endpoint.kubeaddons.mesosphere.io/alertmanager: "/ops/portal/alertmanager"
     endpoint.kubeaddons.mesosphere.io/grafana: "/ops/portal/grafana"
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/6fb4e3d/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/822b1fd/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
-    helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
-    helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"}]'
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"},{"upgradeFrom": "<=9.3.5", "strategy": "delete"}]'
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=8.8.5", "strategy": "delete"},{"upgradeFrom": "<=9.3.5", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -37,6 +37,8 @@ spec:
       enabled: true
     - name: gcp
       enabled: true
+    - name: vsphere
+      enabled: true
     - name: docker
       enabled: false
     - name: none
@@ -44,7 +46,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 9.3.4
+    version: 12.11.6
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -61,6 +63,14 @@ spec:
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
           velero: false
+        homeDashboard:
+          cronJob:
+            image: apteno/alpine-jq:2021-01-19
+        hooks:
+          grafana:
+            image: apteno/alpine-jq:2021-01-19
+          prometheus:
+            kubectlImage: bitnami/kubectl:1.19.7
       prometheus:
         ingress:
           enabled: true
@@ -229,14 +239,12 @@ spec:
                 interval: 30s
                 scheme: http
         prometheusSpec:
-          image:
-            tag: v2.19.2
           thanos:
             version: v0.8.1
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
-            - name: prometheus-config-reloader
+            - name: config-reloader
               envFrom:
               - configMapRef:
                   name: cluster-info-configmap
@@ -352,7 +360,7 @@ spec:
           resources:
             limits:
               cpu: 2000m
-              memory: 8192Mi
+              memory: 10922Mi
             requests:
               cpu: 1000m
               memory: 4000Mi

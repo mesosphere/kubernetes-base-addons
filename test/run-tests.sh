@@ -8,7 +8,7 @@ set -euxo pipefail
 cd "$(dirname "$0")"
 
 echo "Setup Konvoy"
-source ./scripts/setup-konvoy.sh v1.5.0
+source ./scripts/setup-konvoy.sh v1.6.1
 
 echo "git fetch branches."
 git fetch

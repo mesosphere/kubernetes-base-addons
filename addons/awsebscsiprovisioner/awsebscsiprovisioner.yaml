@@ -6,9 +6,9 @@ metadata:
     kubeaddons.mesosphere.io/name: awsebscsiprovisioner
     kubeaddons.mesosphere.io/provides: storageclass
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.7.1-1"
-    appversion.kubeaddons.mesosphere.io/awsebscsiprovisioner: "0.7.1"
-    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/4103aff/stable/awsebscsiprovisioner/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.8.0-1"
+    appversion.kubeaddons.mesosphere.io/awsebscsiprovisioner: "0.8.0"
+    values.chart.helm.kubeaddons.mesosphere.io/awsebscsiprovisioner: "https://raw.githubusercontent.com/mesosphere/charts/b0fc1eb/stable/awsebscsiprovisioner/values.yaml"
 spec:
   namespace: kube-system
   requires:
@@ -20,7 +20,7 @@ spec:
     - name: aws
       enabled: true
   chartReference:
-    version: 0.4.1
+    version: 0.5.0
     chart: awsebscsiprovisioner
     repo: https://mesosphere.github.io/charts/stable
     values: |
