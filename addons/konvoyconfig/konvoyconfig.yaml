@@ -7,7 +7,7 @@ metadata:
   labels:
     kubaddons.mesosphere.io/name: konvoyconfig
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-4"
     appversion.kubeaddons.mesosphere.io/konvoyconfig: "0.0.4"
     values.chart.helm.kubeaddons.mesosphere.io/konvoyconfig: "https://raw.githubusercontent.com/mesosphere/charts/173f2200647defaf67e96b32cfdbb5b6932f1fa5/staging/konvoyconfig/values.yaml"
 spec:
@@ -19,6 +19,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: true

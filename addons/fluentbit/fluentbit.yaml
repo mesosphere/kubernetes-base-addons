@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.7-2"
-    appversion.kubeaddons.mesosphere.io/fluentbit: "1.5.7"
-    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/8b430b9/charts/fluent-bit/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.8-4"
+    appversion.kubeaddons.mesosphere.io/fluentbit: "1.6.8"
+    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/86e50f1/charts/fluent-bit/values.yaml"
     # the older versions were being deployed from stable/fluent-bit
     # and were versioned like 2.8.x
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \">=2.8.0\", \"strategy\": \"delete\"}]"
@@ -16,17 +16,14 @@ metadata:
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
-  requires:
-    # This allows us to have fluentbit wait until ES is deployed and has the right configurations up, in particular
-    # setting up index templates
-    - matchLabels:
-        kubeaddons.mesosphere.io/name: elasticsearch
   cloudProvider:
     - name: aws
       enabled: true
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: false
@@ -35,7 +32,7 @@ spec:
   chartReference:
     chart: fluent-bit
     repo: https://fluent.github.io/helm-charts
-    version: 0.7.3
+    version: 0.7.12
     values: |
       service:
         labels:
@@ -71,8 +68,12 @@ spec:
           fieldRef:
             fieldPath: spec.nodeName
       extraVolumes:
+      # we create this to have a persistent tail-db directory an all nodes
+      # otherwise a restarted fluent-bit would rescrape all tails
       - name: tail-db
-        emptyDir: {}
+        hostPath:
+          path: /var/log/tail-db
+          type: DirectoryOrCreate
       # we create this to get rid of error messages that would appear on non control-plane nodes
       - name: kubernetes-audit
         hostPath:
@@ -166,6 +167,46 @@ spec:
               Name record_modifier
               Match kernel
               Record host ${FLUENT_BIT_NODE_NAME}
+          # We are adding the following filters here to have the workaround for
+          # labels kubernetes.label.app=foobar.
+          # Elasticsearch cannot accept single strings and beneath its new objects,
+          # so it will reject all new entries when there is any kubernetes.label.app=foobar
+          # entry already present. So what we do is that we remap / modify the kubernetes.label.app
+          # to be kubernetes.label.app.kubernetes.io/name.
+          [FILTER]
+              Name                nest
+              Match               kube.*
+              Operation           lift
+              Nested_under        kubernetes
+              Add_prefix          kubernetes_
+          [FILTER]
+              Name                nest
+              Match               kube.*
+              Operation           lift
+              Nested_under        kubernetes_labels
+              Add_prefix          kubernetes_labels_
+          [FILTER]
+              Name                modify
+              Match               kube.*
+              Hard_rename         kubernetes_labels_app kubernetes_labels_app.kubernetes.io/name
+          [FILTER]
+              Name                nest
+              Match               kube.*
+              Operation           nest
+              Wildcard            kubernetes_labels_*
+              Nest_under          kubernetes.labels
+              Remove_prefix       kubernetes_labels_
+          [FILTER]
+              Name                nest
+              Match               kube.*
+              Operation           nest
+              Wildcard            kubernetes_*
+              Nest_under          kubernetes
+              Remove_prefix       kubernetes_
+          [FILTER]
+              Name                modify
+              Match               kube.*
+              Remove_wildcard     kubernetes_
 
         ## https://docs.fluentbit.io/manual/pipeline/outputs
         outputs: |
@@ -183,6 +224,9 @@ spec:
               # See https://github.com/uken/fluent-plugin-elasticsearch#random-400---rejected-by-elasticsearch-is-occured-why.
               Retry_Limit 1
               Buffer_Size 512KB
+              # Audit logs may include resource labels, which may include dots. We replace them with underscores to
+              # prevent conflicts that will cause Elasticsearch to reject logs.
+              Replace_Dots On
           [OUTPUT]
               Name es
               Alias kubernetes_cluster
@@ -225,3 +269,6 @@ spec:
               Time_Keep On
               Time_Key requestReceivedTimestamp
               Time_Format %Y-%m-%dT%H:%M:%S.%L
+
+      testFramework:
+        enabled: false

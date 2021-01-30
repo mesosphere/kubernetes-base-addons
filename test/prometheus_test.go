@@ -25,10 +25,11 @@ const (
 
 func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
-		time.Sleep(time.Second * 120)
+		time.Sleep(time.Minute * 5)
+		t.Logf("INFO: starting to test prometheus")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", promPodPrefix, promPort)
 		if err != nil {
-			return fmt.Errorf("could not forward port to prometheus pod: %s", err)
+			return fmt.Errorf("could not forward port to prometheus pod: %w", err)
 		}
 		defer close(stop)
 
@@ -37,7 +38,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		path := "/api/v1/labels"
 		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
-			return fmt.Errorf("could not GET %s: %s", path, err)
+			return fmt.Errorf("could not GET %s: %w", path, err)
 		}
 
 		if resp.StatusCode != http.StatusOK {
@@ -47,7 +48,7 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 		b, err := ioutil.ReadAll(resp.Body)
 		obj := map[string]interface{}{}
 		if err := json.Unmarshal(b, &obj); err != nil {
-			return fmt.Errorf("could not decode JSON response: %s", err)
+			return fmt.Errorf("could not decode JSON response: %w", err)
 		}
 
 		status, ok := obj["status"].(string)
@@ -65,15 +66,17 @@ func promChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 
 func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		t.Logf("INFO: starting to test alertmanager")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", alertmanagerPodPrefix, alertmanagerPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to alertmanager pod: %s", err)
 		}
 		defer close(stop)
 
-		// Check alertmanager status is ready.
+		// Alertmanager readiness check
+		// https://prometheus.io/docs/alerting/latest/management_api/#readiness-check
 		var resp *http.Response
-		path := "/api/v2/status"
+		path := "/-/ready"
 		resp, err = http.Get(fmt.Sprintf("http://localhost:%d%s", localport, path))
 		if err != nil {
 			return fmt.Errorf("could not GET %s: %s", path, err)
@@ -83,24 +86,6 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 			return fmt.Errorf("expected GET %s status %d, got %d", path, http.StatusOK, resp.StatusCode)
 		}
 
-		b, err := ioutil.ReadAll(resp.Body)
-		obj := map[string]interface{}{}
-		if err := json.Unmarshal(b, &obj); err != nil {
-			return fmt.Errorf("could not decode JSON response: %s", err)
-		}
-
-		clusterObj, ok := obj["cluster"].(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("JSON response missing key cluster with object value")
-		}
-		status, ok := clusterObj["status"].(string)
-		if !ok {
-			return fmt.Errorf("cluster missing key status with string value")
-		}
-		if status != "ready" {
-			return fmt.Errorf("expected status ready, got %s", status)
-		}
-
 		t.Logf("INFO: successfully tested alertmanager")
 		return nil
 	}
@@ -108,6 +93,7 @@ func alertmanagerChecker(t *testing.T, cluster testcluster.Cluster) testharness.
 
 func grafanaChecker(t *testing.T, cluster testcluster.Cluster) testharness.Job {
 	return func(t *testing.T) error {
+		t.Logf("INFO: starting to test grafana")
 		localport, stop, err := portForwardPodWithPrefix(cluster, "kubeaddons", grafanaPodPrefix, grafanaPort)
 		if err != nil {
 			return fmt.Errorf("could not forward port to grafana pod: %s", err)

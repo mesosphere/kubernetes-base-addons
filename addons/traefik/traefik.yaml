@@ -6,7 +6,7 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-24"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-25"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.24"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
@@ -17,6 +17,7 @@ spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/cert-manager: v1
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging

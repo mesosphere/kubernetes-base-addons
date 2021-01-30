@@ -6,12 +6,15 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: defaultstorageclass-protection
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.4-1"
-    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.5-1"
+    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.5"
+    # version 0.0.5 changed the selectors
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.0.5\", \"strategy\": \"delete\"}]"
 spec:
   requires:
     - matchLabels:
         kubeaddons.mesosphere.io/name: cert-manager
+        kubeaddons.mesosphere.io/cert-manager: v1
   kubernetes:
     minSupportedVersion: v1.15.6
   cloudProvider:
@@ -21,6 +24,8 @@ spec:
       enabled: true
     - name: gcp
       enabled: true
+    - name: vsphere
+      enabled: true
     - name: docker
       enabled: true
     - name: none
@@ -28,7 +33,7 @@ spec:
   chartReference:
     chart: defaultstorageclass
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.0.4
+    version: 0.0.5
     values: |
       ---
       issuer:
