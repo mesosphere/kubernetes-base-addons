@@ -769,7 +769,7 @@ kubeEtcd:
 
 func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
 	path, ok := os.LookupEnv("KBA_KUBECONFIG")
-	if ok {
+	if ok && path != "" {
 		t.Log("Using KBA_KUBECONFIG at", path)
 		// load the file from kubeconfig
 		kubeConfig, err := ioutil.ReadFile(path)
