@@ -36,15 +36,6 @@ spec:
     repo: https://mesosphere.github.io/charts/stable
     version: 2.0.0
     values: |
-      ---
-      # Default values for elasticsearch.
-      # This is a YAML-formatted file.
-      # Declare variables to be passed into your templates.
-      appVersion: "6.8.10"
-
-      image:
-        tag: "6.8.10"
-
       cluster:
         config:
           # Disable automatic creation of audit log indexes.
