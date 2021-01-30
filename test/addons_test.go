@@ -30,7 +30,6 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
 	addontesters "github.com/mesosphere/kubeaddons/test/utils"
 	"gopkg.in/yaml.v2"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
 	"sigs.k8s.io/kind/pkg/cluster"
@@ -51,6 +50,13 @@ const (
 
 	kubeaddonsControllerNamespace = "kubeaddons"
 	kubeaddonsControllerPodPrefix = "kubeaddons-controller-manager-"
+
+	elasticSearchGroupName = "elasticsearch"
+
+	provisionerAWS   = "aws"
+	provisionerGCP   = "gcp"
+	provisionerKind  = "kind"
+	provisionerAzure = "azure"
 )
 
 var (
@@ -175,7 +181,7 @@ func TestSsoGroup(t *testing.T) {
 }
 
 func TestElasticsearchGroup(t *testing.T) {
-	if err := testgroup(t, "elasticsearch", defaultKindestNodeImage, elasticsearchChecker, kibanaChecker); err != nil {
+	if err := testgroup(t, elasticSearchGroupName, defaultKindestNodeImage, elasticsearchChecker, kibanaChecker); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -213,6 +219,69 @@ func TestAzureGroup(t *testing.T) {
 // -----------------------------------------------------------------------------
 // Private Functions
 // -----------------------------------------------------------------------------
+
+func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.AddonInterface, error) {
+	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
+
+	var doUpgrade bool
+	addons := groups[groupname]
+	for _, addon := range addons {
+		if err := overrides(addon); err != nil {
+			return false, nil, err
+		}
+	}
+
+	addonDeploymentsArray := make([]v1beta2.AddonInterface, 0)
+	for _, newAddon := range addons {
+		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		if err != nil {
+			if strings.Contains(err.Error(), "directory not found") {
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
+				continue
+			}
+			return false, nil, err
+		}
+		if oldAddon == nil {
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
+			continue // new addon, upgrade test not needed
+		}
+
+		// Apply overrides to oldAddon to ensure it is deployed with the necessary value overrides
+		if err := overrides(oldAddon); err != nil {
+			return false, nil, err
+		}
+
+		t.Logf("determining old and new versions for upgrade testing addon %s", newAddon.GetName())
+		oldRev := oldAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		oldVersion, err := semver.Parse(strings.TrimPrefix(oldRev, "v"))
+		if err != nil {
+			return false, nil, err
+		}
+		newRev := newAddon.GetAnnotations()[constants.AddonRevisionAnnotation]
+		newVersion, err := semver.Parse(strings.TrimPrefix(newRev, "v"))
+		if err != nil {
+			return false, nil, err
+		}
+
+		if newVersion.EQ(oldVersion) {
+			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
+			addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
+			continue
+		} else if oldVersion.GT(newVersion) {
+			return false, nil, fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		}
+
+		t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
+		// for upgraded addons, add the oldAddon (running previous version) to deployments
+		addonDeploymentsArray = append(addonDeploymentsArray, oldAddon)
+		doUpgrade = true
+	}
+
+	return doUpgrade, addonDeploymentsArray, nil
+}
 
 func createNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Node) error {
 	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv)
@@ -259,7 +328,164 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Nod
 	return nil
 }
 
-func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTestJob) error {
+func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTestJob) error {
+	var err error
+	t.Logf("testing deployment group %s", groupName)
+
+	t.Logf("=== Running INSTALL job")
+
+	// TODO these happen sequentially, we should do so in parallel when we have enough confidence
+	err = testGroupDeployment(t, groupName, version, jobs)
+	if err != nil {
+		return err
+	}
+
+	doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+
+	if doUpgrade {
+		t.Logf("=== Running UPGRADE job")
+
+		t.Logf("testing upgrade group %s", groupName)
+		err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+		if err != nil {
+			return err
+		}
+	} else {
+		t.Logf("=== NO UPGRADE jobs to run")
+	}
+
+	return nil
+}
+
+func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
+	var err error
+	t.Logf("testing group %s", groupName)
+
+	u := uuid.New()
+
+	node := v1alpha4.Node{}
+	if err := createNodeVolumes(3, u.String(), &node); err != nil {
+		return err
+	}
+	defer func() {
+		if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
+			t.Logf("error: %s", err)
+		}
+	}()
+
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return err
+	}
+	dir, err := ioutil.TempDir(tempDir, groupName+"-")
+	if err != nil {
+		return err
+	}
+
+	t.Logf("setting up cluster for test group %s", groupName)
+	tcluster, err := newCluster(groupName, version, node, t)
+	if err != nil {
+		// try to clean up in case cluster was created and reference available
+		if tcluster != nil {
+			_ = tcluster.Cleanup()
+		}
+		return err
+	}
+	if tcluster == nil {
+		return fmt.Errorf("tcluster is nil")
+	}
+	defer tcluster.Cleanup()
+
+	kubeConfig, err := tcluster.ConfigYAML()
+	if err != nil {
+		return err
+	}
+
+	kubeConfigPath := filepath.Join(dir, "kubeconfig")
+	if err := ioutil.WriteFile(kubeConfigPath, kubeConfig, 0644); err != nil {
+		return err
+	}
+
+	if err := kubectl("--kubeconfig", kubeConfigPath, "apply", "-f", controllerBundle); err != nil {
+		return err
+	}
+
+	addons := groups[groupName]
+	for _, addon := range addons {
+		if err := overrides(addon); err != nil {
+			return err
+		}
+	}
+
+	wg := &sync.WaitGroup{}
+	stop := make(chan struct{})
+	go experimental.LoggingHook(t, tcluster, wg, stop)
+
+	addonDeployment, err := addontesters.DeployAddons(t, tcluster, addons...)
+	if err != nil {
+		return err
+	}
+
+	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
+	if err != nil {
+		return err
+	}
+
+	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, addons...)
+	if err != nil {
+		return err
+	}
+
+	th := testharness.NewSimpleTestHarness(t)
+	th.Load(
+		addontesters.ValidateAddons(addons...),
+		addonDeployment,
+		addonDefaults,
+	)
+	th.Load(addonCleanup)
+
+	// Collect kubeaddons controller logs during cleanup.
+	th.Load(testharness.Loadable{
+		Plan: testharness.CleanupPlan,
+		Jobs: testharness.Jobs{func(t *testing.T) error {
+			logFilePath := filepath.Join(dir, "kubeaddons-controller-log.txt")
+			t.Logf("INFO: writing kubeaddons controller logs to %s", logFilePath)
+
+			logFile, err := os.Create(logFilePath)
+			if err != nil {
+				return err
+			}
+			defer logFile.Close()
+
+			logs, err := logsFromPodWithPrefix(tcluster, kubeaddonsControllerNamespace, kubeaddonsControllerPodPrefix)
+			if err != nil {
+				return err
+			}
+			defer logs.Close()
+
+			_, err = io.Copy(logFile, logs)
+			return err
+		}},
+	})
+
+	for _, job := range jobs {
+		th.Load(testharness.Loadable{
+			Plan: testharness.DefaultPlan,
+			Jobs: testharness.Jobs{job(t, tcluster)},
+		})
+	}
+
+	defer th.Cleanup()
+	th.Validate()
+	th.Deploy()
+	th.Default()
+
+	close(stop)
+	wg.Wait()
+
+	return nil
+}
+
+func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []clusterTestJob, deployments []v1beta2.AddonInterface) error {
 	var err error
 	t.Logf("testing group %s", groupname)
 
@@ -322,17 +548,13 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	stop := make(chan struct{})
 	go experimental.LoggingHook(t, tcluster, wg, stop)
 
-	addonDeployment, err := addontesters.DeployAddons(t, tcluster, addons...)
+
+	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
 
-	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
-	if err != nil {
-		return err
-	}
-
-	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, addons...)
+	waitForAddons, err := addontesters.WaitForAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
@@ -366,29 +588,42 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 			return err
 		}
 
-		t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
-		if oldVersion.GT(newVersion) {
-			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
-		}
-		if !newVersion.GT(oldVersion) {
+		if newVersion.EQ(oldVersion) {
 			t.Logf("skipping upgrade test for addon %s, it has not been updated", newAddon.GetName())
 			continue
+		} else if oldVersion.GT(newVersion) {
+			return fmt.Errorf("revisions for addon %s are broken, previous revision %s is newer than current %s", newAddon.GetName(), oldVersion, newVersion)
+		} else {
+			t.Logf("found old version of addon %s %s (revision %s) and new version %s (revision %s)", newAddon.GetName(), oldRev, oldVersion, newVersion, newRev)
 		}
 
 		t.Logf("INFO: addon %s was modified and will be upgrade tested", newAddon.GetName())
+
 		addonUpgrade, err := addontesters.UpgradeAddon(t, tcluster, oldAddon, newAddon)
 		if err != nil {
 			return err
 		}
 
+		// append for upgrades
 		addonUpgrades = append(addonUpgrades, addonUpgrade)
+	}
+
+	addonDeployment, err := addontesters.DeployAddons(t, tcluster, deployments...)
+	if err != nil {
+		return err
+	}
+
+	if len(addonUpgrades) == 0 {
+		t.Logf("INFO: NO UPGRADES to be tested, EXITING")
+		close(stop)
+		return nil
 	}
 
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
 		addontesters.ValidateAddons(addons...),
 		addonDeployment,
-		addonDefaults,
+		waitForAddons,
 	)
 	th.Load(addonUpgrades...)
 
@@ -426,6 +661,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	})
 
 	defer th.Cleanup()
+
 	th.Validate()
 	th.Deploy()
 	th.Default()
@@ -519,39 +755,6 @@ configInline:
     addresses:
     - "172.17.1.200-172.17.1.250"
 `,
-	"elasticsearch": `
----
-# Reduce resource limits so elasticsearch will deploy on a kind cluster with limited memory.
-client:
-  heapSize: 256m
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 512Mi
-    requests:
-      cpu: 500m
-      memory: 256Mi
-master:
-  heapSize: 256m
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
-data:
-  persistence:
-    size: 4Gi
-  heapSize: 1024m
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1536Mi
-    requests:
-      cpu: 100m
-      memory: 1024Mi
-`,
 	"prometheus": `
 ---
 # Remove dependency on persistent volumes and Konvoy's "etcd-certs" secret.
@@ -564,33 +767,38 @@ kubeEtcd:
 `,
 }
 
-func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
-	if groupname == "aws" || groupname == "azure" || groupname == "gcp" || groupname == allAWSGroupName {
-		provisioner := groupname
-		if groupname == allAWSGroupName {
-			provisioner = "aws"
-		}
-		path, _ := os.Getwd()
-		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisioner)
-	}
+func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
+	path, _ := os.Getwd()
+	switch groupName {
+	case provisionerAWS:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case provisionerAzure:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAzure)
+	case provisionerGCP:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerGCP)
+	case allAWSGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case elasticSearchGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	default:
+		path, ok := os.LookupEnv("KBA_KUBECONFIG")
+		if ok && path != "" {
+			t.Log("Using KBA_KUBECONFIG at", path)
+			// load the file from kubeconfig
+			kubeConfig, err := ioutil.ReadFile(path)
+			if err != nil {
+				return nil, err
+			}
 
-	path, ok := os.LookupEnv("KBA_KUBECONFIG")
-	if !ok {
+			provisioner, ok := os.LookupEnv("KBA_PROVISIONER")
+			if !ok || provisioner == "" {
+				provisioner = provisionerKind
+			}
+
+			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+		}
+
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
 		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}))
 	}
-
-	config, err := clientcmd.LoadFromFile(path)
-	if err != nil || len(config.Contexts) == 0 {
-		t.Logf("%s is not a valid kubeconfig. Creating Kind cluster", path)
-		return kind.NewCluster(version, cluster.CreateWithV1Alpha4Config(&v1alpha4.Cluster{Nodes: []v1alpha4.Node{node}}), cluster.CreateWithKubeconfigPath(path))
-	}
-
-	t.Log("Using KBA_KUBECONFIG at", path)
-	// load the file from kubeconfig
-	kubeConfig, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return testcluster.NewClusterFromKubeConfig("kind", kubeConfig)
 }
