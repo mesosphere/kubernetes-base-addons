@@ -197,6 +197,28 @@ istio:
       - type: support
         title: Submit a Support Request
         link: https://d2iq.com/services-and-support
+kiali:
+  display_name: kiali
+  description: kiali
+  logo: kiali/logo.svg
+  category: other
+  overview: kiali/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
+jaeger:
+  display_name: jaeger
+  description: jaeger
+  logo: jaeger/logo.svg
+  category: other
+  overview: jaeger/overview.md
+  resources:
+    links:
+      - type: support
+        title: Submit a Support Request
+        link: https://d2iq.com/services-and-support
 kibana:
   display_name: kibana
   description: kibana

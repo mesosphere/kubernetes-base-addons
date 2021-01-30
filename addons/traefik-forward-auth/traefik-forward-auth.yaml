@@ -4,7 +4,7 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.4-8"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.5-1"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -14,6 +14,8 @@ spec:
     - name: azure
       enabled: true
     - name: gcp
+      enabled: true
+    - name: vsphere
       enabled: true
     - name: docker
       enabled: true
@@ -58,7 +60,7 @@ spec:
           auth-host = dex-kubeaddons.kubeaddons.svc.cluster.local:8080
         enableRBAC: true
         enableImpersonation: true
-        rbacPassThroughPaths: ["/ops/portal/kubernetes/", "/ops/portal/kubernetes/*"]
+        rbacPassThroughPaths: ["/ops/portal/kubernetes/", "/ops/portal/kubernetes/*", "/ops/portal/kiali/", "/ops/portal/kiali/*"]
       ingress:
         enabled: true
         annotations:

@@ -63,3 +63,10 @@ ifneq (,$(wildcard kubeaddons-tests/Makefile))
 endif
 	-rm -rf kubeaddons-tests
 	-rm kba-kubeconfig-*
+
+.PHONY: release
+release: make.addons.table
+
+.PHONY: make.addons.table
+make.addons.table:
+	scripts/make_addon_table.sh > ADDONS.md
