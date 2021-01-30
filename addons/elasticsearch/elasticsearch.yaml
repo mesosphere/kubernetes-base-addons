@@ -36,6 +36,7 @@ spec:
     repo: https://mesosphere.github.io/charts/stable
     version: 2.0.0
     values: |
+      ---
       cluster:
         config:
           # Disable automatic creation of audit log indexes.
