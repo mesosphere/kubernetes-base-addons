@@ -1,0 +1,73 @@
+---
+addon/ambassador:
+  - addons/ambassador/*
+addon/awsebscsiprovisioner:
+  - addons/awsebscsiprovisioner/*
+addon/awsebsprovisioner:
+  - addons/awsebsprovisioner/*
+addon/azuredisk-csi-driver:
+  - addons/azuredisk-csi-driver/*
+addon/azurediskprovisioner:
+  - addons/azurediskprovisioner/*
+addon/cert-manager:
+  - addons/cert-manager/*
+addon/dashboard:
+  - addons/dashboard/*
+addon/defaultstorageclass-protection:
+  - addons/defaultstorageclass-protection/*
+addon/dex:
+  - addons/dex/*
+addon/dex-k8s-authenticator:
+  - addons/dex-k8s-authenticator/*
+addon/elasticsearch:
+  - addons/elasticsearch/*
+addon/elasticsearch-curator:
+  - addons/elasticsearch-curator/*
+addon/elasticsearchexporter:
+  - addons/elasticsearchexporter/*
+addon/external-dns:
+  - addons/external-dns/*
+addon/flagger:
+  - addons/flagger/*
+addon/fluentbit:
+  - addons/fluentbit/*
+addon/gatekeeper:
+  - addons/gatekeeper/*
+addon/gcpdisk-csi-driver:
+  - addons/gcpdisk-csi-driver/*
+addon/gcpdiskprovisioner:
+  - addons/gcpdiskprovisioner/*
+addon/istio:
+  - addons/istio/*
+addon/jaeger:
+  - addons/jaeger/*
+addon/kiali:
+  - addons/kiali/*
+addon/kibana:
+  - addons/kibana/*
+addon/konvoyconfig:
+  - addons/konvoyconfig/*
+addon/kube-oidc-proxy:
+  - addons/kube-oidc-proxy/*
+addon/localvolumeprovisioner:
+  - addons/localvolumeprovisioner/*
+addon/metallb:
+  - addons/metallb/*
+addon/nvidia:
+  - addons/nvidia/*
+addon/opsportal:
+  - addons/opsportal/*
+addon/prometheus:
+  - addons/prometheus/*
+addon/prometheusadapter:
+  - addons/prometheusadapter/*
+addon/reloader:
+  - addons/reloader/*
+addon/traefik:
+  - addons/traefik/*
+addon/traefik-forward-auth:
+  - addons/traefik-forward-auth/*
+addon/velero:
+  - addons/velero/*
+addon/vsphere-csi-driver:
+  - addons/vsphere-csi-driver/*
