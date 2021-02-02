@@ -39,3 +39,9 @@ mergeable:
               note (or "none")
               ```
               </code>
+      - do: dependent
+        changed:
+          file: test/go.mod
+          files:
+            - test/go.sum
+        message: 'Please run "go mod tidy".'
