@@ -69,4 +69,19 @@ release: make.addons.table
 
 .PHONY: make.addons.table
 make.addons.table:
+<<<<<<< HEAD
 	scripts/make_addon_table.sh > ADDONS.md
+=======
+	scripts/make_addon_table.sh > ADDONS.md
+
+.PHONY: dispatch-test-install-upgrade
+dispatch-test-install-upgrade: set-git-ssh
+	./test/scripts/setup-konvoy.sh
+
+	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
+	echo "INFO: the following test groups will be run:"
+	cd ./test && go run -tags experimental ./scripts/test-wrapper.go
+	for g in `$(cd ./test && go run -tags experimental ./scripts/test-wrapper.go) | egrep '^Test'` ; do \
+	    cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
+	done
+>>>>>>> e3a2c47... chore: split and parallize install and upgrade jobs.
