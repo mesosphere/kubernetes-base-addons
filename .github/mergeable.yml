@@ -1,0 +1,24 @@
+---
+version: 2
+mergeable:
+  - when: pull_request.*
+    do: and
+    validate:
+      - do: label
+        and:
+          - must_exclude:
+              regex: 'needs documentation'
+              message: 'This PR needs documentation.'
+          - must_exclude:
+              regex: 'needs release notes'
+              message: 'This PR needs release notes.'
+          - must_exclude:
+              regex: 'do not merge'
+              message: 'This PR is marked "do not merge".'
+          - must_exclude:
+              regex: 'wip'
+              message: 'This PR is still in progress ("wip").'
+      - do: milestone
+        no_empty:
+          enabled: true  # Cannot be empty when true.
+          message: 'Milestone must be assigned before merging. Typically this is "release/next".'
