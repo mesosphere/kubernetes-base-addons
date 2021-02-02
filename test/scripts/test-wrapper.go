@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	upstreamRemote = "origin"
-	upstreamBranch = "master"
+	defaultUpstreamRemote = "origin"
+	defaultUpstreamBranch = "master"
 )
 
 type addonName string
@@ -28,7 +28,16 @@ type addonName string
 var re = regexp.MustCompile(`^addons/([a-zA-Z-]+)/?`)
 
 func main() {
-	modifiedAddons, err := getModifiedAddons()
+	upstreamRemote := defaultUpstreamRemote
+	if len(os.Args) > 1 {
+		upstreamRemote = os.Args[1]
+	}
+	upstreamBranch := defaultUpstreamBranch
+	if len(os.Args) > 2 {
+		upstreamBranch = os.Args[2]
+	}
+
+	modifiedAddons, err := getModifiedAddons(upstreamRemote, upstreamBranch)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := ensureModifiedAddonsHaveUpdatedRevisions(modifiedAddons, r); err != nil {
+	if err := ensureModifiedAddonsHaveUpdatedRevisions(modifiedAddons, r, upstreamRemote, upstreamBranch); err != nil {
 		panic(err)
 	}
 
@@ -76,10 +85,10 @@ func main() {
 	}
 }
 
-func getModifiedAddons() ([]addonName, error) {
+func getModifiedAddons(upstreamRemote, upstreamBranch string) ([]addonName, error) {
 	addonsModifiedMap := make(map[addonName]struct{})
 	stdout := new(bytes.Buffer)
-	cmd := exec.Command("git", "diff", "origin/master", "--name-only")
+	cmd := exec.Command("git", "diff", upstreamRemote+"/"+upstreamBranch, "--name-only")
 	cmd.Stdout = stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -101,8 +110,8 @@ func getModifiedAddons() ([]addonName, error) {
 	return addonsModified, nil
 }
 
-func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
-    l := log.New(os.Stderr,"",0)
+func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository, upstreamRemote, upstreamBranch string) error {
+	l := log.New(os.Stderr, "", 0)
 
 	for _, addonName := range namesOfModifiedAddons {
 		fmt.Fprintf(os.Stderr, "INFO: ensuring revision was updated for modified addon %s\n", addonName)
