@@ -8,7 +8,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "v0.8.3-1"
     appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.8.3"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://github.com/prometheus-community/helm-charts/blob/61fb05e4f4ba9b6e4255a07338715414a3f493a0/charts/prometheus-adapter/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/prometheus-community/helm-charts/61fb05e4f4ba9b6e4255a07338715414a3f493a0/charts/prometheus-adapter/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
