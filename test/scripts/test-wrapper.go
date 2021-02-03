@@ -18,7 +18,7 @@ import (
 	testutils "github.com/mesosphere/kubeaddons/test/utils"
 )
 
-const (
+var (
 	upstreamRemote = "origin"
 	upstreamBranch = "master"
 )
@@ -28,6 +28,12 @@ type addonName string
 var re = regexp.MustCompile(`^addons/([a-zA-Z-]+)/?`)
 
 func main() {
+	if len(os.Args) > 1 {
+		upstreamRemote = os.Args[1]
+	}
+	if len(os.Args) > 2 {
+		upstreamBranch = os.Args[2]
+	}
 	modifiedAddons, err := getModifiedAddons()
 	if err != nil {
 		panic(err)
@@ -79,7 +85,7 @@ func main() {
 func getModifiedAddons() ([]addonName, error) {
 	addonsModifiedMap := make(map[addonName]struct{})
 	stdout := new(bytes.Buffer)
-	cmd := exec.Command("git", "diff", "origin/master", "--name-only")
+	cmd := exec.Command("git", "diff", upstreamRemote+"/"+upstreamBranch, "--name-only")
 	cmd.Stdout = stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -102,7 +108,7 @@ func getModifiedAddons() ([]addonName, error) {
 }
 
 func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
-    l := log.New(os.Stderr,"",0)
+	l := log.New(os.Stderr, "", 0)
 
 	for _, addonName := range namesOfModifiedAddons {
 		fmt.Fprintf(os.Stderr, "INFO: ensuring revision was updated for modified addon %s\n", addonName)

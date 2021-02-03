@@ -626,8 +626,13 @@ github.com/mesosphere/kubeaddons v0.11.0/go.mod h1:vUibt0jKmrxwRi2nDS7Os+Lz1PMqG
 github.com/mesosphere/kubeaddons v0.16.1/go.mod h1:CQd9wXoGtdH7iDQ00++WaiL/vJCsXNx22ug94P4z+X0=
 github.com/mesosphere/kubeaddons v0.22.3 h1:62/j6qG7po/PtUUn3nLHM0xFp/g26+seIgFEbtEfl1A=
 github.com/mesosphere/kubeaddons v0.22.3/go.mod h1:ZNK2PuYkIom3YbDZP07XPNKu9jrGq4zrUAfhEwq6yn8=
+<<<<<<< Updated upstream
 github.com/mesosphere/kubeaddons v0.23.12 h1:AtPutG/WtR6IguhDij7r8/ndUHptiaxKVdf7MZIMYOY=
 github.com/mesosphere/kubeaddons v0.23.12/go.mod h1:Hj7RIAEBCl42M17td4W4LahuWWYe8Vt8MZ+GcREv1VA=
+=======
+github.com/mesosphere/kubeaddons v0.23.11 h1:Um8ttQRP8RiANRAlC1LUF7Ns09qNXiD3KcWwSG5uitY=
+github.com/mesosphere/kubeaddons v0.23.11/go.mod h1:Hj7RIAEBCl42M17td4W4LahuWWYe8Vt8MZ+GcREv1VA=
+>>>>>>> Stashed changes
 github.com/mholt/archiver/v3 v3.3.0/go.mod h1:YnQtqsp+94Rwd0D/rk5cnLrxusUBUXg+08Ebtr1Mqao=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.6/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
