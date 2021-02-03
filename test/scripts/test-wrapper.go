@@ -18,9 +18,9 @@ import (
 	testutils "github.com/mesosphere/kubeaddons/test/utils"
 )
 
-var (
-	upstreamRemote = "origin"
-	upstreamBranch = "master"
+const (
+	defaultUpstreamRemote = "origin"
+	defaultUpstreamBranch = "master"
 )
 
 type addonName string
@@ -28,13 +28,15 @@ type addonName string
 var re = regexp.MustCompile(`^addons/([a-zA-Z-]+)/?`)
 
 func main() {
+	upstreamRemote := defaultUpstreamRemote
 	if len(os.Args) > 1 {
 		upstreamRemote = os.Args[1]
 	}
+	upstreamBranch := defaultUpstreamBranch
 	if len(os.Args) > 2 {
 		upstreamBranch = os.Args[2]
 	}
-	modifiedAddons, err := getModifiedAddons()
+	modifiedAddons, err := getModifiedAddons(upstreamRemote, upstreamBranch)
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := ensureModifiedAddonsHaveUpdatedRevisions(modifiedAddons, r); err != nil {
+	if err := ensureModifiedAddonsHaveUpdatedRevisions(modifiedAddons, r, upstreamRemote, upstreamBranch); err != nil {
 		panic(err)
 	}
 
@@ -82,7 +84,7 @@ func main() {
 	}
 }
 
-func getModifiedAddons() ([]addonName, error) {
+func getModifiedAddons(upstreamRemote, upstreamBranch string) ([]addonName, error) {
 	addonsModifiedMap := make(map[addonName]struct{})
 	stdout := new(bytes.Buffer)
 	cmd := exec.Command("git", "diff", upstreamRemote+"/"+upstreamBranch, "--name-only")
@@ -107,7 +109,7 @@ func getModifiedAddons() ([]addonName, error) {
 	return addonsModified, nil
 }
 
-func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository) error {
+func ensureModifiedAddonsHaveUpdatedRevisions(namesOfModifiedAddons []addonName, repo repositories.Repository, upstreamRemote, upstreamBranch string) error {
 	l := log.New(os.Stderr, "", 0)
 
 	for _, addonName := range namesOfModifiedAddons {
