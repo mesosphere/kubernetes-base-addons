@@ -8,6 +8,7 @@ export GO111MODULE := on
 export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
 export KBA_KUBECONFIG ?= $(shell mktemp --tmpdir kba-kubeconfig-XXXXXXXX)
 export KUBECONFIG = $(KBA_KUBECONFIG)
+export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
 
 .DEFAULT_GOAL := test
 
@@ -89,6 +90,7 @@ dispatch-test-install-upgrade: set-git-ssh
 >>>>>>> e3a2c47... chore: split and parallize install and upgrade jobs.
 =======
 dispatch-test-install-upgrade:
+<<<<<<< HEAD
 	@{ \
 	echo "INFO: the following test groups will be run:" ;\
 	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
@@ -98,3 +100,6 @@ dispatch-test-install-upgrade:
 	done ;\
 	}
 >>>>>>> 56c5dac... Fixes makefile target for Dispatch
+=======
+	unset KBA_KUBECONFIG && cd ./test/ && ./test_install_upgrade.sh $(KBA_BRANCH)
+>>>>>>> de4b996... move test to local bash script
