@@ -348,26 +348,57 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 	var err error
 	t.Logf("testing deployment group %s", groupName)
 
-	t.Logf("=== Running INSTALL job")
-
-	// TODO these happen sequentially, we should do so in parallel when we have enough confidence
-	err = testGroupDeployment(t, groupName, version, jobs)
-	if err != nil {
-		return err
+	testType, ok := os.LookupEnv("KBA_TESTGROUP_TYPE")
+	if !ok  || testType == "" {
+		testType = "all"
 	}
 
-	doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+	switch testType {
+	case "install":
+		t.Logf("=== Running INSTALL job")
 
-	if doUpgrade {
-		t.Logf("=== Running UPGRADE job")
-
-		t.Logf("testing upgrade group %s", groupName)
-		err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
+		err = testGroupDeployment(t, groupName, version, jobs)
 		if err != nil {
 			return err
 		}
-	} else {
-		t.Logf("=== NO UPGRADE jobs to run")
+	case "upgrade":
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+
+		if doUpgrade {
+			t.Logf("=== Running UPGRADE job")
+
+			t.Logf("testing upgrade group %s", groupName)
+			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+			if err != nil {
+				return err
+			}
+		} else {
+			t.Logf("=== NO UPGRADE jobs to run")
+		}
+
+	default:
+		t.Logf("=== Running INSTALL job")
+
+		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
+		err = testGroupDeployment(t, groupName, version, jobs)
+		if err != nil {
+			return err
+		}
+
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+
+		if doUpgrade {
+			t.Logf("=== Running UPGRADE job")
+
+			t.Logf("testing upgrade group %s", groupName)
+			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+			if err != nil {
+				return err
+			}
+		} else {
+			t.Logf("=== NO UPGRADE jobs to run")
+		}
 	}
 
 	return nil

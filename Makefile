@@ -70,3 +70,14 @@ release: make.addons.table
 .PHONY: make.addons.table
 make.addons.table:
 	scripts/make_addon_table.sh > ADDONS.md
+
+.PHONY: dispatch-test-install-upgrade
+dispatch-test-install-upgrade:
+	@{ \
+	echo "INFO: the following test groups will be run:" ;\
+	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
+	cd ./test && go run -tags experimental ./scripts/test-wrapper.go ;\
+	for g in $(cd ./test && go run -tags experimental ./scripts/test-wrapper.go) ; do \
+	    shell cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
+	done ;\
+	}
