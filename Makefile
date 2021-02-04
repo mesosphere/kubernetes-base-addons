@@ -81,7 +81,8 @@ dispatch-test-install-upgrade: set-git-ssh
 	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
 	echo "INFO: the following test groups will be run:"
 	cd ./test && go run -tags experimental ./scripts/test-wrapper.go
-	for g in `$(cd ./test && go run -tags experimental ./scripts/test-wrapper.go) | egrep '^Test'` ; do \
+
+	for g in `$(shell cd ./test && go run -tags experimental ./scripts/test-wrapper.go)` ; do \
 	    cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
 	done
 >>>>>>> e3a2c47... chore: split and parallize install and upgrade jobs.
