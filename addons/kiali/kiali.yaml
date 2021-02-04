@@ -8,13 +8,13 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-2"
-    appversion.kubeaddons.mesosphere.io/kiali-operator: "1.29.0"
-    appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.30.0-1"
+    appversion.kubeaddons.mesosphere.io/kiali-operator: "1.30.0"
+    appversion.kubeaddons.mesosphere.io/kiali: "1.30.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
-    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.29/"
-    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/97f435/kiali-operator/values.yaml"
+    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.30/"
+    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/<COMMIT-FOR-v1.30-TAG, FIND IT IN https://github.com/kiali/helm-charts/tags>/kiali-operator/values.yaml"
 spec:
   namespace: istio-system
   kubernetes:
@@ -33,13 +33,13 @@ spec:
   chartReference:
     chart: kiali-operator
     repo: https://kiali.org/helm-charts/
-    version: 1.29.0
+    version: 1.30.0
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       image:
         repo: quay.io/kiali/kiali-operator
-        tag: v1.29.0
+        tag: v1.30.0
 
       cr:
         create: true
