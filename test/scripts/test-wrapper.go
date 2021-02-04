@@ -36,6 +36,7 @@ func main() {
 	if len(os.Args) > 2 {
 		upstreamBranch = os.Args[2]
 	}
+	
 	modifiedAddons, err := getModifiedAddons(upstreamRemote, upstreamBranch)
 	if err != nil {
 		panic(err)
