@@ -79,6 +79,6 @@ dispatch-test-install-upgrade: set-git-ssh
 	echo "INFO: the following test groups will be run:"
 	cd ./test && go run -tags experimental ./scripts/test-wrapper.go
 
-	for g in `$(shell cd ./test && go run -tags experimental ./scripts/test-wrapper.go)` ; do \
-	    cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
+	for g in $(shell cd ./test && go run -tags experimental ./scripts/test-wrapper.go) ; do \
+	    shell cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
 	done
