@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -45,6 +46,8 @@ const (
 	comRepoRef    = "master"
 	comRepoRemote = "origin"
 
+	defaultKBARepoRef = "master"
+
 	allAWSGroupName = "allAWS"
 
 	tempDir = "/tmp/kubernetes-base-addons"
@@ -54,15 +57,26 @@ const (
 )
 
 var (
-	cat       catalog.Catalog
-	localRepo repositories.Repository
-	comRepo   repositories.Repository
-	groups    map[string][]v1beta2.AddonInterface
+	cat        catalog.Catalog
+	localRepo  repositories.Repository
+	comRepo    repositories.Repository
+	kbaRepoRef string
+	groups     map[string][]v1beta2.AddonInterface
 )
 
 type clusterTestJob func(*testing.T, testcluster.Cluster) testharness.Job
 
-func init() {
+var kbaBranchFlag = flag.String("kba-branch", "", "")
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+
+	if *kbaBranchFlag != "" {
+		kbaRepoRef = *kbaBranchFlag
+	} else {
+		kbaRepoRef = defaultKBARepoRef
+	}
+
 	var err error
 
 	fmt.Println("initializing local repository for test...")
@@ -93,6 +107,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	os.Exit(m.Run())
 }
 
 func getGroupsMapFromFile(f string) (testgroups.Groups, error) {
@@ -341,7 +357,7 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 	addonUpgrades := testharness.Loadables{}
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, kbaRepoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
 				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
