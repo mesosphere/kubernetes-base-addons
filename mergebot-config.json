@@ -1,11 +1,19 @@
 {
+   "backport": true,
+   "backport-strategy": {
+       "interactive": false,
+       "strategy": "single-repo",
+       "copy-labels": true
+   },
    "update_jira_on_merge": {
      "enabled": true,
      "interactive": false,
      "fix_version_map": {
-       "master": "K8s Base Addons 3.0.0",
+       "master": "K8s Base Addons Next",
+       "release/3.2": "K8s Base Addons 3.2.0",
        "release/3": "K8s Base Addons 3.0.0",
-       "release/2": "K8s Base Addons 2.6.0",
-     }
+       "release/2": "K8s Base Addons 2.6.0"
+     },
+     "jira_regex": "((?:COPS|D2IQ)-\\d+)"
    }
 }
