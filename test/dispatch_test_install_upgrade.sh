@@ -7,7 +7,7 @@ branch=${1:-master}
 
 # in dispatch we should be able to create these resources, for manual testing this will not work
 if [[ ! -z "${KBA_KUBECONFIG}" ]]; then
-    kubectl --kubeconfig ${KBA_KUBECONFIG} create ns cert-manager || true
+    $(kubectl --kubeconfig ${KBA_KUBECONFIG} create namespace cert-manager || true)
     KIND_POD_NAME=$(kubectl get clusterclaim $CLAIM_NAME | awk '{print $2}')
     kubectl exec  -ti -n dispatch $KIND_POD_NAME -- bash -c "docker ps -aq | xargs -I{} docker exec {} cat /etc/kubernetes/pki/ca.crt"  >> ca.crt
     kubectl exec  -ti -n dispatch $KIND_POD_NAME -- bash -c "docker ps -aq | xargs -I{} docker exec {} cat /etc/kubernetes/pki/ca.key"  >> ca.key
