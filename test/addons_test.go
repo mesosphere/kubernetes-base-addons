@@ -805,6 +805,7 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 				provisioner = provisionerKind
 			}
 
+<<<<<<< HEAD
 			cluster, err := testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
 			if err != nil {
 				return nil, err
@@ -815,6 +816,9 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 			}
 			return cluster, nil
 >>>>>>> 07c93da... copy cert code
+=======
+			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+>>>>>>> 142049f... Try to fetch ca.crt and key from remote cluster
 		}
 		path, _ := os.Getwd()
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisioner)

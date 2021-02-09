@@ -4,7 +4,7 @@ load("github.com/mesosphere/cluster-claim-controller/starlark/claim@master", "ma
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/docker@0.0.4", "dindTask")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "push", "pull_request", "cron", "clean")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "push", "pull_request", "cron", "clean", "task_step_result")
 load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bump_charts")
 
 git_clone_dirname = "kba-git-src"
@@ -113,6 +113,7 @@ dindTask("test-install",
                      k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
                      k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
                      k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="install"),
+                     k8s.corev1.EnvVar(name = "CLAIM_NAME", value = task_step_result(kind_install_cluster_name, "cluster-claim"))
                      ],
 
                  resources=k8s.corev1.ResourceRequirements(
