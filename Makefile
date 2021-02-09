@@ -74,4 +74,4 @@ make.addons.table:
 
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
-	unset KBA_KUBECONFIG && cd ./test/ && ./test_install_upgrade.sh $(KBA_BRANCH)
+	cd ./test/ && KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test_install_upgrade.sh $(KBA_BRANCH)
