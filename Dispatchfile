@@ -8,6 +8,9 @@ load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "p
 load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bump_charts")
 
 git_clone_dirname = "kba-git-src"
+git_install_clone_dirname = "kba-install-git-src"
+git_upgrade_clone_dirname = "kba-upgrade-git-src"
+
 kind_cluster_name = "kba-kind-cluster"
 kind_install_cluster_name = "kba-install-kind-cluster"
 kind_upgrade_cluster_name = "kba-upgrade-kind-cluster"
@@ -24,8 +27,8 @@ git_resource(git_clone_dirname, url="$(context.git.url)", revision="$(context.gi
 git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="v6.37.0")
 
 kind_cluster = make_kind_cluster(kind_cluster_name, git_clone_dirname)
-install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_clone_dirname)
-upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_clone_dirname)
+install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_install_clone_dirname)
+upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_upgrade_clone_dirname)
 
 
 dindTask("dispatch-integration-test",
@@ -80,17 +83,17 @@ dindTask("test-install",
          inputs=[git_clone_dirname],
          deps=[install_kind_cluster],
          steps=[
-             fetch_kubeconfig(kind_install_cluster_name, git_clone_dirname),
+             fetch_kubeconfig(kind_install_cluster_name, git_install_clone_dirname),
 
              k8s.corev1.Container(
                  name="fetch-master",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_install_clone_dirname),
                  args=["git", "fetch", "origin", "master"]),
 
              k8s.corev1.Container(
                  name="test-install",
                  image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_install_clone_dirname),
                  command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
 
                  env=[
@@ -118,17 +121,17 @@ dindTask("test-upgrade",
          inputs=[git_clone_dirname],
          deps=[upgrade_kind_cluster],
          steps=[
-             fetch_kubeconfig(kind_upgrade_cluster_name, git_clone_dirname),
+             fetch_kubeconfig(kind_upgrade_cluster_name, git_upgrade_clone_dirname),
 
              k8s.corev1.Container(
                  name="fetch-master",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_upgrade_clone_dirname),
                  args=["git", "fetch", "origin", "master"]),
 
              k8s.corev1.Container(
                  name="test-upgrade",
                  image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_upgrade_clone_dirname),
                  command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
 
                  env=[
