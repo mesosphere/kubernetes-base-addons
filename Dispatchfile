@@ -9,6 +9,8 @@ load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bum
 
 git_clone_dirname = "kba-git-src"
 kind_cluster_name = "kba-kind-cluster"
+kind_install_cluster_name = "kba-install-kind-cluster"
+kind_upgrade_cluster_name = "kba-upgrade-kind-cluster"
 
 resource("artifacts", type="storage", params={
     "type": "gcs",
@@ -22,6 +24,8 @@ git_resource(git_clone_dirname, url="$(context.git.url)", revision="$(context.gi
 git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="v6.37.0")
 
 kind_cluster = make_kind_cluster(kind_cluster_name, git_clone_dirname)
+install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_clone_dirname)
+upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_clone_dirname)
 
 
 dindTask("dispatch-integration-test",
@@ -74,9 +78,9 @@ dindTask("lint-yaml",
 
 dindTask("test-install",
          inputs=[git_clone_dirname],
-         deps=[kind_cluster],
+         deps=[install_kind_cluster],
          steps=[
-             fetch_kubeconfig(kind_cluster_name, git_clone_dirname),
+             fetch_kubeconfig(kind_install_cluster_name, git_clone_dirname),
 
              k8s.corev1.Container(
                  name="fetch-master",
@@ -112,9 +116,9 @@ dindTask("test-install",
 
 dindTask("test-upgrade",
          inputs=[git_clone_dirname],
-         deps=[kind_cluster],
+         deps=[upgrade_kind_cluster],
          steps=[
-             fetch_kubeconfig(kind_cluster_name, git_clone_dirname),
+             fetch_kubeconfig(kind_upgrade_cluster_name, git_clone_dirname),
 
              k8s.corev1.Container(
                  name="fetch-master",
@@ -147,7 +151,6 @@ dindTask("test-upgrade",
                          "cpu": k8s.resource_quantity("1000m"),
                          "memory": k8s.resource_quantity("2Gi")}))
          ])
-
 
 
 clean_kind = cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
