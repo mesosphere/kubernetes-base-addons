@@ -277,7 +277,71 @@ func cleanupNodeVolumes(numberVolumes int, nodePrefix string, node *v1alpha4.Nod
 
 func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTestJob) error {
 	var err error
+<<<<<<< HEAD
 	t.Logf("testing group %s", groupname)
+=======
+	t.Logf("testing deployment group %s", groupName)
+
+	testType, ok := os.LookupEnv("KBA_TESTGROUP_TYPE")
+	if !ok || testType == "" {
+		testType = "all"
+	}
+
+	switch testType {
+	case "install":
+		t.Logf("=== Running INSTALL job")
+
+		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
+		err = testGroupDeployment(t, groupName, version, jobs)
+		if err != nil {
+			return err
+		}
+	case "upgrade":
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+
+		if doUpgrade {
+			t.Logf("=== Running UPGRADE job")
+
+			t.Logf("testing upgrade group %s", groupName)
+			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+			if err != nil {
+				return err
+			}
+		} else {
+			t.Logf("=== NO UPGRADE jobs to run")
+		}
+
+	default:
+		t.Logf("=== Running INSTALL job")
+
+		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
+		err = testGroupDeployment(t, groupName, version, jobs)
+		if err != nil {
+			return err
+		}
+
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+
+		if doUpgrade {
+			t.Logf("=== Running UPGRADE job")
+
+			t.Logf("testing upgrade group %s", groupName)
+			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
+			if err != nil {
+				return err
+			}
+		} else {
+			t.Logf("=== NO UPGRADE jobs to run")
+		}
+	}
+
+	return nil
+}
+
+func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
+	var err error
+	t.Logf("testing group %s", groupName)
+>>>>>>> 07c93da... copy cert code
 
 	u := uuid.New()
 
@@ -353,6 +417,132 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		return err
 	}
 
+<<<<<<< HEAD
+=======
+	th := testharness.NewSimpleTestHarness(t)
+	th.Load(
+		addontesters.ValidateAddons(addons...),
+		addonDeployment,
+		addonDefaults,
+	)
+	th.Load(addonCleanup)
+
+	// Collect kubeaddons controller logs during cleanup.
+	th.Load(testharness.Loadable{
+		Plan: testharness.CleanupPlan,
+		Jobs: testharness.Jobs{func(t *testing.T) error {
+			logFilePath := filepath.Join(dir, "kubeaddons-controller-log.txt")
+			t.Logf("INFO: writing kubeaddons controller logs to %s", logFilePath)
+
+			logFile, err := os.Create(logFilePath)
+			if err != nil {
+				return err
+			}
+			defer logFile.Close()
+
+			logs, err := logsFromPodWithPrefix(tcluster, kubeaddonsControllerNamespace, kubeaddonsControllerPodPrefix)
+			if err != nil {
+				return err
+			}
+			defer logs.Close()
+
+			_, err = io.Copy(logFile, logs)
+			return err
+		}},
+	})
+
+	for _, job := range jobs {
+		th.Load(testharness.Loadable{
+			Plan: testharness.DefaultPlan,
+			Jobs: testharness.Jobs{job(t, tcluster)},
+		})
+	}
+
+	defer th.Cleanup()
+	th.Validate()
+	th.Deploy()
+	th.Default()
+
+	close(stop)
+	wg.Wait()
+
+	return nil
+}
+
+func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []clusterTestJob, deployments []v1beta2.AddonInterface) error {
+	var err error
+	t.Logf("testing group %s", groupname)
+
+	u := uuid.New()
+
+	node := v1alpha4.Node{}
+	if err := createNodeVolumes(3, u.String(), &node); err != nil {
+		return err
+	}
+	defer func() {
+		if err := cleanupNodeVolumes(3, u.String(), &node); err != nil {
+			t.Logf("error: %s", err)
+		}
+	}()
+
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return err
+	}
+	dir, err := ioutil.TempDir(tempDir, groupname+"-")
+	if err != nil {
+		return err
+	}
+
+	t.Logf("setting up cluster for test group %s", groupname)
+	tcluster, err := newCluster(groupname, version, node, t)
+	if err != nil {
+		// try to clean up in case cluster was created and reference available
+		if tcluster != nil {
+			_ = tcluster.Cleanup()
+		}
+		return err
+	}
+	if tcluster == nil {
+		return fmt.Errorf("tcluster is nil")
+	}
+	defer tcluster.Cleanup()
+
+	kubeConfig, err := tcluster.ConfigYAML()
+	if err != nil {
+		return err
+	}
+
+	kubeConfigPath := filepath.Join(dir, "kubeconfig")
+	if err := ioutil.WriteFile(kubeConfigPath, kubeConfig, 0644); err != nil {
+		return err
+	}
+
+	if err := kubectl("--kubeconfig", kubeConfigPath, "apply", "-f", controllerBundle); err != nil {
+		return err
+	}
+
+	addons := groups[groupname]
+	for _, addon := range addons {
+		if err := overrides(addon); err != nil {
+			return err
+		}
+	}
+
+	wg := &sync.WaitGroup{}
+	stop := make(chan struct{})
+	go experimental.LoggingHook(t, tcluster, wg, stop)
+
+	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, deployments...)
+	if err != nil {
+		return err
+	}
+
+	waitForAddons, err := addontesters.WaitForAddons(t, tcluster, deployments...)
+	if err != nil {
+		return err
+	}
+
+>>>>>>> 07c93da... copy cert code
 	t.Logf("determining which addons in group %s need to be upgrade tested", groupname)
 	addonUpgrades := testharness.Loadables{}
 	for _, newAddon := range addons {
@@ -580,11 +770,51 @@ kubeEtcd:
 `,
 }
 
+<<<<<<< HEAD
 func newCluster(groupname string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
 	if groupname == "aws" || groupname == "azure" || groupname == "gcp" || groupname == allAWSGroupName {
 		provisioner := groupname
 		if groupname == allAWSGroupName {
 			provisioner = "aws"
+=======
+func newCluster(groupName string, version string, node v1alpha4.Node, t *testing.T) (testcluster.Cluster, error) {
+	path, _ := os.Getwd()
+	switch groupName {
+	case provisionerAWS:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case provisionerAzure:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAzure)
+	case provisionerGCP:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerGCP)
+	case allAWSGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case elasticSearchGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	default:
+		path, ok := os.LookupEnv("KBA_KUBECONFIG")
+		if ok && path != "" {
+			t.Log("Using KBA_KUBECONFIG at", path)
+			// load the file from kubeconfig
+			kubeConfig, err := ioutil.ReadFile(path)
+			if err != nil {
+				return nil, err
+			}
+
+			provisioner, ok := os.LookupEnv("KBA_PROVISIONER")
+			if !ok || provisioner == "" {
+				provisioner = provisionerKind
+			}
+
+			cluster, err := testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+			if err != nil {
+				return nil, err
+			}
+			err = createCertManagerSecret(cluster)
+			if err != nil {
+				return nil, err
+			}
+			return cluster, nil
+>>>>>>> 07c93da... copy cert code
 		}
 		path, _ := os.Getwd()
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisioner)
