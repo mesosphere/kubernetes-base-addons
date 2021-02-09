@@ -841,15 +841,7 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 				provisioner = provisionerKind
 			}
 
-			cluster, err := testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
-			if err != nil {
-				return nil, err
-			}
-			err = createCertManagerSecret(cluster)
-			if err != nil {
-				return nil, err
-			}
-			return cluster, nil
+			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
 		}
 
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
