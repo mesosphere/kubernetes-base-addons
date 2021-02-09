@@ -74,4 +74,6 @@ make.addons.table:
 
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
+	ls /workspace/kba-git-src/
+	cat /workspace/kba-git-src/kubeconfig
 	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
