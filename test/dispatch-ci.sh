@@ -20,7 +20,4 @@ echo "Run a subset of tests on dispatch"
 
 DISPATCH_SUBSET_REGEX='TestDisabledGroup\|TestGeneralGroup\|TestAwsGroup'
 
-for g in $(go run -tags experimental scripts/test-wrapper.go | grep $DISPATCH_SUBSET_REGEX)
-do
-    go test -tags experimental -timeout 60m -race -v -run $g
-done
+go test -tags experimental -timeout 60m -race -v -run TestIstioGroup
