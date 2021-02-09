@@ -93,6 +93,7 @@ dispatch-test-install-upgrade:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	@{ \
 	echo "INFO: the following test groups will be run:" ;\
 	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
@@ -109,5 +110,9 @@ dispatch-test-install-upgrade:
 	cd ./test/ && KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test_install_upgrade.sh $(KBA_BRANCH)
 >>>>>>> c9e0a5f... set kubeconfig to avoid an OOM
 =======
+=======
+	ls /workspace/kba-git-src/
+	cat /workspace/kba-git-src/kubeconfig
+>>>>>>> 0e2d737... Debug and ignore dispatchfile
 	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
 >>>>>>> 3ca04a7... multiple fixes to the makefile and dispatch
