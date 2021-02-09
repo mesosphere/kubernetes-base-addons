@@ -91,6 +91,7 @@ dispatch-test-install-upgrade: set-git-ssh
 =======
 dispatch-test-install-upgrade:
 <<<<<<< HEAD
+<<<<<<< HEAD
 	@{ \
 	echo "INFO: the following test groups will be run:" ;\
 	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
@@ -103,3 +104,6 @@ dispatch-test-install-upgrade:
 =======
 	unset KBA_KUBECONFIG && cd ./test/ && ./test_install_upgrade.sh $(KBA_BRANCH)
 >>>>>>> de4b996... move test to local bash script
+=======
+	cd ./test/ && KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test_install_upgrade.sh $(KBA_BRANCH)
+>>>>>>> c9e0a5f... set kubeconfig to avoid an OOM
