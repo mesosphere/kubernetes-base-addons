@@ -161,9 +161,9 @@ clean_upgrade_kind = cleanup(upgrade_kind_cluster, "test-upgrade", git_clone_dir
 
 # Robot Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request())
-action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
-action(tasks=["test-install", clean_install_kind], on=pull_request())
-action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request())
+action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(paths=["!Dispatchfile"]))
+action(tasks=["test-install", clean_install_kind], on=pull_request(paths=["!Dispatchfile"]))
+action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(paths=["!Dispatchfile"]))
 
 # Chatops Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint", "test"]))
