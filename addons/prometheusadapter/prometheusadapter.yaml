@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: prometheusadapter
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-5"
     appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.7.0"
     values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/prometheus-community/helm-charts/ef6391472c694c8cb1412b277f94ae3b7cfe972e/charts/prometheus-adapter/values.yaml"
 spec:
@@ -47,7 +47,7 @@ spec:
       rules:
         resource:
           cpu:
-            containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)
+            containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>,container!='POD',container!='',pod!=''}[2m])) by (<<.GroupBy>>)
             nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[2m])) by (<<.GroupBy>>)
             resources:
               overrides:
@@ -59,7 +59,7 @@ spec:
                  resource: pod
             containerLabel: container
           memory:
-            containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+            containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,container!='POD',container!='',pod!=''}) by (<<.GroupBy>>)
             nodeQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,id='/'}) by (<<.GroupBy>>)
             resources:
               overrides:
