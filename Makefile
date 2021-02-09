@@ -8,6 +8,7 @@ export GO111MODULE := on
 export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
 export KBA_KUBECONFIG ?= $(shell mktemp --tmpdir kba-kubeconfig-XXXXXXXX)
 export KUBECONFIG = $(KBA_KUBECONFIG)
+export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
 
 .DEFAULT_GOAL := test
 
@@ -73,11 +74,4 @@ make.addons.table:
 
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
-	@{ \
-	echo "INFO: the following test groups will be run:" ;\
-	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
-	cd ./test && go run -tags experimental ./scripts/test-wrapper.go ;\
-	for g in $(cd ./test && go run -tags experimental ./scripts/test-wrapper.go) ; do \
-		cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
-	done ;\
-	}
+	cd ./test/ && KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test_install_upgrade.sh $(KBA_BRANCH)
