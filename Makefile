@@ -6,7 +6,7 @@ export ADDON_TESTS_SETUP_WAIT_DURATION := 30m
 export GIT_TERMINAL_PROMPT := 1
 export GO111MODULE := on
 export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
-export KBA_KUBECONFIG ?= $(shell mktemp --tmpdir kba-kubeconfig-XXXXXXXX)
+export KBA_KUBECONFIG ?= "/workspace/kba-git-src/kubeconfig"
 export KUBECONFIG = $(KBA_KUBECONFIG)
 export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
 
@@ -22,7 +22,7 @@ endif
 # The KUBECONFIG is set to config file in the git-clone repo of Dispatch.
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
-	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
+	./test/dispatch-ci.sh
 
 .PHONY: lint
 lint:
@@ -92,6 +92,7 @@ dispatch-test-install-upgrade: set-git-ssh
 dispatch-test-install-upgrade:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	@{ \
 	echo "INFO: the following test groups will be run:" ;\
 	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
@@ -107,3 +108,6 @@ dispatch-test-install-upgrade:
 =======
 	cd ./test/ && KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test_install_upgrade.sh $(KBA_BRANCH)
 >>>>>>> c9e0a5f... set kubeconfig to avoid an OOM
+=======
+	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
+>>>>>>> 3ca04a7... multiple fixes to the makefile and dispatch

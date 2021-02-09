@@ -9,6 +9,8 @@ load("github.com/mesosphere/dispatch-tasks/bump_charts/bump_charts@master", "bum
 
 git_clone_dirname = "kba-git-src"
 kind_cluster_name = "kba-kind-cluster"
+kind_install_cluster_name = "kba-install-kind-cluster"
+kind_upgrade_cluster_name = "kba-upgrade-kind-cluster"
 
 resource("artifacts", type="storage", params={
     "type": "gcs",
@@ -22,6 +24,8 @@ git_resource(git_clone_dirname, url="$(context.git.url)", revision="$(context.gi
 git_resource("ui-git", url="git@github.com:mesosphere/kommander.git", revision="v6.37.0")
 
 kind_cluster = make_kind_cluster(kind_cluster_name, git_clone_dirname)
+install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_clone_dirname)
+upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_clone_dirname)
 
 
 dindTask("dispatch-integration-test",
@@ -70,8 +74,89 @@ dindTask("lint-yaml",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["yamllint", "--config-file", "test/yamllint.yaml", "."],
              ),
+<<<<<<< HEAD
          ]
          )
+=======
+         ])
+
+dindTask("test-install",
+         inputs=[git_clone_dirname],
+         deps=[install_kind_cluster],
+         steps=[
+             fetch_kubeconfig(kind_install_cluster_name, git_clone_dirname),
+
+             k8s.corev1.Container(
+                 name="fetch-master",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 args=["git", "fetch", "origin", "master"]),
+
+             k8s.corev1.Container(
+                 name="test-install",
+                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
+
+                 env=[
+                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
+                     k8s.corev1.EnvVar(name="ADDON_TESTS_PER_ADDON_WAIT_DURATION", value="10m"),
+                     k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
+                     k8s.corev1.EnvVar(name="ADDON_TESTS_SETUP_WAIT_DURATION", value="60m"),
+                     k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
+                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
+                     k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="install"),
+                     ],
+
+                 resources=k8s.corev1.ResourceRequirements(
+                     requests={
+                         "cpu": k8s.resource_quantity("1000m"),
+                         "memory": k8s.resource_quantity("2Gi")}))
+         ])
+
+dindTask("test-upgrade",
+         inputs=[git_clone_dirname],
+         deps=[upgrade_kind_cluster],
+         steps=[
+             fetch_kubeconfig(kind_upgrade_cluster_name, git_clone_dirname),
+
+             k8s.corev1.Container(
+                 name="fetch-master",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 args=["git", "fetch", "origin", "master"]),
+
+             k8s.corev1.Container(
+                 name="test-upgrade",
+                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
+
+                 env=[
+                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
+                     k8s.corev1.EnvVar(name="ADDON_TESTS_PER_ADDON_WAIT_DURATION", value="10m"),
+                     k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
+                     k8s.corev1.EnvVar(name="ADDON_TESTS_SETUP_WAIT_DURATION", value="60m"),
+                     k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
+                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
+                     k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
+                     ],
+
+                 resources=k8s.corev1.ResourceRequirements(
+                     requests={
+                         "cpu": k8s.resource_quantity("1000m"),
+                         "memory": k8s.resource_quantity("2Gi")}))
+         ])
+
+>>>>>>> 3ca04a7... multiple fixes to the makefile and dispatch
 
 clean_kind = cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
 
