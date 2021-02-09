@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
+	"os/exec"
 	"strings"
 
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
@@ -11,6 +13,47 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+const (
+	certManagerNamespace = "cert-manager"
+	kubeConfigPath       = "/etc/kubernetes/admin.conf"
+	rootCACertPath       = "/etc/kubernetes/pki/ca.crt"
+	rootCAKeyPath        = "/etc/kubernetes/pki/ca.key"
+)
+
+func createCertManagerSecret(k testcluster.Cluster) error {
+	ns := &corev1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: certManagerNamespace,
+		},
+	}
+	_, err := k.Client().CoreV1().Namespaces().Create(context.TODO(), ns, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("could not create cert-manager namespace: %w", err)
+	}
+
+	createSecretCommand := fmt.Sprintf(
+		"set -o pipefail && "+
+			"kubectl --kubeconfig %s create secret tls kubernetes-root-ca "+
+			"--namespace=%s --cert=%s --key=%s --dry-run -o yaml "+
+			"| kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f -",
+		kubeConfigPath,
+		certManagerNamespace,
+		rootCACertPath,
+		rootCAKeyPath)
+	a := []string{
+		"-c",
+		createSecretCommand,
+	}
+	cmd := exec.Command("bash", a...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error running command in docker: %w", err)
+	}
+	return nil
+}
 
 func portForwardPodWithPrefix(cluster testcluster.Cluster, ns, prefix, port string) (int, chan struct{}, error) {
 	pod, err := findPodWithPrefix(cluster, ns, prefix)
