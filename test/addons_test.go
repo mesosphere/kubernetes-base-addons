@@ -349,7 +349,7 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 	t.Logf("testing deployment group %s", groupName)
 
 	testType, ok := os.LookupEnv("KBA_TESTGROUP_TYPE")
-	if !ok  || testType == "" {
+	if !ok || testType == "" {
 		testType = "all"
 	}
 
@@ -594,7 +594,6 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	wg := &sync.WaitGroup{}
 	stop := make(chan struct{})
 	go experimental.LoggingHook(t, tcluster, wg, stop)
-
 
 	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, deployments...)
 	if err != nil {
@@ -842,7 +841,15 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 				provisioner = provisionerKind
 			}
 
-			return testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+			cluster, err := testcluster.NewClusterFromKubeConfig(provisioner, kubeConfig)
+			if err != nil {
+				return nil, err
+			}
+			err = createCertManagerSecret(cluster)
+			if err != nil {
+				return nil, err
+			}
+			return cluster, nil
 		}
 
 		t.Logf("No Kubeconfig specified in KBA_KUBECONFIG. Creating Kind cluster")
