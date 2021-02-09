@@ -152,6 +152,7 @@ dindTask("test-upgrade",
                      k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
                      k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
                      k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
+                     k8s.corev1.EnvVar(name = "CLAIM_NAME", value = task_step_result(kind_upgrade_cluster_name, "cluster-claim"))
                      ],
 
                  resources=k8s.corev1.ResourceRequirements(
