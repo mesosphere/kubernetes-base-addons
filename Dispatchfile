@@ -12,8 +12,8 @@ git_install_clone_dirname = "kba-install-git-src"
 git_upgrade_clone_dirname = "kba-upgrade-git-src"
 
 kind_cluster_name = "kba-kind-cluster"
-kind_install_cluster_name = "kba-install-kind-cluster"
-kind_upgrade_cluster_name = "kba-upgrade-kind-cluster"
+kind_install_cluster_name = "kba-install-cluster"
+kind_upgrade_cluster_name = "kba-upgrade-cluster"
 
 resource("artifacts", type="storage", params={
     "type": "gcs",
@@ -162,14 +162,28 @@ dindTask("test-upgrade",
 >>>>>>> 3ca04a7... multiple fixes to the makefile and dispatch
 
 clean_kind = cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
+clean_install_kind = cleanup(install_kind_cluster, "test-install", git_install_clone_dirname)
+clean_upgrade_kind = cleanup(upgrade_kind_cluster, "test-upgrade", git_upgrade_clone_dirname)
+
 
 # Robot Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request())
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request())
+<<<<<<< HEAD
+=======
+action(tasks=["test-install", clean_install_kind], on=pull_request())
+action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request())
+>>>>>>> ee792f7... fixing naming and cleanup
 
 # Chatops Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint", "test"]))
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
+<<<<<<< HEAD
+=======
+action(tasks=["test-install", clean_install_kind], on=pull_request(chatops=["test-install"]))
+action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-upgrade"]))
+action(tasks=["dispatch-integration-test", clean_kind, "test-install", clean_install_kind, "test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-all"])
+>>>>>>> ee792f7... fixing naming and cleanup
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
