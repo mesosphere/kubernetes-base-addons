@@ -76,5 +76,4 @@ dispatch-test-install-upgrade:
 
 .PHONY: test-aws
 test-aws:
-	env
 	cd test; ./test-aws.sh $(KBA_BRANCH)

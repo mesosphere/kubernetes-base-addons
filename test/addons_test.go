@@ -827,6 +827,8 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	case elasticSearchGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case istioGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	default:
 		path, ok := os.LookupEnv("KBA_KUBECONFIG")
 		if ok && path != "" {
