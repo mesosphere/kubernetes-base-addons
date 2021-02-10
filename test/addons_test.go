@@ -292,25 +292,23 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		t.Logf("=== Running INSTALL job")
 
 		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
-		err = testGroupDeployment(t, groupName, version, jobs)
+		return testGroupDeployment(t, groupName, version, jobs)
+	case "upgrade":
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 		if err != nil {
 			return err
 		}
-	case "upgrade":
-		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
 
 			t.Logf("testing upgrade group %s", groupName)
-			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
-			if err != nil {
-				return err
-			}
+			return testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
 
+		return nil
 	default:
 		t.Logf("=== Running INSTALL job")
 
@@ -321,6 +319,9 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		}
 
 		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+		if err != nil {
+			return err
+		}
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
@@ -333,9 +334,9 @@ func testgroup(t *testing.T, groupname string, version string, jobs ...clusterTe
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
-	}
 
-	return nil
+		return nil
+	}
 }
 
 func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
