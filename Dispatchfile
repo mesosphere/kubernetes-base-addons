@@ -166,7 +166,7 @@ dindTask("test-aws-addons",
                  args=["git", "fetch", "origin", "master"]),
 
              k8s.corev1.Container(
-                 name="dispatch-integration-test",
+                 name="test-addons",
                  image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["/entrypoint.sh", "make", "test-aws"],
