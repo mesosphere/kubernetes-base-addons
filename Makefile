@@ -15,9 +15,7 @@ export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print
 set-git-ssh:
 ifdef DISPATCH_CI
 	./scripts/ci/setup_ssh.sh
-endif
-
-# Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
+endif # Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
 # The KUBECONFIG is set to config file in the git-clone repo of Dispatch.
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
@@ -117,4 +115,11 @@ dispatch-test-install-upgrade:
 =======
 >>>>>>> 379ed74... create resources on dispath kind cluster
 	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
+<<<<<<< HEAD
 >>>>>>> 3ca04a7... multiple fixes to the makefile and dispatch
+=======
+
+.PHONY: test-aws
+test-aws:
+	cd test; ./test-aws.sh $(KBA_BRANCH)
+>>>>>>> a98481e... Creates a seperate task for AWS groups

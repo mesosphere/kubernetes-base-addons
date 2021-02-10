@@ -3,8 +3,6 @@ set -euo pipefail
 
 branch=${1:-master}
 
-./scripts/setup-konvoy.sh
-
 # if we're in dispatch - create the secrets on the container running in the pod with exec
 if [[ ! -z "${CLAIM_NAME}" ]]; then
     kubectl --kubeconfig ${KBA_KUBECONFIG} create namespace cert-manager || true
@@ -16,7 +14,7 @@ fi
 
 
 echo "INFO: the following test groups will be run:"
-tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (egrep '^Test' || true))
+tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (egrep '^Test' || true) | grep -v 'TestAwsGroup\|TestElasticsearchGroup')
 echo ${tests}
 
 for g in ${tests}
