@@ -7,7 +7,8 @@ export GIT_TERMINAL_PROMPT := 1
 export GO111MODULE := on
 export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
 export KBA_KUBECONFIG ?= /workspace/kba-git-src/kubeconfig
-export KBA_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
+export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
+export KBA_BRANCH2 ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 .DEFAULT_GOAL := test
 
@@ -121,5 +122,6 @@ dispatch-test-install-upgrade:
 
 .PHONY: test-aws
 test-aws:
+	env
 	cd test; ./test-aws.sh $(KBA_BRANCH)
 >>>>>>> a98481e... Creates a seperate task for AWS groups
