@@ -8,7 +8,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-3"
     appversion.kubeaddons.mesosphere.io/kiali-operator: "1.29.0"
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
@@ -57,6 +57,8 @@ spec:
             tracing:
               in_cluster_url: http://jaeger-kubeaddons-jaeger-operator-jaeger-query:16686
           deployment:
+            image_version: v1.29.0
+            version_label: v1.29.0
             accessible_namespaces:
             - '**'
             ingress_enabled: true
