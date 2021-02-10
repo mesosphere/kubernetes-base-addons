@@ -157,7 +157,7 @@ dindTask("test-upgrade",
                          "memory": k8s.resource_quantity("2Gi")}))
          ])
 
-dindTask("test-aws-addons",
+dindTask("test-aws-install-addons",
          inputs=[git_clone_dirname],
          steps=[
              k8s.corev1.Container(
@@ -175,6 +175,31 @@ dindTask("test-aws-addons",
                      k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
                      k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
                      k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="install"),
+                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))]
+         )])
+
+dindTask("test-aws-upgrade-addons",
+         inputs=[git_clone_dirname],
+         steps=[
+             k8s.corev1.Container(
+                 name="fetch-master",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 args=["git", "fetch", "origin", "master"]),
+
+             k8s.corev1.Container(
+                 name="test-addons",
+                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
+                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
+                 command=["/entrypoint.sh", "make", "test-aws"],
+
+                 env=[
+                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
+                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
                      k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
                      k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
                      k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))]
@@ -190,7 +215,8 @@ action(tasks=["lint-yaml", clean_kind], on=pull_request())
 action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(paths=["!Dispatchfile"]))
 action(tasks=["test-install", clean_install_kind], on=pull_request(paths=["!Dispatchfile"]))
 action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(paths=["!Dispatchfile"]))
-action(tasks=["test-aws-addons"], on=pull_request(paths=["!Dispatchfile"]))
+action(tasks=["test-aws-install-addons"], on=pull_request(paths=["!Dispatchfile"]))
+action(tasks=["test-aws-upgrade-addons"], on=pull_request(paths=["!Dispatchfile"]))
 
 # Chatops Actions
 action(tasks=["lint-yaml", clean_kind], on=pull_request(chatops=["lint", "test"]))
