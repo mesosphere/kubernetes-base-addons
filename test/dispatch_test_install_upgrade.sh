@@ -14,7 +14,9 @@ fi
 
 
 echo "INFO: the following test groups will be run:"
-tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (egrep '^Test' || true) | grep -v 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
+tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | egrep 'TestIstioGroup')
+
+#| grep -v 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
 echo ${tests}
 
 for g in ${tests}
