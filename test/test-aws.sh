@@ -20,6 +20,7 @@ for pid in ${pids[*]}; do
   wait $pid || EXIT_CODE=$?
   exits+=($EXIT_CODE)
   if [ $DISPATCH_CI = "true" ]; then
+    cat Test*
     cp Test* $ARTIFACTS_DIR
   fi
 done
