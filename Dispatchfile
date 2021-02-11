@@ -189,7 +189,11 @@ dindTask("test-aws-install-addons",
               resources=k8s.corev1.ResourceRequirements(
                   requests={
                       "cpu": k8s.resource_quantity("1000m"),
-                      "memory": k8s.resource_quantity("2Gi")})
+                      "memory": k8s.resource_quantity("3Gi")},
+                    limits={
+                        "cpu": k8s.resource_quantity("8000m"),
+                        "memory": k8s.resource_quantity("15Gi")}
+                    )
          )])
 
 dindTask("test-aws-upgrade-addons",
@@ -221,7 +225,12 @@ dindTask("test-aws-upgrade-addons",
                  resources=k8s.corev1.ResourceRequirements(
                      requests={
                          "cpu": k8s.resource_quantity("1000m"),
-                         "memory": k8s.resource_quantity("2Gi")})
+                         "memory": k8s.resource_quantity("3Gi")
+                         },
+                    limits={
+                        "cpu": k8s.resource_quantity("8000m"),
+                        "memory": k8s.resource_quantity("15Gi")}
+                  )
 
          )])
 
