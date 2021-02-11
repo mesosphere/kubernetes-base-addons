@@ -75,5 +75,8 @@ dispatch-test-install-upgrade:
 	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
 
 .PHONY: test-aws
-test-aws:
+test-aws: test/konvoy
 	cd test; ./test-aws.sh $(KBA_BRANCH)
+
+test/konvoy:
+	./test/scripts/setup-konvoy.sh
