@@ -19,7 +19,7 @@ for pid in ${pids[*]}; do
   wait $pid || EXIT_CODE=$?
   exits+=($EXIT_CODE)
   if [ $DISPATCH_CI = "true" ]; then
-    cp Test* /workspace/output
+    cp Test* $ARTIFACTS_DIR
   fi
 done
 
