@@ -15,6 +15,7 @@ do
 done
 
 exits=()
+EXIT_CODE=0
 for pid in ${pids[*]}; do
   wait $pid || EXIT_CODE=$?
   exits+=($EXIT_CODE)
