@@ -79,4 +79,4 @@ test-aws: test/konvoy
 	cd test; ./test-aws.sh $(KBA_BRANCH)
 
 test/konvoy:
-	./test/scripts/setup-konvoy.sh
+	./test/scripts/setup-konvoy.sh; mv konvoy test
