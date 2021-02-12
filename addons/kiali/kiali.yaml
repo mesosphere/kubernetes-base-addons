@@ -13,7 +13,7 @@ metadata:
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
-    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/vv1.29/"
+    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.29/"
     values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/3c8a896/kiali-operator/values.yaml"
 spec:
   namespace: istio-system
