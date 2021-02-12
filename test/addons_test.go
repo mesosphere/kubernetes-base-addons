@@ -20,6 +20,7 @@ import (
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
+	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
 	"github.com/mesosphere/kubeaddons/pkg/constants"
