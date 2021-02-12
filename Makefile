@@ -72,11 +72,11 @@ make.addons.table:
 
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
-	cd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH)
+	pushd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH); popd;
 
 .PHONY: test-aws
 test-aws: test/konvoy
-	cd test; ./test-aws.sh $(KBA_BRANCH)
+	pushd test; ./test-aws.sh $(KBA_BRANCH); popd;
 
 test/konvoy:
 	./test/scripts/setup-konvoy.sh; mv konvoy test
