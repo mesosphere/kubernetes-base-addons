@@ -1,8 +1,10 @@
-kubeconfig
+**/*.kube/
+.vscode/
+/kubeaddons-tests
+_build
+admin.conf
 bin/
 dist/
-kind-logs-*/
-**/*.kube/
-/kubeaddons-tests
 kba-kubeconfig-*
-admin.conf
+kind-logs-*/
+kubeconfig
