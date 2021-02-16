@@ -1,16 +1,63 @@
+MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+MKFILE_DIR := $(dir $(MKFILE_PATH))
 SHELL := /bin/bash -euo pipefail
+comma := ,
+empty :=
+space := $(empty) $(empty)
+commaspace := $(comma)$(empty)
+
+
+# ------------------------------------------------------------------------------
+# Configuration - Versions
+# ------------------------------------------------------------------------------
+GITHUB_CLI_VERSION := 1.5.0
+
+# ------------------------------------------------------------------------------
+# Configuration - Golang
+# ------------------------------------------------------------------------------
+
+GOARCH ?= $(shell go env GOARCH)
+GOOS ?= $(shell go env GOOS)
+GOPATH ?= $(shell go env GOPATH)
+GOPRIVATE ?= "github.com/mesosphere"
+
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
+
+export GO111MODULE := on
+
+# ------------------------------------------------------------------------------
+# Configuration - Binaries
+# ------------------------------------------------------------------------------
+GITHUB_CLI_BIN := $(MKFILE_DIR)/bin/linux/$(GOARCH)/gh-$(GITHUB_CLI_VERSION)
+RELEASE_NOTES_TOOL_BIN := $(MKFILE_DIR)/bin/$(GOOS)/$(GOARCH)/release-notes
+
+# ------------------------------------------------------------------------------
+# Configuration - Other
+# ------------------------------------------------------------------------------
+
 YAMLLINT := $(shell command -v yamllint)
 
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
 export ADDON_TESTS_SETUP_WAIT_DURATION := 30m
 export GIT_TERMINAL_PROMPT := 1
-export GO111MODULE := on
-export GOPRIVATE := github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework
 export KBA_KUBECONFIG ?= /workspace/kba-git-src/kubeconfig
 export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
 export KBA_BRANCH2 ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 .DEFAULT_GOAL := test
+ADDON_SOURCES := $(wildcard addons/*/*.yaml)
+
+ifneq (,$(filter tar (GNU tar)%, $(shell tar --version)))
+WILDCARDS := --wildcards
+endif
+
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
 
 .PHONY: set-git-ssh
 set-git-ssh:
@@ -63,13 +110,6 @@ endif
 	-rm -rf kubeaddons-tests
 	-rm kba-kubeconfig-*
 
-.PHONY: release
-release: make.addons.table
-
-.PHONY: make.addons.table
-make.addons.table:
-	scripts/make_addon_table.sh > ADDONS.md
-
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
 	pushd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH); popd;
@@ -80,3 +120,70 @@ test-aws: test/konvoy
 
 test/konvoy:
 	./test/scripts/setup-konvoy.sh; mv konvoy test
+
+# ------------------------------------------------------------------------------
+# Release
+# ------------------------------------------------------------------------------
+RELEASE_LIST := $(sort $(subst $(comma), ,$(KBA_TAGS)))
+RELEASE_VER := $(filter v%,$(RELEASE_LIST))
+
+.PHONY: release.pr
+release.pr: $(RELEASE_NOTES_TOOL_BIN) ADDONS.md
+ifndef KBA_MILESTONE
+	echo "Please set KBA_MILESTONE"
+else
+ifndef KBA_TAGS
+	echo "Please set KBA_TAGS"
+else
+	echo -e "# Release Notes\n" > NEW_RELEASE_NOTES.md
+	echo -e "## $(subst $(space),$(comma) ,$(RELEASE_LIST))\n" >> NEW_RELEASE_NOTES.md
+	$(RELEASE_NOTES_TOOL_BIN) >> NEW_RELEASE_NOTES.md
+	tail -n +3 RELEASE_NOTES.md >> NEW_RELEASE_NOTES.md
+	mv NEW_RELEASE_NOTES.md RELEASE_NOTES.md
+endif
+endif
+
+.PHONY: release
+release: $(RELEASE_NOTES_TOOL_BIN) 
+ifndef KBA_MILESTONE
+	echo "Please set KBA_MILESTONE"
+else
+ifndef KBA_TAGS
+	echo "Please set KBA_TAGS"
+else
+	git checkout $(KBA_MILESTONE)
+	git pull
+	echo $(RELEASE_LIST) | xargs -n1 echo git tag && echo git push --tags
+	$(RELEASE_NOTES_TOOL_BIN) > DELETE_ME.md
+	$(GITHUB_CLI_BIN) release create $(RELEASE_VER) -t $(RELEASE_VER) --target $(RELEASE_VER) --notes-file DELETE_ME.md
+	rm DELETE_ME.md
+endif
+endif
+
+.PHONY: make.addons.table
+make.addons.table: ADDONS.md
+
+ADDONS.md: $(ADDON_SOURCES)
+	scripts/make_addon_table.sh > ADDONS.md
+
+# ------------------------------------------------------------------------------
+# Tools
+# ------------------------------------------------------------------------------
+
+.PHONY: tools
+tools: $(RELEASE_NOTES_TOOL_BIN) $(GITHUB_CLI_BIN)
+
+.PHONY: tool.release-notes
+tool.release-notes: $(RELEASE_NOTES_TOOL_BIN)
+
+.PHONY: tool.github_cli
+tool.github_cli: $(GITHUB_CLI_BIN)
+
+$(RELEASE_NOTES_TOOL_BIN): tools/cmd/release-notes/release-notes.go
+	mkdir -p $(dir $@)
+	cd tools/cmd/release-notes && go build -o $@ .
+
+$(GITHUB_CLI_BIN):
+	mkdir -p $(dir $@) _build
+	curl -Ls https://github.com/cli/cli/releases/download/v$(GITHUB_CLI_VERSION)/gh_$(GITHUB_CLI_VERSION)_linux_$(GOARCH).tar.gz | tar xz -C _build $(WILDCARDS) --strip=2 '*/*/gh'
+	mv _build/gh $@
