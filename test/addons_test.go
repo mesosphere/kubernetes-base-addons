@@ -53,6 +53,7 @@ const (
 	kubeaddonsControllerPodPrefix = "kubeaddons-controller-manager-"
 
 	elasticSearchGroupName = "elasticsearch"
+	istioGroupName         = "istio"
 
 	provisionerAWS   = "aws"
 	provisionerGCP   = "gcp"
@@ -207,7 +208,7 @@ func TestPrometheusGroup(t *testing.T) {
 }
 
 func TestIstioGroup(t *testing.T) {
-	if err := testgroup(t, "istio", "kindest/node:v1.16.9"); err != nil {
+	if err := testgroup(t, istioGroupName, "kindest/node:v1.16.9"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -356,25 +357,23 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		t.Logf("=== Running INSTALL job")
 
 		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
-		err = testGroupDeployment(t, groupName, version, jobs)
+		return testGroupDeployment(t, groupName, version, jobs)
+	case "upgrade":
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 		if err != nil {
 			return err
 		}
-	case "upgrade":
-		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
 
 			t.Logf("testing upgrade group %s", groupName)
-			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
-			if err != nil {
-				return err
-			}
+			return testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
 
+		return nil
 	default:
 		t.Logf("=== Running INSTALL job")
 
@@ -385,6 +384,9 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		}
 
 		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+		if err != nil {
+			return err
+		}
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
@@ -397,9 +399,9 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
-	}
 
-	return nil
+		return nil
+	}
 }
 
 func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
@@ -823,6 +825,8 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 	case allAWSGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	case elasticSearchGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case istioGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	default:
 		path, ok := os.LookupEnv("KBA_KUBECONFIG")
