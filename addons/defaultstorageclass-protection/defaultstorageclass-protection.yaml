@@ -5,13 +5,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: defaultstorageclass-protection
   annotations:
-<<<<<<< HEAD
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-0"
     appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.6"
-=======
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.0.5-2"
-    appversion.kubeaddons.mesosphere.io/defaultstorageclass-protection: "0.0.5"
->>>>>>> 39305b0... Bump defaultstorageclass to 0.0.6
     # version 0.0.5 changed the selectors
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<0.0.5\", \"strategy\": \"delete\"}]"
 spec:
