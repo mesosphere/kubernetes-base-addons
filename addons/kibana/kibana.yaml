@@ -6,11 +6,11 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kibana
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "7.9.3-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "7.9.3-2"
     appversion.kubeaddons.mesosphere.io/kibana: "7.9.3"
     endpoint.kubeaddons.mesosphere.io/kibana: "/ops/portal/kibana"
     docs.kubeaddons.mesosphere.io/kibana: "https://www.elastic.co/guide/en/kibana/7.9/index.html"
-    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/mesosphere/charts/8730849/stable/kibana/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/kibana: "https://raw.githubusercontent.com/mesosphere/charts/fbeb354/stable/kibana/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: kibana
     repo: https://mesosphere.github.io/charts/stable
-    version: 3.3.0
+    version: 3.3.1
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
