@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.2.2-2"
-    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.2.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-1"
+    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.3.0"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/34a717f/staging/gatekeeper/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/1c81193/staging/gatekeeper/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.5.2
+    version: 0.6.0
     values: |
       ---
       replicas: 2
