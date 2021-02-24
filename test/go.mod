@@ -15,7 +15,7 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/mesosphere/ksphere-testing-framework v0.2.6
 	github.com/mesosphere/kubeaddons v0.24.1
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.19.5
 	k8s.io/apimachinery v0.19.5
 	k8s.io/client-go v0.19.5
