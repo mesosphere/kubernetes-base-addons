@@ -22,3 +22,26 @@ mergeable:
         no_empty:
           enabled: true  # Cannot be empty when true.
           message: 'Milestone must be assigned before merging. Typically this is "release/next".'
+      - do: description
+        no_empty:
+          enabled: true
+        must_exclude:
+          regex: '```release-note\s*```'
+          regex_flag: m
+          message: 'release-note block cannot be empty.'
+        must_include:
+          regex: '```release-note$(.|\r\n)+^```'
+          regex_flag: mi
+          message: |
+            Must include release-note block:
+              <code style="white-space: pre;">
+              ```release-note
+              note (or "none")
+              ```
+              </code>
+      - do: dependent
+        changed:
+          file: test/go.mod
+          files:
+            - test/go.sum
+        message: 'Please run "go mod tidy".'
