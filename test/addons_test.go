@@ -43,7 +43,7 @@ const (
 	comRepoRef    = "master"
 	comRepoRemote = "origin"
 
-	defaultKBARepoRef = "master"
+	defaultKBARepoRef = "release/3.3"
 
 	allAWSGroupName = "allAWS"
 

@@ -19,7 +19,7 @@ import (
 
 const (
 	defaultUpstreamRemote = "origin"
-	defaultUpstreamBranch = "master"
+	defaultUpstreamBranch = "release/3.3"
 )
 
 type addonName string
