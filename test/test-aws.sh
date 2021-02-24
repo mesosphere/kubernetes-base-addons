@@ -4,8 +4,7 @@ set -eo pipefail
 branch=${1:-master}
 
 echo "INFO: the following test groups will be run:"
-tests=$(go run -tags experimental scripts/test-wrapper.go origin "${branch}" | grep '^Test'  | grep 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
-echo "${tests}"
+tests=$(go run -tags experimental scripts/test-wrapper.go origin "${branch}" | grep '^Test'  | grep 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup') && echo ${tests}
 
 pids=()
 for g in ${tests}
