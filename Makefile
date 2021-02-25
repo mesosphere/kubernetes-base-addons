@@ -44,8 +44,9 @@ YAMLLINT := $(shell command -v yamllint)
 export ADDON_TESTS_PER_ADDON_WAIT_DURATION := 10m
 export ADDON_TESTS_SETUP_WAIT_DURATION := 30m
 export GIT_TERMINAL_PROMPT := 1
-export KBA_KUBECONFIG ?= $(shell mktemp --tmpdir kba-kubeconfig-XXXXXXXX)
-export KUBECONFIG = $(KBA_KUBECONFIG)
+export KBA_KUBECONFIG ?= /workspace/kba-git-src/kubeconfig
+export KBA_BRANCH ?= $(shell git branch | grep -v detached | awk '$$1=="*"{print $$2}')
+export KBA_BRANCH2 ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 .DEFAULT_GOAL := test
 ADDON_SOURCES := $(wildcard addons/*/*.yaml)
@@ -62,13 +63,11 @@ endif
 set-git-ssh:
 ifdef DISPATCH_CI
 	./scripts/ci/setup_ssh.sh
-endif
-
-# Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
+endif # Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
 # The KUBECONFIG is set to config file in the git-clone repo of Dispatch.
 .PHONY: dispatch-test
 dispatch-test: set-git-ssh
-	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh
+	./test/dispatch-ci.sh
 
 .PHONY: lint
 lint:
@@ -113,14 +112,14 @@ endif
 
 .PHONY: dispatch-test-install-upgrade
 dispatch-test-install-upgrade:
-	@{ \
-	echo "INFO: the following test groups will be run:" ;\
-	KBA_KUBECONFIG=/workspace/kba-git-src/kubeconfig ./test/dispatch-ci.sh ;\
-	cd ./test && go run -tags experimental ./scripts/test-wrapper.go ;\
-	for g in $(cd ./test && go run -tags experimental ./scripts/test-wrapper.go) ; do \
-	    shell cd ./test && go test -tags experimental -timeout 60m -race -v -run $g ; \
-	done ;\
-	}
+	pushd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH); popd;
+
+.PHONY: test-aws
+test-aws: test/konvoy
+	pushd test; ./test-aws.sh $(KBA_BRANCH); popd;
+
+test/konvoy:
+	./test/scripts/setup-konvoy.sh; mv konvoy test
 
 # ------------------------------------------------------------------------------
 # Release
