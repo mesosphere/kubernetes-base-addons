@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-branch=${1:-master}
+branch=${1:-release/3.3}
 
 # if we're in dispatch - create the secrets on the container running in the pod with exec
 if [[ ! -z "${CLAIM_NAME}" ]]; then
