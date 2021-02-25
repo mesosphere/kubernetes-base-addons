@@ -145,7 +145,11 @@ func main() {
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
-	a, _ := getPullRequestIssuesInMilestone(milestone, client)
+	a, err := getPullRequestIssuesInMilestone(milestone, client)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	labels := getLabelsFromIssues(a)
 	sort.Strings(labels)
 	releaseNotes := ""
@@ -156,7 +160,7 @@ func main() {
 		note, err := buildReleaseNoteForLabel(label, a)
 		if err != nil {
 			fmt.Println(err)
-			return
+			os.Exit(1)
 		}
 		releaseNotes = releaseNotes + note
 	}
