@@ -20,8 +20,6 @@ import (
 	testcluster "github.com/mesosphere/ksphere-testing-framework/pkg/cluster"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/kind"
 	"github.com/mesosphere/ksphere-testing-framework/pkg/cluster/konvoy"
-	"github.com/mesosphere/ksphere-testing-framework/pkg/experimental"
-	testgroups "github.com/mesosphere/ksphere-testing-framework/pkg/groups"
 	testharness "github.com/mesosphere/ksphere-testing-framework/pkg/harness"
 	"github.com/mesosphere/kubeaddons/pkg/api/v1beta2"
 	"github.com/mesosphere/kubeaddons/pkg/catalog"
@@ -29,7 +27,7 @@ import (
 	"github.com/mesosphere/kubeaddons/pkg/repositories"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/git"
 	"github.com/mesosphere/kubeaddons/pkg/repositories/local"
-	addontesters "github.com/mesosphere/kubeaddons/test/utils"
+	testutils "github.com/mesosphere/kubeaddons/test/utils"
 	"gopkg.in/yaml.v2"
 	"k8s.io/helm/pkg/chartutil"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
@@ -55,6 +53,7 @@ const (
 	kubeaddonsControllerPodPrefix = "kubeaddons-controller-manager-"
 
 	elasticSearchGroupName = "elasticsearch"
+	istioGroupName         = "istio"
 
 	provisionerAWS   = "aws"
 	provisionerGCP   = "gcp"
@@ -109,7 +108,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	appendDynamicToGroupsMap(groupsMap)
-	groups, err = testgroups.AddonsForGroups(groupsMap, cat)
+	groups, err = testutils.AddonsForGroups(groupsMap, cat)
 	if err != nil {
 		panic(err)
 	}
@@ -117,13 +116,13 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func getGroupsMapFromFile(f string) (testgroups.Groups, error) {
+func getGroupsMapFromFile(f string) (testutils.Groups, error) {
 	b, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, err
 	}
 
-	g := make(testgroups.Groups)
+	g := make(testutils.Groups)
 	if err := yaml.Unmarshal(b, &g); err != nil {
 		return nil, err
 	}
@@ -131,7 +130,7 @@ func getGroupsMapFromFile(f string) (testgroups.Groups, error) {
 }
 
 // appends all AWS related addons to the groupsMap as allAWSGroupName
-func appendDynamicToGroupsMap(groupsMap testgroups.Groups) {
+func appendDynamicToGroupsMap(groupsMap testutils.Groups) {
 	addonRevisionsList, err := cat.ListAddons(func(addon v1beta2.AddonInterface) bool {
 		// https://github.com/mesosphere/konvoy/blob/94899699aa49ce8344a9d000300d9fa37ebbbf48/pkg/addons/addons.go#L97-L99
 		if len(addon.GetAddonSpec().CloudProvider) == 0 {
@@ -152,7 +151,7 @@ func appendDynamicToGroupsMap(groupsMap testgroups.Groups) {
 	for _, addonRevisons := range addonRevisionsList {
 		addonName := addonRevisons[0].GetName()
 		fmt.Println(addonName)
-		groupsMap[allAWSGroupName] = append(groupsMap[allAWSGroupName], testgroups.AddonName(addonName))
+		groupsMap[allAWSGroupName] = append(groupsMap[allAWSGroupName], testutils.AddonName(addonName))
 	}
 	fmt.Println("")
 }
@@ -209,7 +208,7 @@ func TestPrometheusGroup(t *testing.T) {
 }
 
 func TestIstioGroup(t *testing.T) {
-	if err := testgroup(t, "istio", "kindest/node:v1.16.9"); err != nil {
+	if err := testgroup(t, istioGroupName, "kindest/node:v1.16.9"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -250,7 +249,7 @@ func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.Add
 	addonDeploymentsArray := make([]v1beta2.AddonInterface, 0)
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		oldAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
 				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
@@ -349,7 +348,7 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 	t.Logf("testing deployment group %s", groupName)
 
 	testType, ok := os.LookupEnv("KBA_TESTGROUP_TYPE")
-	if !ok  || testType == "" {
+	if !ok || testType == "" {
 		testType = "all"
 	}
 
@@ -358,25 +357,23 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		t.Logf("=== Running INSTALL job")
 
 		// TODO these happen sequentially, we should do so in parallel when we have enough confidence
-		err = testGroupDeployment(t, groupName, version, jobs)
+		return testGroupDeployment(t, groupName, version, jobs)
+	case "upgrade":
+		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 		if err != nil {
 			return err
 		}
-	case "upgrade":
-		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
 
 			t.Logf("testing upgrade group %s", groupName)
-			err = testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
-			if err != nil {
-				return err
-			}
+			return testGroupUpgrades(t, groupName, version, jobs, addonDeployments)
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
 
+		return nil
 	default:
 		t.Logf("=== Running INSTALL job")
 
@@ -387,6 +384,9 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		}
 
 		doUpgrade, addonDeployments, err := checkIfUpgradeIsNeeded(t, groupName)
+		if err != nil {
+			return err
+		}
 
 		if doUpgrade {
 			t.Logf("=== Running UPGRADE job")
@@ -399,9 +399,9 @@ func testgroup(t *testing.T, groupName string, version string, jobs ...clusterTe
 		} else {
 			t.Logf("=== NO UPGRADE jobs to run")
 		}
-	}
 
-	return nil
+		return nil
+	}
 }
 
 func testGroupDeployment(t *testing.T, groupName string, version string, jobs []clusterTestJob) error {
@@ -465,26 +465,26 @@ func testGroupDeployment(t *testing.T, groupName string, version string, jobs []
 
 	wg := &sync.WaitGroup{}
 	stop := make(chan struct{})
-	go experimental.LoggingHook(t, tcluster, wg, stop)
+	go testutils.LoggingHook(t, tcluster, wg, stop)
 
-	addonDeployment, err := addontesters.DeployAddons(t, tcluster, addons...)
+	addonDeployment, err := testutils.DeployAddons(t, tcluster, addons...)
 	if err != nil {
 		return err
 	}
 
-	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, addons...)
+	addonCleanup, err := testutils.CleanupAddons(t, tcluster, addons...)
 	if err != nil {
 		return err
 	}
 
-	addonDefaults, err := addontesters.WaitForAddons(t, tcluster, addons...)
+	addonDefaults, err := testutils.WaitForAddons(t, tcluster, addons...)
 	if err != nil {
 		return err
 	}
 
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
-		addontesters.ValidateAddons(addons...),
+		testutils.ValidateAddons(addons...),
 		addonDeployment,
 		addonDefaults,
 	)
@@ -593,15 +593,14 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 
 	wg := &sync.WaitGroup{}
 	stop := make(chan struct{})
-	go experimental.LoggingHook(t, tcluster, wg, stop)
+	go testutils.LoggingHook(t, tcluster, wg, stop)
 
-
-	addonCleanup, err := addontesters.CleanupAddons(t, tcluster, deployments...)
+	addonCleanup, err := testutils.CleanupAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
 
-	waitForAddons, err := addontesters.WaitForAddons(t, tcluster, deployments...)
+	waitForAddons, err := testutils.WaitForAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
@@ -610,7 +609,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 	addonUpgrades := testharness.Loadables{}
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := addontesters.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, kbaRepoRef, newAddon.GetName())
+		oldAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, kbaRepoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
 				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
@@ -646,7 +645,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 
 		t.Logf("INFO: addon %s was modified and will be upgrade tested", newAddon.GetName())
 
-		addonUpgrade, err := addontesters.UpgradeAddon(t, tcluster, oldAddon, newAddon)
+		addonUpgrade, err := testutils.UpgradeAddon(t, tcluster, oldAddon, newAddon)
 		if err != nil {
 			return err
 		}
@@ -655,7 +654,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		addonUpgrades = append(addonUpgrades, addonUpgrade)
 	}
 
-	addonDeployment, err := addontesters.DeployAddons(t, tcluster, deployments...)
+	addonDeployment, err := testutils.DeployAddons(t, tcluster, deployments...)
 	if err != nil {
 		return err
 	}
@@ -668,7 +667,7 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 
 	th := testharness.NewSimpleTestHarness(t)
 	th.Load(
-		addontesters.ValidateAddons(addons...),
+		testutils.ValidateAddons(addons...),
 		addonDeployment,
 		waitForAddons,
 	)
@@ -826,6 +825,8 @@ func newCluster(groupName string, version string, node v1alpha4.Node, t *testing
 	case allAWSGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	case elasticSearchGroupName:
+		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
+	case istioGroupName:
 		return konvoy.NewCluster(fmt.Sprintf("%s/konvoy", path), provisionerAWS)
 	default:
 		path, ok := os.LookupEnv("KBA_KUBECONFIG")
