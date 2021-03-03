@@ -9,7 +9,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-7"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
@@ -52,13 +52,9 @@ spec:
       "grafana.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
-      defaultRules:
-        rules:
-          etcd: false
       mesosphereResources:
         create: true
         rules:
-          etcd: true
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
           velero: false
