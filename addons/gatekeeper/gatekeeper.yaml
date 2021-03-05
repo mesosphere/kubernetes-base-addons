@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-3"
     appversion.kubeaddons.mesosphere.io/gatekeeper: "3.3.0"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/34a717f/staging/gatekeeper/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/a8fafc2/staging/gatekeeper/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,10 +33,11 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.6.0
+    version: 0.6.2
     valuesRemap:
       "mutations.enable": "gatekeeper.mutation.enable"
       "mutations.enablePodProxy": "gatekeeper.mutation.enablePodProxy"
+      "mutations.excludeNamespacesFromProxy": "gatekeeper.mutation.excludeNamespacesFromProxy"
       "proxySettings.noProxy": "gatekeeper.no-proxy"
       "proxySettings.httpProxy": "gatekeeper.http-proxy"
       "proxySettings.httpsProxy": "gatekeeper.https-proxy"
@@ -60,3 +61,4 @@ spec:
       mutations:
         enable: false
         enablePodProxy: false
+        excludeNamespacesFromProxy: []
