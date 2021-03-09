@@ -6,9 +6,17 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: reloader
   annotations:
+<<<<<<< HEAD
     catalog.kubeaddons.mesosphere.io/addon-revision: "v0.0.79-1"
     appversion.kubeaddons.mesosphere.io/reloader: "v0.0.79"
     values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/1f22ebe/deployments/kubernetes/chart/reloader/values.yaml
+=======
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.0.81-2"
+    appversion.kubeaddons.mesosphere.io/reloader: "v0.0.81"
+    values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/4f551ad/deployments/kubernetes/chart/reloader/values.yaml
+    # Test delete strategy following https://mesosphere.slack.com/archives/CLETZF5U6/p1615265348020900
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<v0.0.79\", \"strategy\": \"delete\"}]"
+>>>>>>> ab8917c... Add delete strategy to reloader
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
