@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: opsportal
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.0-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.0-3"
     appversion.kubeaddons.mesosphere.io/opsportal: "1.5.0"
     endpoint.kubeaddons.mesosphere.io/opsportal: /ops/portal/
-    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/a7d3c02/stable/opsportal/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/opsportal: "https://raw.githubusercontent.com/mesosphere/charts/4c72ff2/stable/opsportal/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -27,7 +27,7 @@ spec:
   chartReference:
     chart: opsportal
     repo: https://mesosphere.github.io/charts/stable
-    version: 0.3.23
+    version: 0.5.0
     valuesRemap:
       "kommander-ui.ingress.extraAnnotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
