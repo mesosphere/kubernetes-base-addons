@@ -52,12 +52,6 @@ spec:
         certManager:
           enabled: true
 
-      # ProxySettings
-      proxySettings:
-        noProxy:
-        httpProxy:
-        httpsProxy:
-
       # enable mutations
       mutations:
         enable: false
