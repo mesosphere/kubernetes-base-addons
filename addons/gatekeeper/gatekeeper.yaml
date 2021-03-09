@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-5"
     appversion.kubeaddons.mesosphere.io/gatekeeper: "3.3.0"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
     values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/a8fafc2/staging/gatekeeper/values.yaml"
@@ -33,15 +33,15 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.6.3
+    version: 0.6.4
     valuesRemap:
       "mutations.enable": "gatekeeper.mutation.enable"
       "mutations.enablePodProxy": "gatekeeper.mutation.enablePodProxy"
       "mutations.excludeNamespacesFromProxy": "gatekeeper.mutation.excludeNamespacesFromProxy"
       "mutations.namespaceSelectorForProxy": "gatekeeper.mutation.namespaceSelectorForProxy"
-      "proxySettings.noProxy": "gatekeeper.no-proxy"
-      "proxySettings.httpProxy": "gatekeeper.http-proxy"
-      "proxySettings.httpsProxy": "gatekeeper.https-proxy"
+      "mutations.podProxySettings.noProxy": "gatekeeper.mutation.no-proxy"
+      "mutations.podProxySettings.httpProxy": "gatekeeper.mutation.http-proxy"
+      "mutations.podProxySettings.httpsProxy": "gatekeeper.mutation.https-proxy"
     values: |
       ---
       replicas: 2
@@ -62,5 +62,11 @@ spec:
       mutations:
         enable: false
         enablePodProxy: false
+
+        podProxySettings:
+          noProxy:
+          httpProxy:
+          httpsProxy:
+
         excludeNamespacesFromProxy: []
         namespaceSelectorForProxy: {}
