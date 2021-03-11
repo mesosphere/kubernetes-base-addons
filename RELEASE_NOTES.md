@@ -1,5 +1,42 @@
 # Release Notes
 
+## stable-1.18-3.3.0, stable-1.19-3.3.0, v3.3.0
+
+### defaultstorageclass-protection
+  - update client-go to 0.19.2 to support k8s 1.16-1.21
+  - use the distroless image and run as nonroot user to address image CVEs
+  #925 (@mesosphere-mergebot)
+
+### elasticsearchexporter
+  - added chart support for additional user-specified labels
+  #910 (@mesosphere-mergebot)
+
+### fluentbit
+  - Upgrade fluent-bit helm chart to v0.7.13
+  #911 (@mesosphere-mergebot)
+
+### jaeger
+  - bump jaeger-operator-2.18.4
+  #918 (@mesosphere-mergebot)
+
+### prometheus
+  - fix(prometheus): Bump k8s-sidecar to 1.3.0 to align and fix CVEs
+  - fix(prometheus): Adds a missing service account which caused addon deletion/cleanup to fail occasionally
+  #900 (@gracedo)
+
+  - fix(prometheus): Bump k8s-sidecar to 1.3.0 to align and fix CVEs
+  - fix(prometheus): Adds a missing service account which caused addon deletion/cleanup to fail occasionally
+  #868 (@d2iq-dispatch)
+
+### prometheusadapter
+  - prometheusadapter: fix an error were resources in reported by the Kubernetes dashboard and `kubectl top` reported double of the actual resources.
+  #929 (@mesosphere-mergebot)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #958 (@mesosphere-mergebot)
+
+
 ## stable-1.18-3.0.0
 
 - Ambassador

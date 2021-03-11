@@ -33,6 +33,6 @@
 |kubeaddons|opsportal|1.5.0-9|1.5.0|Addon|
 |kubeaddons|prometheus|0.44.0-6|2.22.1|Addon|
 |kubeaddons|prometheusadapter|v0.7.0-5|v0.7.0|Addon|
-|kubeaddons|reloader|v0.0.79-1|v0.0.79|Addon|
+|kubeaddons|reloader|v0.0.79-2|v0.0.79|Addon|
 |kubeaddons|traefik-forward-auth|1.0.5-1|null|Addon|
 |kubeaddons-flagger|flagger|0.19.0-4|0.19.0|ClusterAddon|
