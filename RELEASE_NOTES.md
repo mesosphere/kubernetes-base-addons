@@ -1,5 +1,24 @@
 # Release Notes
 
+## stable-1.17-2.7.0, v2.7.0
+
+### elasticsearch
+  - [fluentbit] Allows the fluentbit addon to deploy without elasticsearch enabled.
+  #803 (@branden)
+
+### fluentbit
+  - [fluentbit] Allows the fluentbit addon to deploy without elasticsearch enabled.
+  #803 (@branden)
+
+### opsportal
+  - Fixes bug in OpsPortal where Identity Providers would not show up
+  #955 (@mesosphere-mergebot)
+
+### prometheus
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #943 (@gracedo)
+
+
 ## stable-1.15-2.4.0, stable-1.16-2.4.0, stable-1.17-2.4.0
 
 * Istio:
