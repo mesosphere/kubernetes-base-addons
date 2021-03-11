@@ -6,16 +6,18 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: reloader
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.0.80-1"
-    appversion.kubeaddons.mesosphere.io/reloader: "v0.0.80"
-    values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/dc3494c/deployments/kubernetes/chart/reloader/values.yaml
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.0.81-2"
+    appversion.kubeaddons.mesosphere.io/reloader: "v0.0.81"
+    values.chart.helm.kubeaddons.mesosphere.io/reloader: https://raw.githubusercontent.com/stakater/Reloader/4f551ad/deployments/kubernetes/chart/reloader/values.yaml
+    # Use delete strategy following a failure upgrading
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<v0.0.79\", \"strategy\": \"delete\"}]"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
   chartReference:
     chart: reloader
     repo: https://stakater.github.io/stakater-charts
-    version: v0.0.80
+    version: v0.0.81
     values: |
       ---
       reloader:
