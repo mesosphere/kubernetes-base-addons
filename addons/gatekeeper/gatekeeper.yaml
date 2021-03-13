@@ -1,4 +1,4 @@
-apiVersion: kubeaddons.mesosphere.io/v1beta1
+apiVersion: kubeaddons.mesosphere.io/v1beta2
 kind: Addon
 metadata:
   name: gatekeeper
@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.2.2-2"
-    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.2.2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-6"
+    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.3.0"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/34a717f/staging/gatekeeper/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/77250f2/staging/gatekeeper/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,13 +33,34 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.5.2
+    version: 0.6.5
+    valuesRemap:
+      "mutations.enable": "gatekeeper.mutation.enable"
+      "mutations.enablePodProxy": "gatekeeper.mutation.enablePodProxy"
+      "mutations.excludeNamespacesFromProxy": "gatekeeper.mutation.excludeNamespacesFromProxy"
+      "mutations.namespaceSelectorForProxy": "gatekeeper.mutation.namespaceSelectorForProxy"
+      "mutations.podProxySettings.noProxy": "gatekeeper.mutation.no-proxy"
+      "mutations.podProxySettings.httpProxy": "gatekeeper.mutation.http-proxy"
+      "mutations.podProxySettings.httpsProxy": "gatekeeper.mutation.https-proxy"
     values: |
       ---
       replicas: 2
       image:
         repository: openpolicyagent/gatekeeper
-        release: v3.2.2
+        release: v3.3.0
       webhook:
         certManager:
           enabled: true
+
+      # enable mutations
+      mutations:
+        enable: false
+        enablePodProxy: false
+
+        podProxySettings:
+          noProxy:
+          httpProxy:
+          httpsProxy:
+
+        excludeNamespacesFromProxy: []
+        namespaceSelectorForProxy: {}
