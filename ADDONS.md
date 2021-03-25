@@ -30,8 +30,8 @@
 |kubeaddons|konvoyconfig|0.0.4-4|0.0.4|Addon|
 |kubeaddons|kube-oidc-proxy|0.2.0-2|v0.2.0|Addon|
 |kubeaddons|nvidia|0.2.0-8|0.2.0|ClusterAddon|
-|kubeaddons|opsportal|1.5.0-9|1.5.0|Addon|
-|kubeaddons|prometheus|0.44.0-6|2.22.1|Addon|
+|kubeaddons|opsportal|1.5.0-10|1.5.0|Addon|
+|kubeaddons|prometheus|0.44.0-7|2.22.1|Addon|
 |kubeaddons|prometheusadapter|v0.7.0-5|v0.7.0|Addon|
 |kubeaddons|reloader|v0.0.79-2|v0.0.79|Addon|
 |kubeaddons|traefik-forward-auth|1.0.5-1|null|Addon|
