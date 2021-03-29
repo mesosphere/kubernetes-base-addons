@@ -6,11 +6,11 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-25"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-26"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.24"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
-    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/32a2dec/staging/traefik/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/8cbc449/staging/traefik/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -21,7 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.88.0
+    version: 1.89.0
     valuesRemap:
       "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
