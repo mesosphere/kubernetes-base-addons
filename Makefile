@@ -153,9 +153,9 @@ ifndef KBA_TAGS
 else
 	git checkout $(KBA_MILESTONE)
 	git pull
-	echo $(RELEASE_LIST) | xargs -n1 echo git tag && echo git push --tags
 	$(RELEASE_NOTES_TOOL_BIN) > DELETE_ME.md
-	$(GITHUB_CLI_BIN) release create $(RELEASE_VER) -t $(RELEASE_VER) --target $(RELEASE_VER) --notes-file DELETE_ME.md
+	$(GITHUB_CLI_BIN) release create $(RELEASE_VER) -t $(RELEASE_VER) --target $(shell git rev-parse HEAD) --notes-file DELETE_ME.md
+	-echo $(RELEASE_LIST) | xargs -n1 git tag && git push --tags
 	rm DELETE_ME.md
 endif
 endif

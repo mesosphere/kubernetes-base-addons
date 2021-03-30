@@ -1,5 +1,71 @@
 # Release Notes
 
+## v4.0.0-alpha.3
+
+### defaultstorageclass-protection
+  - Fix CVE-2019-14697.
+  #877 (@faiq)
+
+  - update client-go to 0.19.2 to support k8s 1.16-1.21
+  - use the distroless image and run as nonroot user to address image CVEs
+  #863 (@d2iq-dispatch)
+
+### dex
+  - Bump kube-rbac-proxy to tackle vulnerabilities from CVE-14697
+  - fix: ignore metrics auth https://github.com/mesosphere/dex-controller/compare/v0.6.5...v0.6.6#diff-5437c8653258a2e2a070c91d87e2f7581d12f6c7f103b0d8c324a37307287b65R30
+  - chore: bump kube-rbac-proxy version https://github.com/mesosphere/dex-controller/compare/v0.6.5...v0.6.6#diff-4d1856f3f2123c349e94607208c95a821f2485405db0b97ce41e87336a0ea3a7R21
+  #869 (@d2iq-dispatch)
+
+### gatekeeper
+  - Gatekeeper upgraded to 3.3.0
+  #928 (@alejandroEsc)
+
+### jaeger
+  - bump jaeger-operator-2.19.0
+  #867 (@d2iq-dispatch)
+
+### kiali
+  - bump kiali-operator-1.29.1
+  #892 (@d2iq-dispatch)
+
+  - kiali: configure to use the same version for `kiali/kialii` that matches the operator.
+  #887 (@dkoshkin)
+
+### opsportal
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #976 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #964 (@d2iq-dispatch)
+
+  - fix(kommander-ui): disable addons on foundation disabled
+  - feat(kommander-ui): add license delete mutation
+  - feat(kommander-ui): replace license table with single license detail view
+  - feat(kommander-ui): allow workspace namespace to be configurable
+  #930 (@d2iq-dispatch)
+
+  - fix(kommander): Fix empty non-Konvoy cluster Platform Services tab
+  #902 (@d2iq-dispatch)
+
+### prometheus
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #938 (@gracedo)
+
+### prometheusadapter
+  - prometheusadapter: fix an error were resources in reported by the Kubernetes dashboard and `kubectl top` reported double of the actual resources.
+  #884 (@dkoshkin)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #956 (@armandgrillet)
+
+  - Bump from v0.0.79 to v0.0.80
+  - Add custom annotation support in service account
+  #893 (@d2iq-dispatch)
+
+
 ## stable-1.18-3.0.0
 
 - Ambassador
