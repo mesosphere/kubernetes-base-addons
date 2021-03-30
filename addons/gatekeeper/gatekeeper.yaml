@@ -6,10 +6,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: gatekeeper
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-6"
-    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.3.0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.4.0-1"
+    appversion.kubeaddons.mesosphere.io/gatekeeper: "3.4.0"
     docs.kubeaddons.mesosphere.io/gatekeeper: "https://github.com/open-policy-agent/gatekeeper/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/77250f2/staging/gatekeeper/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/gatekeeper: "https://raw.githubusercontent.com/mesosphere/charts/e6079a6/staging/gatekeeper/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: gatekeeper
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.6.5
+    version: 0.6.6
     valuesRemap:
       "mutations.enable": "gatekeeper.mutation.enable"
       "mutations.enablePodProxy": "gatekeeper.mutation.enablePodProxy"
@@ -45,9 +45,6 @@ spec:
     values: |
       ---
       replicas: 2
-      image:
-        repository: openpolicyagent/gatekeeper
-        release: v3.3.0
       webhook:
         certManager:
           enabled: true
