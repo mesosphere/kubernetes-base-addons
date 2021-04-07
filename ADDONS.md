@@ -25,13 +25,13 @@
 |kubeaddons|elasticsearch-curator|5.8.1-4|5.8.1|Addon|
 |kubeaddons|elasticsearchexporter|1.1.0-5|1.1.0|Addon|
 |kubeaddons|fluentbit|1.6.8-5|1.6.8|Addon|
-|kubeaddons|gatekeeper|3.3.0-6|3.3.0|Addon|
+|kubeaddons|gatekeeper|3.4.0-2|3.4.0|Addon|
 |kubeaddons|kibana|7.9.3-2|7.9.3|Addon|
 |kubeaddons|konvoyconfig|0.0.4-4|0.0.4|Addon|
 |kubeaddons|kube-oidc-proxy|0.2.0-2|v0.2.0|Addon|
 |kubeaddons|nvidia|0.2.0-8|0.2.0|ClusterAddon|
 |kubeaddons|opsportal|1.5.0-12|1.5.0|Addon|
-|kubeaddons|prometheus|0.44.0-7|2.22.1|Addon|
+|kubeaddons|prometheus|0.44.0-8|2.22.1|Addon|
 |kubeaddons|prometheusadapter|v0.8.3-2|v0.8.3|Addon|
 |kubeaddons|reloader|v0.0.85-1|v0.0.85|Addon|
 |kubeaddons|traefik-forward-auth|1.0.5-1|null|Addon|

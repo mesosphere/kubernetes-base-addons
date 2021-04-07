@@ -1,6 +1,46 @@
 # Release Notes
 
-## v4.0.0-alpha.3
+## v4.0.0-rc.1
+
+### ambassador
+  - bump ambassador-6.6.0
+  #973 (@d2iq-dispatch)
+
+  - bump ambasador to 1.12
+  #969 (@d2iq-dispatch)
+
+### gatekeeper
+  - NONE, since these changes aren't user facing yet.
+  #995 (@d2iq-dispatch)
+
+### opsportal
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #976 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #964 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal where Identity Providers would not show up (COPS-6843)
+  #953 (@d2iq-dispatch)
+
+  - fix(kommander-ui): disable addons on foundation disabled
+  - feat(kommander-ui): add license delete mutation
+  - feat(kommander-ui): replace license table with single license detail view
+  - feat(kommander-ui): allow workspace namespace to be configurable
+  #930 (@d2iq-dispatch)
+
+### prometheus
+  - fix(prometheus): In upgrades, use existing PVC from previous installation.
+  #1015 (@gracedo)
+
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #938 (@gracedo)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #956 (@armandgrillet)
 
 ### defaultstorageclass-protection
   - Fix CVE-2019-14697.
