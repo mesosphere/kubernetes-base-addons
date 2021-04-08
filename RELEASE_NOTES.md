@@ -1,5 +1,13 @@
 # Release Notes
 
+## stable-1.18-3.4.1, stable-1.19-3.4.1, v3.4.1
+
+### opsportal
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #1019 (@mesosphere-mergebot)
+
+
 ## stable-1.18-3.4.0, stable-1.19-3.4.0, v3.4.0
 
 ### opsportal
