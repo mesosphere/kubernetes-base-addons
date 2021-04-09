@@ -14,51 +14,53 @@ Changes to Konvoy or Kommander to create a resource needed by an Addon should be
 
 ## Schedule
 
-Releases should be twice monthly<sup>[1](#footnote1)</sup> on the second and forth Wednesdays, or as needed to address CVEs.
+Releases should be at the end of every sprint.
 
 ## Considerations
 
 ### Kubernetes
 
-**The Kubernetes versions supported by this repo are 1.15, 1.16, and 1.17.**
+**The Kubernetes versions supported by this repo are 1.17, 1.18, and 1.19.**
 Support should be maintained for the latest general release of Kubernetes and the two prior minor releases.
 
 The Addons in this repo are the minimum base set of supported<sup>[2](#footnote2)</sup> Addons to be installed as a suite for any supported version of Kubernetes.
 
 ### Branches and Tags
 
-As much as possible, we will try to maintain a `master` branch that is compatible with all supported versions of Kubernetes.
-If there is a variation in the Kubernetes API which requires a _**breaking change**_ to the Addon, a _**branch**_ will be made for the prior Kubernetes versions.
-All future changes adopted into master will need to be back-ported to those branches.
+This project is a dependency of DKP and releases will be branched and maintained to facilitate the releases of Konvoy.
+
+This repo will be branched, as necessary, to support the release cycle of Konvoy.
+There will be no attempt to provide a single repo that can be used across all supported versions of Kubernetes, instead we will tie branching to the versions of the addons within the repo.
+If any addon has a major version change, this repo will have a major version change.
+If minor, minor, if only patch versions change, only the patch version will be bumped.
+There will be no effort to tie the versions to the versions of any one addon.
+
+All changes adopted into master will need to determine if backports to prior branches are necessary to support Konvoy releases.
 
 **NOTE**: No other changes may be breaking. Extreme changes, like moving from traefik 1.7 to 2.2, must be done in such a way that the transition is transparent to the user.
 
 ## Process
 
-### Testing Release (Second and Forth Thursday)
+### Testing Release (The beginning of every sprint)
 
-On the second and forth _**Thursday**_, this repository should be branched for SOAK testing by setting the `testing` branch to the head of master and force-pushing.
-
-- This set of Addons are installed into the SOAK cluster.
+At the beginning of every sprint, this repository should be branched for SOAK testing. Each branch tied to each konvoy release will be tested on the appropriate SOAK cluster.
 
 ### Stable Release (Second and Forth Wednesday)
 
-On the second and forth _**Wednesday**_:
+At the end of each sprint:
 
-- Using automation, parse the PR logs in the `testing` branch for release notes and generate and commit a Changelog.md
-- One _**tag**_ is made for the each supported version of Kubernetes with a consistent semver suffix
-- If the current version of Kubernetes is `1.17.2`, and the last release was `stable-1.17-1.2.x`, the new SOAK tag will be `release-1.17-1.3.0`
-- The same semver portion of the tag `1.3.0` is used for each supported kubernetes version, the new tags being `release-1.16-1.3.0`, and `release-1.15-1.3.0`
-- These tag versions, in the form of `release-<major>.<minor>-<semver>`, only the `<major>.<minor>` refer to the kubernetes version.
-  The api within a minor version should not be changing so there should never be a need to refer to the kubernetes patch version.
-- As a standing agenda item in sig-ksphere-catalog, vote go/no-go on the release of the Addons that have been SOAK tested.
-- Merge the `testing` branch into the `stable` branch<sup>[3](#footnote3)</sup>
+- Create a PR branch for the `release/*` branch being released.
+- Run `make release.pr KBA_MILESTONE=release/3.2 KBA_TAGS=v3.2.0,stable-1.19-3.2.0,stable-1.16-3.2.0`
+  - Use the appropriate `milestone` and `tags` using semver, and konvoy-specific tags as demonstrated above.
+  - One _**tag**_ is made for the semver of this release, and for each supported version of Kubernetes with a consistent semver suffix, eg: `v2.3.0`, `stable-1.16-2.3.0`, `stable-1.17-2.3.0`, etc.
+  - These tag versions, in the form of `release-<major>.<minor>-<semver>`, only the `<major>.<minor>` refer to the kubernetes version.
+    The api within a minor version should not be changing so there should never be a need to refer to the kubernetes patch version.
+- Commit and open a PR to the correct release branch
+- Once merged, `make release KBA_MILESTONE=release/3.2 KBA_TAGS=v3.2.0,stable-1.19-3.2.0,stable-1.16-3.2.0`
 - Announce the release.
 
 <a name="footnote1">1</a>: Based on a two-week soak cycle. If we can have overlapping soak clusters, we can accelerate this.
 
 <a name="footnote2">2</a>: A supported Addon is one which has been tested to work in concert with other Addons in the same release. This suite of Addons, as a whole, constitute a set for which D2iQ customers can get support with their software contract. Variations from the configurations and suite of Addons are not expected to be the responsibility of D2iQ support.
-
-<a name="footnote3">3</a>: In the future, there may need to be multiple `stable` branches as needed to maintain our support commitment.
 
 **NOTE:** This document is governed by kep sig-ksphere-cluster/20200218-kubernetes-base-addon-release-process.md
