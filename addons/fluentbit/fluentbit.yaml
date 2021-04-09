@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: fluentbit
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.10-1"
-    appversion.kubeaddons.mesosphere.io/fluentbit: "1.6.10"
-    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/2055a51/charts/fluent-bit/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.3-1"
+    appversion.kubeaddons.mesosphere.io/fluentbit: "1.7.3"
+    values.chart.helm.kubeaddons.mesosphere.io/fluentbit: "https://raw.githubusercontent.com/fluent/helm-charts/1c4d46b7bd15ead0f23d3c61183a1e3cda931da0/charts/fluent-bit/values.yaml"
     # the older versions were being deployed from stable/fluent-bit
     # and were versioned like 2.8.x
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \">=2.8.0\", \"strategy\": \"delete\"}]"
@@ -32,7 +32,7 @@ spec:
   chartReference:
     chart: fluent-bit
     repo: https://fluent.github.io/helm-charts
-    version: 0.10.0
+    version: 0.15.4
     values: |
       service:
         labels:
