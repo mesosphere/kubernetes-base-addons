@@ -39,6 +39,8 @@ spec:
       image:
         repository: mesosphere/dex-k8s-authenticator
         tag: v1.2.2-d2iq
+      rbac:
+        create: true
       ingress:
         enabled: true
         annotations:
