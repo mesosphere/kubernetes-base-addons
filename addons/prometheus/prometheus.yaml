@@ -9,7 +9,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-7"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-9"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
@@ -20,7 +20,7 @@ metadata:
     docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
     docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
     docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/bf61152/staging/prometheus-operator/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/64e5c540ec8273cc7135babfde94a57495bbc52b/staging/prometheus-operator/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
@@ -45,7 +45,7 @@ spec:
   chartReference:
     chart: prometheus-operator
     repo: https://mesosphere.github.io/charts/staging
-    version: 12.11.9
+    version: 12.11.10
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -227,7 +227,7 @@ spec:
                 scheme: http
         prometheusSpec:
           thanos:
-            version: v0.8.1
+            version: v0.17.1
           externalLabels:
             cluster: $(CLUSTER_ID)
           containers:
