@@ -4,7 +4,9 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.5-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.0.0-1"
+    helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
+    helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
