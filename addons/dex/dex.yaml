@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.27.0-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.27.0-3"
     appversion.kubeaddons.mesosphere.io/dex: "2.27.0"
-    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/d37058c/stable/dex/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/679ae2a/stable/dex/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -34,7 +34,7 @@ spec:
   chartReference:
     chart: dex
     repo: https://mesosphere.github.io/charts/stable
-    version: 2.9.2
+    version: 2.9.4
     values: |
       ---
       # Temporarily we're going to use our custom built container. Documentation
