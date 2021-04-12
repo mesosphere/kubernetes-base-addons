@@ -12,8 +12,7 @@ if [[ ! -z "${CLAIM_NAME}" ]]; then
     kubectl --kubeconfig ${KBA_KUBECONFIG} create secret tls kubernetes-root-ca --namespace=cert-manager --cert=ca.crt --key=ca.key --dry-run -o yaml  | kubectl --kubeconfig ${KBA_KUBECONFIG} apply -f -  || true
 fi
 
-
-echo "INFO: the following test groups will be run:"
+echo "INFO: the following test groups will be run against branch ${branch}:"
 tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (egrep '^Test' || true) | grep -v 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
 echo ${tests}
 
