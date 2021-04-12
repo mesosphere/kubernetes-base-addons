@@ -140,7 +140,7 @@ endif
 endif
 
 .PHONY: release
-release: $(RELEASE_NOTES_TOOL_BIN) $(GITHUB_CLI_BIN)
+release: $(RELEASE_NOTES_TOOL_BIN) 
 ifndef KBA_MILESTONE
 	echo "Please set KBA_MILESTONE"
 else
@@ -149,9 +149,9 @@ ifndef KBA_TAGS
 else
 	git checkout $(KBA_MILESTONE)
 	git pull
-	echo $(RELEASE_LIST) | xargs -n1 echo git tag && git push --tags
 	$(RELEASE_NOTES_TOOL_BIN) > DELETE_ME.md
-	$(GITHUB_CLI_BIN) release create $(RELEASE_VER) -t $(RELEASE_VER) --target $(KBA_MILESTONE) --notes-file DELETE_ME.md
+	$(GITHUB_CLI_BIN) release create $(RELEASE_VER) -t $(RELEASE_VER) --target $(shell git rev-parse HEAD) --notes-file DELETE_ME.md
+	-echo $(RELEASE_LIST) | xargs -n1 git tag && git push --tags
 	rm DELETE_ME.md
 endif
 endif
