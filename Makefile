@@ -63,11 +63,7 @@ endif
 set-git-ssh:
 ifdef DISPATCH_CI
 	./scripts/ci/setup_ssh.sh
-endif # Target to run tests on Dispatch CI with KUBECONFIG from Cluster Claim Controller.
-# The KUBECONFIG is set to config file in the git-clone repo of Dispatch.
-.PHONY: dispatch-test
-dispatch-test: set-git-ssh
-	./test/dispatch-ci.sh
+endif
 
 .PHONY: lint
 lint:
