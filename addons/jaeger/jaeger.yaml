@@ -8,7 +8,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: jaeger
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.18.3-7"
     appversion.kubeaddons.mesosphere.io/jaeger-operator: "1.21.2"
     appversion.kubeaddons.mesosphere.io/jaeger: "1.21.0"
     stage.kubeaddons.mesosphere.io/jaeger: Experimental
@@ -29,6 +29,8 @@ spec:
     - name: docker
       enabled: false
     - name: vsphere
+      enabled: false
+    - name: none
       enabled: false
   chartReference:
     chart: jaeger-operator
