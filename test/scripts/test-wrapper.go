@@ -24,7 +24,7 @@ const (
 
 type addonName string
 
-var re = regexp.MustCompile(`^addons/([a-zA-Z-]+)/?`)
+var re = regexp.MustCompile(`^addons/([a-zA-Z0-9-]+)/?`)
 
 func main() {
 	upstreamRemote := defaultUpstreamRemote
