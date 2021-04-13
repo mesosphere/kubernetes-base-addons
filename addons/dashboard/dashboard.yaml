@@ -10,8 +10,12 @@ metadata:
     appversion.kubeaddons.mesosphere.io/dashboard: "2.7.1"
 =======
     catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.2-1"
+<<<<<<< HEAD
     appversion.kubeaddons.mesosphere.io/dashboard: "3.0.2"
 >>>>>>> 2771bc8... Bump kubernetes-dashboard to 4.0.3
+=======
+    appversion.kubeaddons.mesosphere.io/dashboard: "2.2.0"
+>>>>>>> 0884bf3... correct app version
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
     values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/506eedd/stable/kubernetes-dashboard/values.yaml"
