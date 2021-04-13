@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-branch=${1:-master}
+branch=${1:-release/3}
 
 echo "INFO: the following test groups will be run:"
 tests=$(go run -tags experimental scripts/test-wrapper.go origin "${branch}" | grep '^Test'  | grep 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup') && echo ${tests}
