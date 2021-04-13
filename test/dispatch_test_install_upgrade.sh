@@ -2,6 +2,7 @@
 set -euo pipefail
 
 branch=${1:-release/3}
+git fetch origin ${branch} 
 
 # if we're in dispatch - create the secrets on the container running in the pod with exec
 if [[ ! -z "${CLAIM_NAME}" ]]; then
