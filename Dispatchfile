@@ -29,37 +29,6 @@ install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_clone_di
 upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_clone_dirname)
 
 
-dindTask("dispatch-integration-test",
-         inputs=[git_clone_dirname],
-         deps=[kind_cluster],
-         steps=[
-             fetch_kubeconfig(kind_cluster_name, git_clone_dirname),
-
-             k8s.corev1.Container(
-                 name="fetch-master",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]),
-
-             k8s.corev1.Container(
-                 name="dispatch-integration-test",
-                 image="mesosphere/kubeaddons-ci:dispatch@sha256:80a6f3c8775133b4ad2fab3d44ab4fbb4b541dbc03fcdb296b13f67611427d8c",
-                 workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 command=["/entrypoint.sh", "make", "dispatch-test"],
-
-                 env=[
-                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
-                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
-                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var("d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
-                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var("d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))],
-
-                 resources=k8s.corev1.ResourceRequirements(
-                     requests={
-                         "cpu": k8s.resource_quantity("1000m"),
-                         "memory": k8s.resource_quantity("2Gi")}))
-         ])
-
 dindTask("lint-yaml",
          inputs=[git_clone_dirname],
          steps=[
@@ -234,14 +203,12 @@ dindTask("test-aws-upgrade-addons",
 
          )])
 
-clean_kind = cleanup(kind_cluster, "dispatch-integration-test", git_clone_dirname)
 clean_install_kind = cleanup(install_kind_cluster, "test-install", git_clone_dirname)
 clean_upgrade_kind = cleanup(upgrade_kind_cluster, "test-upgrade", git_clone_dirname)
 
 
 # Robot Actions
 action(tasks=["lint-yaml"], on=pull_request())
-action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(paths=["!Dispatchfile"]))
 action(tasks=["test-install", clean_install_kind], on=pull_request(paths=["!Dispatchfile"]))
 action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(paths=["!Dispatchfile"]))
 action(tasks=["test-aws-install-addons"], on=pull_request(paths=["!Dispatchfile"]))
@@ -249,10 +216,9 @@ action(tasks=["test-aws-upgrade-addons"], on=pull_request(paths=["!Dispatchfile"
 
 # Chatops Actions
 action(tasks=["lint-yaml"], on=pull_request(chatops=["lint", "test"]))
-action(tasks=["dispatch-integration-test", clean_kind], on=pull_request(chatops=["test"]))
 action(tasks=["test-install", clean_install_kind], on=pull_request(chatops=["test-install"]))
 action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-upgrade"]))
-action(tasks=["dispatch-integration-test", clean_kind, "test-install", clean_install_kind, "test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-all"]))
+action(tasks=["test-install", clean_install_kind, "test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-all"]))
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
