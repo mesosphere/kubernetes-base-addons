@@ -96,6 +96,6 @@ spec:
         - name: "TFA_INGRESS_SERVICE_NAME"
           value: "traefik-kubeaddons"
       clusterStorage:
-        enabled: true
+        enabled: false
         namespace: kubeaddons
       addonsInitializer: mesosphere/kubeaddons-addon-initializer:v0.5.1
