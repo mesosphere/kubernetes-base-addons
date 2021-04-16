@@ -29,14 +29,28 @@ kind_cluster = make_kind_cluster(kind_cluster_name, git_clone_dirname)
 install_kind_cluster = make_kind_cluster(kind_install_cluster_name, git_clone_dirname)
 upgrade_kind_cluster = make_kind_cluster(kind_upgrade_cluster_name, git_clone_dirname)
 
+common_env = [
+    k8s.corev1.EnvVar(name="ADDON_TESTS_PER_ADDON_WAIT_DURATION", value="10m"),
+    k8s.corev1.EnvVar(name="ADDON_TESTS_SETUP_WAIT_DURATION", value="60m"),
+    k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var( "d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
+    k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
+    k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var( "d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
+    k8s.corev1.EnvVar(name="DISPATCH_BUILD_NAME", value="$(context.build.name)"),
+    k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
+    k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
+    k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
+    k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+    k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
+    k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var( "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
+]
 
 dindTask("lint-yaml",
          inputs=[git_clone_dirname],
          steps=[
              k8s.corev1.Container(
-                 name="fetch-master",
+                 name="fetch-branches",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]
+                 args=["git", "fetch", "origin"]
              ),
 
              k8s.corev1.Container(
@@ -54,9 +68,9 @@ dindTask("test-install",
              fetch_kubeconfig(kind_install_cluster_name, git_clone_dirname),
 
              k8s.corev1.Container(
-                 name="fetch-master",
+                 name="fetch-branches",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]),
+                 args=["git", "fetch", "origin"]),
 
              k8s.corev1.Container(
                  name="test-install",
@@ -64,24 +78,9 @@ dindTask("test-install",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
 
-                 env=[
-                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
-                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
-                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var(
-                         "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
-                     k8s.corev1.EnvVar(name="ADDON_TESTS_PER_ADDON_WAIT_DURATION", value="10m"),
-                     k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
-                     k8s.corev1.EnvVar(name="ADDON_TESTS_SETUP_WAIT_DURATION", value="60m"),
-                     k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
-                     k8s.corev1.EnvVar(
-                         name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
-                     k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+                 env= common_env + [
+                     k8s.corev1.EnvVar(name="CLAIM_NAME", value=task_step_result(kind_install_cluster_name, "cluster-claim")),
                      k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="install"),
-                     k8s.corev1.EnvVar(name="CLAIM_NAME", value=task_step_result(kind_install_cluster_name, "cluster-claim"))
                  ],
 
                  resources=k8s.corev1.ResourceRequirements(
@@ -97,9 +96,9 @@ dindTask("test-upgrade",
              fetch_kubeconfig(kind_upgrade_cluster_name, git_clone_dirname),
 
              k8s.corev1.Container(
-                 name="fetch-master",
+                 name="fetch-branches",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]),
+                 args=["git", "fetch", "origin"]),
 
              k8s.corev1.Container(
                  name="test-upgrade",
@@ -107,24 +106,9 @@ dindTask("test-upgrade",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["/entrypoint.sh", "make", "dispatch-test-install-upgrade"],
 
-                 env=[
-                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
-                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
-                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var(
-                         "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
-                     k8s.corev1.EnvVar(name="ADDON_TESTS_PER_ADDON_WAIT_DURATION", value="10m"),
-                     k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
-                     k8s.corev1.EnvVar(name="ADDON_TESTS_SETUP_WAIT_DURATION", value="60m"),
-                     k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
-                     k8s.corev1.EnvVar(
-                         name="GOPRIVATE", value="github.com/mesosphere/kubeaddons,github.com/mesosphere/ksphere-testing-framework"),
-                     k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+                 env= common_env + [
+                     k8s.corev1.EnvVar(name="CLAIM_NAME", value=task_step_result(kind_upgrade_cluster_name, "cluster-claim")),
                      k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
-                     k8s.corev1.EnvVar(name="CLAIM_NAME", value=task_step_result(kind_upgrade_cluster_name, "cluster-claim"))
                  ],
 
                  resources=k8s.corev1.ResourceRequirements(
@@ -144,9 +128,9 @@ dindTask("test-aws-install-addons",
          outputs=[konvoy_artifacts_resource_name],
          steps=[
              k8s.corev1.Container(
-                 name="fetch-master",
+                 name="fetch-branches",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]),
+                 args=["git", "fetch", "origin"]),
 
              k8s.corev1.Container(
                  name="test-addons",
@@ -154,19 +138,10 @@ dindTask("test-aws-install-addons",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["/entrypoint.sh", "make", "test-aws"],
 
-                 env=[
+                 env=common_env + [
                      k8s.corev1.EnvVar(name="ARTIFACTS_DIR", value="$(resources.outputs.{}.path)".format(
                          konvoy_artifacts_resource_name)),
-                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
-                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
                      k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="install"),
-                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
-                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
-                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var(
-                         "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64"))
                  ],
                  resources=k8s.corev1.ResourceRequirements(
                      requests={
@@ -183,9 +158,9 @@ dindTask("test-aws-upgrade-addons",
          outputs=[konvoy_artifacts_upgrade_name],
          steps=[
              k8s.corev1.Container(
-                 name="fetch-master",
+                 name="fetch-branches",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
-                 args=["git", "fetch", "origin", "master"]),
+                 args=["git", "fetch", "origin"]),
 
              k8s.corev1.Container(
                  name="test-addons",
@@ -193,19 +168,10 @@ dindTask("test-aws-upgrade-addons",
                  workingDir="/workspace/{git_clone_dirname}/".format(git_clone_dirname=git_clone_dirname),
                  command=["/entrypoint.sh", "make", "test-aws"],
 
-                 env=[
-                     k8s.corev1.EnvVar(name="DISPATCH_CI", value="true"),
-                     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
-                     k8s.corev1.EnvVar(name="AWS_REGION", value="us-west-2"),
-                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
-                     k8s.corev1.EnvVar(name="AWS_ACCESS_KEY_ID", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_ACCESS_KEY_ID")),
-                     k8s.corev1.EnvVar(name="AWS_SECRET_ACCESS_KEY", valueFrom=secret_var(
-                         "d2iq-dispatch-aws-creds", "AWS_SECRET_ACCESS_KEY")),
-                     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var(
-                         "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
+                 env=common_env + [
                      k8s.corev1.EnvVar(name="ARTIFACTS_DIR", value="$(resources.outputs.{}.path)".format(
-                         konvoy_artifacts_upgrade_name))
+                         konvoy_artifacts_upgrade_name)),
+                     k8s.corev1.EnvVar(name="KBA_TESTGROUP_TYPE", value="upgrade"),
                  ],
 
                  resources=k8s.corev1.ResourceRequirements(
