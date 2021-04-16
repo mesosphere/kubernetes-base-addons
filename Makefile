@@ -102,7 +102,7 @@ kind-test: kubeaddons-tests
 .PHONY: clean
 clean:
 ifneq (,$(wildcard kubeaddons-tests/Makefile))
-	make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
+	-make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
 endif
 	-rm -rf kubeaddons-tests
 	-rm kba-kubeconfig-*
