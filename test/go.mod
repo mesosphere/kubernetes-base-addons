@@ -1,6 +1,6 @@
-module github.com/mesosphere/kubeaddons-base-addons/test
+module github.com/mesosphere/kubernetes-base-addons/test
 
-go 1.15
+go 1.16
 
 replace (
 	github.com/docker/docker => github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce // locked to this version to avoid upgrades from kind that would drop our volume provisioning code. TODO: we should update/remove our volume provisioning code.
