@@ -40,7 +40,6 @@ const (
 	patchStorageClass       = `{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}`
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
-	comRepoRef    = "master"
 	comRepoRemote = "origin"
 
 	defaultKBARepoRef = "master"
@@ -91,7 +90,7 @@ func TestMain(m *testing.M) {
 	}
 
 	fmt.Printf("initializing remote repository %s for test...\n", comRepoURL)
-	comRepo, err = git.NewRemoteRepository(comRepoURL, comRepoRef, comRepoRemote)
+	comRepo, err = git.NewRemoteRepository(comRepoURL, kbaRepoRef, comRepoRemote)
 	if err != nil {
 		panic(err)
 	}
@@ -249,17 +248,17 @@ func checkIfUpgradeIsNeeded(t *testing.T, groupname string) (bool, []v1beta2.Add
 	addonDeploymentsArray := make([]v1beta2.AddonInterface, 0)
 	for _, newAddon := range addons {
 		t.Logf("verifying whether upgrade testing is needed for addon %s", newAddon.GetName())
-		oldAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, comRepoRef, newAddon.GetName())
+		oldAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, kbaRepoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
-				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), kbaRepoRef)
 				addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
 				continue
 			}
 			return false, nil, err
 		}
 		if oldAddon == nil {
-			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), kbaRepoRef)
 			addonDeploymentsArray = append(addonDeploymentsArray, newAddon)
 			continue // new addon, upgrade test not needed
 		}
@@ -612,13 +611,13 @@ func testGroupUpgrades(t *testing.T, groupname string, version string, jobs []cl
 		oldAddon, err := testutils.GetLatestAddonRevisionFromLocalRepoBranch("../", comRepoRemote, kbaRepoRef, newAddon.GetName())
 		if err != nil {
 			if strings.Contains(err.Error(), "directory not found") {
-				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+				t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), kbaRepoRef)
 				continue
 			}
 			return err
 		}
 		if oldAddon == nil {
-			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), comRepoRef)
+			t.Logf("no need to upgrade test %s, it appears to be a new addon (no previous revisions found in branch %s)", newAddon.GetName(), kbaRepoRef)
 			continue // new addon, upgrade test not needed
 		}
 
