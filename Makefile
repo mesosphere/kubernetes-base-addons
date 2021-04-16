@@ -1,6 +1,7 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR := $(dir $(MKFILE_PATH))
-SHELL := /bin/bash -euo pipefail
+SHELL := /bin/bash
+SHELLFLAGS := -euo pipefail
 comma := ,
 empty :=
 space := $(empty) $(empty)
@@ -10,7 +11,7 @@ commaspace := $(comma)$(empty)
 # ------------------------------------------------------------------------------
 # Configuration - Versions
 # ------------------------------------------------------------------------------
-GITHUB_CLI_VERSION := 1.5.0
+GITHUB_CLI_VERSION := 1.8.1
 
 # ------------------------------------------------------------------------------
 # Configuration - Golang
@@ -32,7 +33,7 @@ export GO111MODULE := on
 # ------------------------------------------------------------------------------
 # Configuration - Binaries
 # ------------------------------------------------------------------------------
-GITHUB_CLI_BIN := $(MKFILE_DIR)/bin/linux/$(GOARCH)/gh-$(GITHUB_CLI_VERSION)
+export GITHUB_CLI_BIN := $(MKFILE_DIR)/bin/linux/$(GOARCH)/gh-$(GITHUB_CLI_VERSION)
 RELEASE_NOTES_TOOL_BIN := $(MKFILE_DIR)/bin/$(GOOS)/$(GOARCH)/release-notes
 
 # ------------------------------------------------------------------------------
@@ -101,14 +102,16 @@ kind-test: kubeaddons-tests
 .PHONY: clean
 clean:
 ifneq (,$(wildcard kubeaddons-tests/Makefile))
-	make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
+	-make -f kubeaddons-tests/Makefile clean KUBEADDONS_REPO=kubernetes-base-addons
 endif
 	-rm -rf kubeaddons-tests
 	-rm kba-kubeconfig-*
 
 .PHONY: dispatch-test-install-upgrade
-dispatch-test-install-upgrade:
-	pushd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH); popd;
+.ONESHELL:
+dispatch-test-install-upgrade: $(GITHUB_CLI_BIN)
+	cd test
+	./dispatch_test_install_upgrade.sh
 
 .PHONY: test-aws
 test-aws: test/konvoy
