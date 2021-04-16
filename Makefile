@@ -1,6 +1,7 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR := $(dir $(MKFILE_PATH))
-SHELL := /bin/bash -euo pipefail
+SHELL := /bin/bash
+SHELLFLAGS := -euo pipefail
 comma := ,
 empty :=
 space := $(empty) $(empty)
