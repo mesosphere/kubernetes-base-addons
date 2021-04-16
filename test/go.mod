@@ -1,4 +1,4 @@
-module github.com/mesosphere/kubeaddons-base-addons/test
+module github.com/mesosphere/kubernetes-base-addons/test
 
 go 1.16
 
