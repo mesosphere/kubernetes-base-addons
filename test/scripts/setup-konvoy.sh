@@ -2,11 +2,7 @@
 # NOTE: used by teamcity and dispatch
 
 UNAME=$(uname | tr '[:upper:]' '[:lower:]')
-KONVOY_VERSION="${KONVOY_VERSION:-v1.6.1}"
-if ! [ -z $1 ]
-then
-    KONVOY_VERSION=$1
-fi
+KONVOY_VERSION="${1:-${KONVOY_VERSION:-v1.6.1}}"
 
 set -euo pipefail
 
