@@ -32,7 +32,7 @@ export GO111MODULE := on
 # ------------------------------------------------------------------------------
 # Configuration - Binaries
 # ------------------------------------------------------------------------------
-GITHUB_CLI_BIN := $(MKFILE_DIR)/bin/linux/$(GOARCH)/gh-$(GITHUB_CLI_VERSION)
+export GITHUB_CLI_BIN := $(MKFILE_DIR)/bin/linux/$(GOARCH)/gh-$(GITHUB_CLI_VERSION)
 RELEASE_NOTES_TOOL_BIN := $(MKFILE_DIR)/bin/$(GOOS)/$(GOARCH)/release-notes
 
 # ------------------------------------------------------------------------------
@@ -107,8 +107,10 @@ endif
 	-rm kba-kubeconfig-*
 
 .PHONY: dispatch-test-install-upgrade
-dispatch-test-install-upgrade:
-	pushd test; ./dispatch_test_install_upgrade.sh $(KBA_BRANCH); popd;
+.ONESHELL:
+dispatch-test-install-upgrade: $(GITHUB_CLI_BIN)
+	cd test
+	./dispatch_test_install_upgrade.sh
 
 .PHONY: test-aws
 test-aws: test/konvoy
