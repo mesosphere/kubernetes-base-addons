@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -xeuo pipefail
 
 if [[ ${DISPATCH_BUILD_NAME#pr-} =~ ^[0-9]+$ ]]; then
   branch=$(${GITHUB_CLI_BIN} api --method GET repos/:owner/:repo/pulls/${DISPATCH_BUILD_NAME#pr-} -q .base.ref)
