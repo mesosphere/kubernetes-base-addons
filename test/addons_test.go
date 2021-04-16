@@ -41,6 +41,7 @@ const (
 
 	comRepoURL    = "https://github.com/mesosphere/kubeaddons-community"
 	comRepoRemote = "origin"
+	comRepoRef    = "master"
 
 	defaultKBARepoRef = "master"
 
@@ -90,7 +91,7 @@ func TestMain(m *testing.M) {
 	}
 
 	fmt.Printf("initializing remote repository %s for test...\n", comRepoURL)
-	comRepo, err = git.NewRemoteRepository(comRepoURL, kbaRepoRef, comRepoRemote)
+	comRepo, err = git.NewRemoteRepository(comRepoURL, comRepoRef, comRepoRemote)
 	if err != nil {
 		panic(err)
 	}
