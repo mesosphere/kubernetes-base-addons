@@ -2,7 +2,6 @@
 set -euo pipefail
 
 if [[ ${DISPATCH_BUILD_NAME#pr-} =~ ^[0-9]+$ ]]; then
-  ${GITHUB_CLI_BIN} auth login --with-token <<< "${GITHUB_TOKEN}"
   branch=$(${GITHUB_CLI_BIN} api --method GET repos/:owner/:repo/pulls/${DISPATCH_BUILD_NAME#pr-} -q .base.ref)
 else
   branch=master
