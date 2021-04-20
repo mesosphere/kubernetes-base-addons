@@ -77,6 +77,7 @@ test:
 kubeaddons-tests:
 	git clone --depth 1 https://github.com/mesosphere/kubeaddons-tests.git --branch master --single-branch
 
+# run with UPDATE_FIXTURES=true to fix the test, as it pulls metrics from prometheus on a Konvoy cluster and checks if none change
 .PHONY: test-nightly
 test-nightly:
 	cd test; go test -tags experimental,nightly -timeout 60m -race -v -run TestUnmarshallPrometheusMetricNames
@@ -108,10 +109,8 @@ endif
 	-rm kba-kubeconfig-*
 
 .PHONY: dispatch-test-install-upgrade
-.ONESHELL:
 dispatch-test-install-upgrade: $(GITHUB_CLI_BIN)
-	cd test
-	./dispatch_test_install_upgrade.sh
+	cd test; ./dispatch_test_install_upgrade.sh
 
 .PHONY: test-aws
 test-aws: test/konvoy
