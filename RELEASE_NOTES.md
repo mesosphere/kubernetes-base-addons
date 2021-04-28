@@ -69,6 +69,10 @@
   - Updated UI to only ship with needed dependencies
   #976 (@d2iq-dispatch)
 
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #964 (@d2iq-dispatch)
+
 ### prometheus
   - prometheus: Added new Thanos sidecar metrics
   - prometheus: Significantly improved Thanos sidecar latency (reduced ~2x)
