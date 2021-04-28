@@ -1,5 +1,83 @@
 # Release Notes
 
+## testing-1.20-4.0.0, testing-1.20-4.0.0-rc.3, v4.0.0-rc.3
+
+### ambassador
+  - bump ambassador-6.6.0
+  #973 (@d2iq-dispatch)
+
+  - bump ambasador to 1.12
+  #969 (@d2iq-dispatch)
+
+### dashboard
+  - Starting from version 4.0.0 of this chart, it will only support Helm 3 and remove the support for Helm 2
+  #1058 (@mesosphere-mergebot)
+
+### dex-k8s-authenticator
+  - security: use a service account rather than adding extra permissions to the default namespace account
+  #1040 (@mesosphere-mergebot)
+
+### fluentbit
+  - Update to the latest minor version just to keep up with upstream. The bugfixes listed should have no effect on our default configurations.
+  - https://fluentbit.io/announcements/v1.6.9/
+  - https://fluentbit.io/announcements/v1.6.10/
+  - https://fluentbit.io/announcements/v1.7.0/
+  - https://fluentbit.io/announcements/v1.7.1/
+  - https://fluentbit.io/announcements/v1.7.2/
+  - https://fluentbit.io/announcements/v1.7.3/
+  #1053 (@mesosphere-mergebot)
+
+### istio
+  - istio version upgraded to 1.9.1
+  #1021 (@mesosphere-mergebot)
+
+### jaeger
+  - kiali and jaeger are now deployable with the "none" provisioner, i.e. in on-premise environments.
+  #1022 (@mesosphere-mergebot)
+
+### kiali
+  - kiali and jaeger are now deployable with the "none" provisioner, i.e. in on-premise environments.
+  #1022 (@mesosphere-mergebot)
+
+### opsportal
+  - UI - resolve kubecost performance issue
+  - UI - handle license loading state, show loading instead of invalid when license is missing a status
+  #1089 (@mesosphere-mergebot)
+
+  - fix: update UI dependencies to mitigate CVE-2021-23337
+  #1075 (@mesosphere-mergebot)
+
+  - fix: updating GitOps Source in Kommander.
+  - fest: Show certification badges in Kommander project catalog.
+  - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
+  - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
+  #1072 (@mesosphere-mergebot)
+
+  - fix: updating GitOps Source in Kommander.
+  - fest: Show certification badges in Kommander project catalog.
+  - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
+  - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
+  #1068 (@mesosphere-mergebot)
+
+  - fix: updating GitOps Source in Kommander.
+  - fest: Show certification badges in Kommander project catalog.
+  - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
+  - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
+  #1055 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #976 (@d2iq-dispatch)
+
+### prometheus
+  - prometheus: Added new Thanos sidecar metrics
+  - prometheus: Significantly improved Thanos sidecar latency (reduced ~2x)
+  #1018 (@mesosphere-mergebot)
+
+  - fix(prometheus): In upgrades, use existing PVC from previous installation.
+  #1015 (@gracedo)
+
+
 ## v4.0.0-rc.2
 
 ### ambassador
