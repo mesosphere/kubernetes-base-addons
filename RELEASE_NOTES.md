@@ -1,6 +1,6 @@
 # Release Notes
 
-## v4.0.0-rc.2
+## testing-1.20-4.0.0, testing-1.20-4.0.0-rc.3, v4.0.0-rc.3
 
 ### ambassador
   - bump ambassador-6.6.0
@@ -27,10 +27,6 @@
   - https://fluentbit.io/announcements/v1.7.3/
   #1053 (@mesosphere-mergebot)
 
-### gatekeeper
-  - NONE, since these changes aren't user facing yet.
-  #995 (@d2iq-dispatch)
-
 ### istio
   - istio version upgraded to 1.9.1
   #1021 (@mesosphere-mergebot)
@@ -44,6 +40,10 @@
   #1022 (@mesosphere-mergebot)
 
 ### opsportal
+  - UI - resolve kubecost performance issue
+  - UI - handle license loading state, show loading instead of invalid when license is missing a status
+  #1089 (@mesosphere-mergebot)
+
   - fix: update UI dependencies to mitigate CVE-2021-23337
   #1075 (@mesosphere-mergebot)
 
