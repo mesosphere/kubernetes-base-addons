@@ -62,6 +62,8 @@ spec:
         web:
           containerPort: 8080
       certs:
+        image: dkoshkin/kubernetes-dashboard-init-amd64
+        imageTag: v1.0.1
         web:
           create: false
           secret:
