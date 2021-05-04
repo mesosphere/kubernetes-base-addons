@@ -1,13 +1,6 @@
 # Release Notes
 
-## testing-1.20-4.0.0, testing-1.20-4.0.0-rc.3, v4.0.0-rc.3
-
-### ambassador
-  - bump ambassador-6.6.0
-  #973 (@d2iq-dispatch)
-
-  - bump ambasador to 1.12
-  #969 (@d2iq-dispatch)
+## testing-1.20-4.0.0-rc.4, v4.0.0-rc.4
 
 ### dashboard
   - Starting from version 4.0.0 of this chart, it will only support Helm 3 and remove the support for Helm 2
@@ -40,6 +33,12 @@
   #1022 (@mesosphere-mergebot)
 
 ### opsportal
+  - Update opsportal to mitigate CVE-2020-1971
+  #1107 (@mesosphere-mergebot)
+
+  - Update opsportal to mitigate CVE-2020-1971
+  #1106 (@armandgrillet)
+
   - UI - resolve kubecost performance issue
   - UI - handle license loading state, show loading instead of invalid when license is missing a status
   #1089 (@mesosphere-mergebot)
@@ -64,14 +63,6 @@
   - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
   - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
   #1055 (@d2iq-dispatch)
-
-  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
-  - Updated UI to only ship with needed dependencies
-  #976 (@d2iq-dispatch)
-
-  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
-  - Updated UI to only ship with needed dependencies
-  #964 (@d2iq-dispatch)
 
 ### prometheus
   - prometheus: Added new Thanos sidecar metrics
