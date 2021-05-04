@@ -205,4 +205,4 @@ action(tasks=["test-install", clean_install_kind, "test-upgrade", clean_upgrade_
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
-action(name="bump-charts", on=cron(schedule="0 3 * * 5"), tasks=[do_bump_charts])
+action(name="bump-charts", on=cron(schedule="0 3 7,21 * *"), tasks=[do_bump_charts])
