@@ -1,14 +1,42 @@
 # Release Notes
 
-## testing-1.20-4.0.0-rc.4, v4.0.0-rc.4
+## stable-1.20-4.0.0, v4.0.0
+
+### ambassador
+  - bump ambassador-6.5.18
+  #862 (@d2iq-dispatch)
+
+  - bump ambassador-6.6.0
+  #973 (@d2iq-dispatch)
+
+  - bump ambassador to 1.12
+  #969 (@d2iq-dispatch)
 
 ### dashboard
   - Starting from version 4.0.0 of this chart, it will only support Helm 3 and remove the support for Helm 2
   #1058 (@mesosphere-mergebot)
 
+### defaultstorageclass-protection
+  - update client-go to 0.19.2 to support k8s 1.16-1.21
+  - use the distroless image and run as nonroot user to address image CVEs
+  #863 (@d2iq-dispatch)
+
+  - Fix CVE-2019-14697.
+  #877 (@faiq)
+
+### dex
+  - Bump kube-rbac-proxy to tackle vulnerabilities from CVE-14697
+  - fix: ignore metrics auth https://github.com/mesosphere/dex-controller/compare/v0.6.5...v0.6.6#diff-5437c8653258a2e2a070c91d87e2f7581d12f6c7f103b0d8c324a37307287b65R30
+  - chore: bump kube-rbac-proxy version https://github.com/mesosphere/dex-controller/compare/v0.6.5...v0.6.6#diff-4d1856f3f2123c349e94607208c95a821f2485405db0b97ce41e87336a0ea3a7R21
+  #869 (@d2iq-dispatch)
+
 ### dex-k8s-authenticator
   - security: use a service account rather than adding extra permissions to the default namespace account
   #1040 (@mesosphere-mergebot)
+
+### elasticsearch
+  - Upgrades to version 7.10.1 of ElasticSearch
+  #796 (@alejandroEsc)
 
 ### fluentbit
   - Update to the latest minor version just to keep up with upstream. The bugfixes listed should have no effect on our default configurations.
@@ -20,57 +48,110 @@
   - https://fluentbit.io/announcements/v1.7.3/
   #1053 (@mesosphere-mergebot)
 
+### gatekeeper
+  - Gatekeeper upgraded to 3.3.0
+  #928 (@alejandroEsc)
+
 ### istio
   - istio version upgraded to 1.9.1
   #1021 (@mesosphere-mergebot)
 
 ### jaeger
+  - bump jaeger-operator-2.18.4
+  #835 (@d2iq-dispatch)
+
   - kiali and jaeger are now deployable with the "none" provisioner, i.e. in on-premise environments.
   #1022 (@mesosphere-mergebot)
 
+  - bump jaeger-operator-2.19.0
+  #867 (@d2iq-dispatch)
+
 ### kiali
+  - bump kiali-operator-1.29.1
+  #892 (@d2iq-dispatch)
+
   - kiali and jaeger are now deployable with the "none" provisioner, i.e. in on-premise environments.
   #1022 (@mesosphere-mergebot)
+
+  - kiali: configure to use the same version for `kiali/kialii` that matches the operator.
+  #887 (@dkoshkin)
 
 ### opsportal
   - Update opsportal to mitigate CVE-2020-1971
   #1107 (@mesosphere-mergebot)
 
-  - Update opsportal to mitigate CVE-2020-1971
-  #1106 (@armandgrillet)
-
   - UI - resolve kubecost performance issue
   - UI - handle license loading state, show loading instead of invalid when license is missing a status
   #1089 (@mesosphere-mergebot)
 
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #964 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #976 (@d2iq-dispatch)
+
+  - Fixes bug in OpsPortal where Identity Providers would not show up (COPS-6843)
+  #953 (@d2iq-dispatch)
+
+  - Update opsportal to mitigate CVE-2020-1971
+  #1106 (@armandgrillet)
+
   - fix: update UI dependencies to mitigate CVE-2021-23337
   #1075 (@mesosphere-mergebot)
 
+  - fix(kommander): Fix empty non-Konvoy cluster Platform Services tab
+  #902 (@d2iq-dispatch)
+
+  - fix(kommander-ui): disable addons on foundation disabled
+  - feat(kommander-ui): add license delete mutation
+  - feat(kommander-ui): replace license table with single license detail view
+  - feat(kommander-ui): allow workspace namespace to be configurable
+  #930 (@d2iq-dispatch)
+
   - fix: updating GitOps Source in Kommander.
-  - fest: Show certification badges in Kommander project catalog.
+  - feat: Show certification badges in Kommander project catalog.
   - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
   - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
   #1072 (@mesosphere-mergebot)
 
   - fix: updating GitOps Source in Kommander.
-  - fest: Show certification badges in Kommander project catalog.
+  - feat: Show certification badges in Kommander project catalog.
   - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
   - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
   #1068 (@mesosphere-mergebot)
 
-  - fix: updating GitOps Source in Kommander.
-  - fest: Show certification badges in Kommander project catalog.
-  - feat: Allow creating Root CA secret when attaching a firewalled cluster in Kommander.
-  - feat: give list of loadbalncers when attaching a firewalled cluster in Kommander.
-  #1055 (@d2iq-dispatch)
-
 ### prometheus
+  - fix(prometheus): In upgrades, use existing PVC from previous installation.
+  #1015 (@gracedo)
+
   - prometheus: Added new Thanos sidecar metrics
   - prometheus: Significantly improved Thanos sidecar latency (reduced ~2x)
   #1018 (@mesosphere-mergebot)
 
-  - fix(prometheus): In upgrades, use existing PVC from previous installation.
-  #1015 (@gracedo)
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #938 (@gracedo)
+
+### prometheusadapter
+  - prometheusadapter: fix an error were resources in reported by the Kubernetes dashboard and `kubectl top` reported double of the actual resources.
+  #884 (@dkoshkin)
+
+  - prometheus-adapter: bump to latest version v0.8.3
+  - * Fix authorizer webhook panic by bumping apiserver dependencies #362
+  - * Add NOTICE to comply with the CNCF rules #359
+  - * Populate metric selector for custom metrics #348
+  - * Fix apiserver panics by bump to k8s 1.20, go 1.15 #352
+  - * Make NodeMetrics and PodMetrics APIs match K8s conventions #344
+  #848 (@hectorj2f)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #956 (@armandgrillet)
+
+  - Bump from v0.0.79 to v0.0.80
+  - Add custom annotation support in service account
+  #893 (@d2iq-dispatch)
 
 ## stable-1.18-3.0.0
 
