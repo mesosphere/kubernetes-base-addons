@@ -6,15 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: prometheusadapter
   annotations:
-<<<<<<< HEAD
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-5"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-6"
     appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.7.0"
     values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/prometheus-community/helm-charts/ef6391472c694c8cb1412b277f94ae3b7cfe972e/charts/prometheus-adapter/values.yaml"
-=======
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.8.3-3"
-    appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.8.3"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/prometheus-community/helm-charts/61fb05e4f4ba9b6e4255a07338715414a3f493a0/charts/prometheus-adapter/values.yaml"
->>>>>>> 3f16423... Update prometheus URL in prometheusadapter config
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6

@@ -9,15 +9,9 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-<<<<<<< HEAD
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-8"
-    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
-    appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
-=======
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.47.0-1"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.47.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.26.0"
->>>>>>> 0305ab9... Upgrade prometheus addon chart
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
     appversion.kubeaddons.mesosphere.io/grafana: "7.5.3"
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
