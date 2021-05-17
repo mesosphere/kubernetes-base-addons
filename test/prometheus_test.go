@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	promPodPrefix = "prometheus-prometheus-kubeaddons-prom-prometheus-"
+	promPodPrefix = "prometheus-prometheus-kubeaddons-kube-prometheus-"
 	promPort      = "9090"
 
-	alertmanagerPodPrefix = "alertmanager-prometheus-kubeaddons-prom-alertmanager-"
+	alertmanagerPodPrefix = "alertmanager-prometheus-kubeaddons-kube-alertmanager-"
 	alertmanagerPort      = "9093"
 
 	grafanaPodPrefix = "prometheus-kubeaddons-grafana"
