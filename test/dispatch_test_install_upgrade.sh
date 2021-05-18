@@ -16,8 +16,14 @@ if [[ -n "${CLAIM_NAME}" ]]; then
     kubectl --kubeconfig ${KBA_KUBECONFIG} create secret tls kubernetes-root-ca --namespace=cert-manager --cert=ca.crt --key=ca.key --dry-run -o yaml  | kubectl --kubeconfig ${KBA_KUBECONFIG} apply -f -  || true
 fi
 
+<<<<<<< HEAD
 echo "INFO: the following test groups will be run against branch ${branch}:"
 tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (grep -E '^Test' || true) | grep -v 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
+=======
+
+echo "INFO: the following test groups will be run:"
+tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (grep -E '^Test' || true) | grep -Ev 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
+>>>>>>> 685ff59... set extended-regexp when using extended-regexp syntax
 echo ${tests}
 
 for g in ${tests}
