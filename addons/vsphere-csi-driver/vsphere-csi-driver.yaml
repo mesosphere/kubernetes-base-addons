@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
@@ -8,8 +7,8 @@ metadata:
     kubeaddons.mesosphere.io/provides: csi-driver
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.1-1"
-    appversion.kubeaddons.mesosphere.io/vsphere-csi-driver: "2.0.1"
-    values.chart.helm.kubeaddons.mesosphere.io/vsphere-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/5565912/stable/vsphere-csi-driver/values.yaml"
+    appversion.kubeaddons.mesosphere.io/vsphere-csi-driver: "2.2.0"
+    values.chart.helm.kubeaddons.mesosphere.io/vsphere-csi-driver: "https://raw.githubusercontent.com/mesosphere/charts/a41acbd/stable/vsphere-csi-driver/values.yaml"
 spec:
   requires:
     - matchLabels:
@@ -23,7 +22,7 @@ spec:
   chartReference:
     chart: vsphere-csi-driver
     repo: https://mesosphere.github.io/charts/stable
-    version: 1.2.1
+    version: 1.3.0
     values: |
       storageclass:
         # Fill it with your created and tagged vSphere Storage Policy
