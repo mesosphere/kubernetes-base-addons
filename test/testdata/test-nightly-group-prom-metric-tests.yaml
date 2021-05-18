@@ -57,11 +57,6 @@
 - name: up
   app: ""
   namespace: kubeaddons
-  service: prometheus-kubeaddons-kube-state-metrics
-  job: kube-state-metrics
-- name: up
-  app: ""
-  namespace: kubeaddons
   service: prometheus-kubeaddons-kube-alertmanager
   job: prometheus-kubeaddons-kube-alertmanager
 - name: up
@@ -74,6 +69,11 @@
   namespace: kubeaddons
   service: prometheus-kubeaddons-kube-prometheus
   job: prometheus-kubeaddons-kube-prometheus
+- name: up
+  app: ""
+  namespace: kubeaddons
+  service: prometheus-kubeaddons-kube-state-metrics
+  job: kube-state-metrics
 - name: up
   app: ""
   namespace: kubeaddons
