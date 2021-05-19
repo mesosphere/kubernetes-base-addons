@@ -9,11 +9,11 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.44.0-9"
-    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.44.0"
-    appversion.kubeaddons.mesosphere.io/prometheus: "2.22.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.47.0-1"
+    appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.47.0"
+    appversion.kubeaddons.mesosphere.io/prometheus: "2.26.0"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
-    appversion.kubeaddons.mesosphere.io/grafana: "6.1.17"
+    appversion.kubeaddons.mesosphere.io/grafana: "7.5.3"
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
     endpoint.kubeaddons.mesosphere.io/alertmanager: "/ops/portal/alertmanager"
     endpoint.kubeaddons.mesosphere.io/grafana: "/ops/portal/grafana"
@@ -43,9 +43,9 @@ spec:
     - name: none
       enabled: true
   chartReference:
-    chart: prometheus-operator
+    chart: kube-prometheus-stack
     repo: https://mesosphere.github.io/charts/staging
-    version: 12.11.10
+    version: 15.4.5
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -70,6 +70,7 @@ spec:
             traefik.ingress.kubernetes.io/priority: "2"
           paths:
             - /ops/portal/prometheus
+          pathType: ImplementationSpecific
         service:
           additionalPorts:
             # Service port for Thanos gRPC.
@@ -367,6 +368,7 @@ spec:
             traefik.ingress.kubernetes.io/priority: "2"
           paths:
             - /ops/portal/alertmanager
+          pathType: ImplementationSpecific
         alertmanagerSpec:
           resources:
             limits:
@@ -388,6 +390,7 @@ spec:
             traefik.ingress.kubernetes.io/priority: "2"
           hosts: [""]
           path: /ops/portal/grafana
+          pathType: ImplementationSpecific
         sidecar:
           dashboards:
             searchNamespace: ALL
@@ -396,6 +399,7 @@ spec:
             protocol: http
             enable_gzip: true
             root_url: "%(protocol)s://%(domain)s:%(http_port)s/ops/portal/grafana"
+            serve_from_sub_path: true
           auth.proxy:
             enabled: true
             header_name: X-Forwarded-User
