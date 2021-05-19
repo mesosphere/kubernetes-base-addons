@@ -2,10 +2,7 @@ module github.com/mesosphere/kubernetes-base-addons/test
 
 go 1.16
 
-replace (
-	github.com/docker/docker => github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce // locked to this version to avoid upgrades from kind that would drop our volume provisioning code. TODO: we should update/remove our volume provisioning code.
-	sigs.k8s.io/kind => sigs.k8s.io/kind v0.9.0 // locked to avoid changes, as we've historically had issues with kind being changed as a side effect of other changes
-)
+replace github.com/docker/docker => github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce // locked to this version to avoid upgrades from kind that would drop our volume provisioning code. TODO: we should update/remove our volume provisioning code.
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
