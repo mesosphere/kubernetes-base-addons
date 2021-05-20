@@ -39,28 +39,37 @@ func getMilestone(title string, client *github.Client) (*github.Milestone, error
 	return nil, errors.New("milestone, " + title + ", not found.")
 }
 
-func getPullRequestIssuesInMilestone(title string, client *github.Client) ([]*github.Issue, error) {
+func getPullRequestIssuesInMilestone(title string, client *github.Client) (map[int64]*github.Issue, error) {
 	milestone, err := getMilestone(title, client)
 	if err != nil {
 		return nil, err
 	}
-	pullRequests, _, err := client.Issues.ListByRepo(ctx, owner, repo, &github.IssueListByRepoOptions{Milestone: strconv.Itoa(milestone.GetNumber()), State: "closed"})
-	if err != nil {
-		return nil, err
-	}
-	result := []*github.Issue{}
-	for _, pullRequest := range pullRequests {
-		if pullRequest.Milestone.GetID() != milestone.GetID() {
-			continue
+	result := map[int64]*github.Issue{}
+	options := github.IssueListByRepoOptions{Milestone: strconv.Itoa(milestone.GetNumber()), State: "closed"}
+	options.Page = 0
+	options.PerPage = 100
+	done := false
+	for pullRequests, response, err := client.Issues.ListByRepo(ctx, owner, repo, &options); !done; {
+		if err != nil {
+			return nil, err
 		}
-		if pullRequest.Milestone.GetID() == milestone.GetID() {
-			result = append(result, pullRequest)
+		for _, pullRequest := range pullRequests {
+			if pullRequest.Milestone.GetID() != milestone.GetID() {
+				continue
+			}
+			if pullRequest.Milestone.GetID() == milestone.GetID() {
+				result[pullRequest.GetID()] = pullRequest
+			}
 		}
+		if options.Page == response.LastPage {
+			done = true
+		}
+		options.Page = response.NextPage
 	}
 	return result, nil
 }
 
-func getLabelsFromIssues(pullRequests []*github.Issue) []string {
+func getLabelsFromIssues(pullRequests map[int64]*github.Issue) []string {
 	labels := map[string]*string{}
 	for _, pr := range pullRequests {
 		for _, label := range pr.Labels {
@@ -107,7 +116,7 @@ func releaseNoteForIssue(issue *github.Issue) (string, error) {
 	return fmt.Sprintf("  - %s\n  #%d (@%s)\n\n", strings.Join(out, "\n  - "), issue.GetNumber(), issue.GetUser().GetLogin()), nil
 }
 
-func buildReleaseNoteForLabel(label string, issues []*github.Issue) (string, error) {
+func buildReleaseNoteForLabel(label string, issues map[int64]*github.Issue) (string, error) {
 	result := fmt.Sprintf("### %s\n", label[6:])
 	notes := ""
 	for _, i := range issues {
