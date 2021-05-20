@@ -108,15 +108,10 @@ endif
 	-rm kba-kubeconfig-*
 
 .PHONY: dispatch-test-install-upgrade
-<<<<<<< HEAD
 .ONESHELL:
-dispatch-test-install-upgrade: $(GITHUB_CLI_BIN)
+dispatch-test-install-upgrade: test/konvoy $(GITHUB_CLI_BIN)
 	cd test
 	./dispatch_test_install_upgrade.sh
-=======
-dispatch-test-install-upgrade: test/konvoy $(GITHUB_CLI_BIN)
-	cd test; ./dispatch_test_install_upgrade.sh
->>>>>>> acb92d6... Update test target to depend on konvoy bin
 
 .PHONY: test-aws
 test-aws: test/konvoy
