@@ -7,7 +7,7 @@ metadata:
     kubeaddons.mesosphere.io/name: nvidia
     kubeaddons.mesosphere.io/provides: nvidia
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-9"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.1-0"
     appversion.kubeaddons.mesosphere.io/nvidia: "0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/a41acbd/staging/nvidia/values.yaml"
     # The nvidia addon requires its underlying driver to be completely removed before adding an upgraded one, as two versions of the driver can no cleanly
