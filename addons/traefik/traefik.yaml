@@ -6,8 +6,13 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
+<<<<<<< HEAD
     catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.24-25"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.24"
+=======
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.30-0"
+    appversion.kubeaddons.mesosphere.io/traefik: "1.7.30+d2iq.0"
+>>>>>>> 251daec... use internal traefik fork
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
     values.chart.helm.kubeaddons.mesosphere.io/traefik: "https://raw.githubusercontent.com/mesosphere/charts/32a2dec/staging/traefik/values.yaml"
@@ -26,6 +31,11 @@ spec:
       "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
+      ## Default values for Traefik
+      image: mesosphere/traefik
+      imageTag: v1.7.30_d2iq.0
+      imagePullPolicy: IfNotPresent
+
       # Configure Traefik for HA.
       replicas: 2
       podDisruptionBudget:
