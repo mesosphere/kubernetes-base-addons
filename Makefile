@@ -109,7 +109,7 @@ endif
 
 .PHONY: dispatch-test-install-upgrade
 .ONESHELL:
-dispatch-test-install-upgrade: $(GITHUB_CLI_BIN)
+dispatch-test-install-upgrade: test/konvoy $(GITHUB_CLI_BIN)
 	cd test
 	./dispatch_test_install_upgrade.sh
 
