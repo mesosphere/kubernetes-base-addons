@@ -11,7 +11,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/datawire/ambassador v1.12.3
 	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
-	github.com/google/go-cmp v0.5.5
+	github.com/google/go-cmp v0.5.6
 	github.com/google/uuid v1.2.0
 	github.com/mesosphere/ksphere-testing-framework v0.2.6
 	github.com/mesosphere/kubeaddons v0.27.0
