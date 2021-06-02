@@ -17,17 +17,17 @@
 - name: up
   app: ""
   namespace: kube-system
-  service: prometheus-kubeaddons-kube-coredns
+  service: prometheus-kubeaddons-prom-coredns
   job: coredns
 - name: up
   app: ""
   namespace: kube-system
-  service: prometheus-kubeaddons-kube-kube-proxy
+  service: prometheus-kubeaddons-prom-kube-proxy
   job: kube-proxy
 - name: up
   app: ""
   namespace: kube-system
-  service: prometheus-kubeaddons-kube-kubelet
+  service: prometheus-kubeaddons-prom-kubelet
   job: kubelet
 - name: up
   app: ""
@@ -57,23 +57,23 @@
 - name: up
   app: ""
   namespace: kubeaddons
-  service: prometheus-kubeaddons-kube-alertmanager
-  job: prometheus-kubeaddons-kube-alertmanager
-- name: up
-  app: ""
-  namespace: kubeaddons
-  service: prometheus-kubeaddons-kube-operator
-  job: prometheus-kubeaddons-kube-operator
-- name: up
-  app: ""
-  namespace: kubeaddons
-  service: prometheus-kubeaddons-kube-prometheus
-  job: prometheus-kubeaddons-kube-prometheus
-- name: up
-  app: ""
-  namespace: kubeaddons
   service: prometheus-kubeaddons-kube-state-metrics
   job: kube-state-metrics
+- name: up
+  app: ""
+  namespace: kubeaddons
+  service: prometheus-kubeaddons-prom-alertmanager
+  job: prometheus-kubeaddons-prom-alertmanager
+- name: up
+  app: ""
+  namespace: kubeaddons
+  service: prometheus-kubeaddons-prom-operator
+  job: prometheus-kubeaddons-prom-operator
+- name: up
+  app: ""
+  namespace: kubeaddons
+  service: prometheus-kubeaddons-prom-prometheus
+  job: prometheus-kubeaddons-prom-prometheus
 - name: up
   app: ""
   namespace: kubeaddons
