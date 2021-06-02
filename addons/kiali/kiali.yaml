@@ -8,7 +8,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-4"
     appversion.kubeaddons.mesosphere.io/kiali-operator: "v1.29.1"
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
@@ -55,7 +55,7 @@ spec:
             grafana:
               in_cluster_url: http://prometheus-kubeaddons-grafana.kubeaddons:3000
             prometheus:
-              url: http://prometheus-kubeaddons-kube-prometheus.kubeaddons:9090
+              url: http://prometheus-kubeaddons-prom-prometheus.kubeaddons:9090
             tracing:
               in_cluster_url: http://jaeger-kubeaddons-jaeger-operator-jaeger-query:16686
           deployment:
