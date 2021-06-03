@@ -8,13 +8,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-<<<<<<< HEAD
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.29.0-5"
     appversion.kubeaddons.mesosphere.io/kiali-operator: "1.29.0"
-=======
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-4"
-    appversion.kubeaddons.mesosphere.io/kiali-operator: "v1.29.1"
->>>>>>> 673c8c1... prometheus: set nameOverride to preserve previous Service name
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
