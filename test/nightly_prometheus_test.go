@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"reflect"
 	"sort"
 	"strings"
@@ -29,7 +30,7 @@ const (
 )
 
 func updateFixtures() bool {
-	return true //os.Getenv(updateFixturesEnvVar) == "true"
+	return os.Getenv(updateFixturesEnvVar) == "true"
 }
 
 func updateFixturesFatalMessage(err error) string {
@@ -56,9 +57,7 @@ func TestUnmarshallPrometheusMetricNames(t *testing.T) {
 	if updateFixtures() {
 		commentHeader := "used in TestUnmarshallPrometheusMetricNames as unit test output of prometheus-metric-output.json"
 		err := updatePrometheusMetricFixtures(prometheusMetricTestsFilename, commentHeader, metrics)
-		if err != nil {
-			t.Fatal(updateFixturesFatalMessage(err))
-		}
+		t.Fatal(updateFixturesFatalMessage(err))
 	}
 	err = testMetricFixtures(prometheusMetricTestsFilename, metrics)
 	if err != nil {
