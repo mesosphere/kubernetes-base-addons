@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: prometheusadapter
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v0.7.0-7"
     appversion.kubeaddons.mesosphere.io/prometheusadapter: "v0.7.0"
     values.chart.helm.kubeaddons.mesosphere.io/prometheusadapter: "https://raw.githubusercontent.com/prometheus-community/helm-charts/ef6391472c694c8cb1412b277f94ae3b7cfe972e/charts/prometheus-adapter/values.yaml"
 spec:
@@ -35,7 +35,7 @@ spec:
     values: |
       ---
       prometheus:
-        url: http://prometheus-kubeaddons-kube-prometheus
+        url: http://prometheus-kubeaddons-prom-prometheus
       resources:
         limits:
            cpu: 2000m
