@@ -1,6 +1,6 @@
 # Release Notes
 
-## testing-1.18-3.5.0-rc.2, testing-1.19-3.5.0, v3.5.0-rc.2
+## stable-1.18-3.5.0, stable-1.19-3.5.0, v3.5.0
 
 ### dex
   - Defer AuthRequest creation until after initial login page to avoid too many objects.
@@ -65,6 +65,24 @@
 ### vsphere-csi-driver
   - Update vpshere-csi-driver to v2.2.0 to pull in the fix for duplicate operations failure when attaching PVs (https://github.com/kubernetes-sigs/vsphere-csi-driver/issues/580) (COPS-6906)
   #1149 (@mesosphere-mergebot)
+
+
+## stable-1.18-3.4.0, stable-1.19-3.4.0, v3.4.0
+
+### opsportal
+  - Fixes bug in OpsPortal where Identity Providers would not show up (COPS-6843)
+  #954 (@mesosphere-mergebot)
+
+### prometheus
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #981 (@gracedo)
+
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #941 (@mesosphere-mergebot)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #957 (@mesosphere-mergebot)
 
 
 ## stable-1.18-3.3.0, stable-1.19-3.3.0, v3.3.0
