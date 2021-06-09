@@ -31,7 +31,7 @@
 |kubeaddons|kube-oidc-proxy|0.2.0-2|v0.2.0|Addon|
 |kubeaddons|nvidia|0.2.0-8|0.2.0|ClusterAddon|
 |kubeaddons|opsportal|1.5.0-15|1.5.0|Addon|
-|kubeaddons|prometheus|0.47.0-2|2.26.0|Addon|
+|kubeaddons|prometheus|0.47.0-3|2.26.0|Addon|
 |kubeaddons|prometheusadapter|v0.7.0-7|v0.7.0|Addon|
 |kubeaddons|reloader|v0.0.85-1|v0.0.85|Addon|
 |kubeaddons|traefik-forward-auth|1.0.5-1|null|Addon|
