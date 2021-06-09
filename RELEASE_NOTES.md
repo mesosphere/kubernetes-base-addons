@@ -1,6 +1,6 @@
 # Release Notes
 
-## testing-1.20-4.1.0-rc.2, v4.1.0-rc.2
+## stable-1.20-4.1.0, v4.1.0
 
 ### prometheus
   - [prometheus] Upgrades to the latest version of the kube-prometheus-stack chart. This includes upgrades for multiple applications. The changes listed should not be disruptive to the default addon configuration.
