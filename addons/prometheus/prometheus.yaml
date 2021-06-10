@@ -9,7 +9,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.47.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.47.0-3"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.47.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.26.0"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
@@ -52,6 +52,8 @@ spec:
       "grafana.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
       ---
+      # override the name for a zero downtime upgrade from stable/prometheus-operator
+      nameOverride: prometheus-operator
       mesosphereResources:
         create: true
         rules:
@@ -250,7 +252,7 @@ spec:
                   replacement: '${1}:1338'
                   target_label: __address__
             - job_name: 'gpu_metrics'
-              metrics_path: /gpu/metrics
+              metrics_path: /metrics
               tls_config:
                 ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
