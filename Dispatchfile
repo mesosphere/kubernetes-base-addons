@@ -39,7 +39,7 @@ common_env = [
     k8s.corev1.EnvVar(name="GIT_TERMINAL_PROMPT", value="1"),
     k8s.corev1.EnvVar(name="GITHUB_TOKEN", valueFrom=secret_var("d2iq-dispatch-basic-auth", "password")),
     k8s.corev1.EnvVar(name="GOPRIVATE", value="github.com/mesosphere"),
-    k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.6.1"),
+    k8s.corev1.EnvVar(name="KONVOY_VERSION", value="v1.8.0"),
     k8s.corev1.EnvVar(name="KUBEADDONS_ADDON_DELETE_DURATION", value="5m"),
     k8s.corev1.EnvVar(name="SSH_KEY_BASE64", valueFrom=secret_var( "d2iq-dispatch-git-ssh-base64", "ssh-privatekey-base64")),
 ]
@@ -205,4 +205,4 @@ action(tasks=["test-install", clean_install_kind, "test-upgrade", clean_upgrade_
 
 # Cron Actions
 do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
-action(name="bump-charts", on=cron(schedule="0 3 * * 5"), tasks=[do_bump_charts])
+action(name="bump-charts", on=cron(schedule="0 3 7,21 * *"), tasks=[do_bump_charts])

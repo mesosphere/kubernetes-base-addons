@@ -8,7 +8,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-2"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-4"
     appversion.kubeaddons.mesosphere.io/kiali-operator: "v1.29.1"
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental

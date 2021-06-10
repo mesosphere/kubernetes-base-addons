@@ -40,7 +40,7 @@ spec:
       # Temporarily we're going to use our custom built container. Documentation
       # for how to build a new version: https://github.com/mesosphere/dex/blob/v2.27.0-d2iq/README.d2iq.md
       image: mesosphere/dex
-      imageTag:  v2.27.0-2-ged3d-d2iq
+      imageTag:  v2.27.0-7-g258c09-d2iq
       resources:
         requests:
           cpu: 100m
