@@ -191,6 +191,7 @@ github.com/cyphar/filepath-securejoin v0.2.2 h1:jCwT2GTP+PY5nBz3c/YL5PAIbusElVrP
 github.com/cyphar/filepath-securejoin v0.2.2/go.mod h1:FpkQEhXnPnOthhzymB7CGsFk2G9VLXONKD9G7QGMM+4=
 github.com/datawire/ambassador v1.12.2 h1:tQOxcCuagD6+lU5uzPAOJuf/grS/kRePn71J9pvQ7I0=
 github.com/datawire/ambassador v1.12.2/go.mod h1:2grBLdYgILzrgTpenDMB5OeyhObIUaT+KwkLkZI1KDE=
+github.com/datawire/ambassador v1.12.3/go.mod h1:2grBLdYgILzrgTpenDMB5OeyhObIUaT+KwkLkZI1KDE=
 github.com/datawire/dlib v1.2.0/go.mod h1:t0upKFHApJskdVFH/gyksG5+vMCl0GCKeEZIEJBBv4g=
 github.com/datawire/pf v0.0.0-20180510150411-31a823f9495a/go.mod h1:H8uUmE8qqo7z9u30MYB9riLyRckPHOPBk9ZdCuH+dQQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -553,7 +554,9 @@ github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
 github.com/kudobuilder/kudo v0.18.2/go.mod h1:DvoOu1icNIjJNErUKjyxXdpWAQdr4s9envHDQ9jJQ3s=
+github.com/kudobuilder/kudo v0.19.0/go.mod h1:z/TQsZ3DTiLOVRTImqJCN8ZsFVwzY9nboE0R2Rs7icI=
 github.com/kudobuilder/kuttl v0.7.2/go.mod h1:WoJncTIMyGQtEc84qaqfMjk9I6m/eSPuhcvEVPO+Sxk=
+github.com/kudobuilder/kuttl v0.8.1/go.mod h1:57feMHIbT8RK2DS3xYpQAWasAmr/ZyHQbWvIFGoaehM=
 github.com/lann/builder v0.0.0-20180802200727-47ae307949d0/go.mod h1:dXGbAdH5GtBTC4WfIxhKZfyBF/HBFgRZSWwZ9g/He9o=
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6FmdpVm2joNMFikkuWg0EoCKLGUMNw=
 github.com/lib/pq v1.0.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
@@ -604,6 +607,7 @@ github.com/mesosphere/ksphere-testing-framework v0.2.6 h1:e1Ajbs+eYyKjBO4gTbrC1n
 github.com/mesosphere/ksphere-testing-framework v0.2.6/go.mod h1:0QnFuhrEvqut8ArRVY706j4iTm7T03GT/jwCDlb6dhQ=
 github.com/mesosphere/kubeaddons v0.26.1 h1:mOJNNWDvvEINNF3ZH+dv4n6EfXE3rG8Ni0GGEIFmyWg=
 github.com/mesosphere/kubeaddons v0.26.1/go.mod h1:utI/0ePAqwIKBuOlu+L3+y/QvUZt0uyVIMaU3intq+U=
+github.com/mesosphere/kubeaddons v0.27.0/go.mod h1:8iap+vCbTS2gZY17EsiBDbqnzyQpwpERB71tQkTkwbM=
 github.com/mholt/archiver/v3 v3.3.0/go.mod h1:YnQtqsp+94Rwd0D/rk5cnLrxusUBUXg+08Ebtr1Mqao=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.6/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
@@ -1400,6 +1404,7 @@ sigs.k8s.io/controller-runtime v0.8.3/go.mod h1:U/l+DUopBc1ecfRZ5aviA9JDmGFQKvLf
 sigs.k8s.io/controller-tools v0.3.0/go.mod h1:enhtKGfxZD1GFEoMgP8Fdbu+uKQ/cq1/WGJhdVChfvI=
 sigs.k8s.io/controller-tools v0.3.1-0.20200517180335-820a4a27ea84/go.mod h1:enhtKGfxZD1GFEoMgP8Fdbu+uKQ/cq1/WGJhdVChfvI=
 sigs.k8s.io/controller-tools v0.4.0/go.mod h1:G9rHdZMVlBDocIxGkK3jHLWqcTMNvveypYJwrvYKjWU=
+sigs.k8s.io/controller-tools v0.4.1/go.mod h1:G9rHdZMVlBDocIxGkK3jHLWqcTMNvveypYJwrvYKjWU=
 sigs.k8s.io/kind v0.9.0 h1:SoDlXq6pEc7dGagHULNRCCBYrLH6xOi7lqXTRXeAlg4=
 sigs.k8s.io/kind v0.9.0/go.mod h1:cxKQWwmbtRDzQ+RNKnR6gZG6fjbeTtItp5cGf+ww+1Y=
 sigs.k8s.io/kustomize v2.0.3+incompatible/go.mod h1:MkjgH3RdOWrievjo6c9T245dYlB5QeXV4WCbnt/PEpU=

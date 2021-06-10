@@ -1,4 +1,3 @@
----
 apiVersion: kubeaddons.mesosphere.io/v1beta1
 kind: ClusterAddon
 metadata:
@@ -8,9 +7,9 @@ metadata:
     kubeaddons.mesosphere.io/name: nvidia
     kubeaddons.mesosphere.io/provides: nvidia
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-8"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.1-0"
     appversion.kubeaddons.mesosphere.io/nvidia: "0.2.0"
-    values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/master/staging/nvidia/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/nvidia: "https://raw.githubusercontent.com/mesosphere/charts/a41acbd/staging/nvidia/values.yaml"
     # The nvidia addon requires its underlying driver to be completely removed before adding an upgraded one, as two versions of the driver can no cleanly
     # co-exist in version v0.3.x of the chart. For this reason we do a delete upgrade to ensure the driver is fully purged before installing the new one.
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=0.4.0", "strategy": "delete"}]'
@@ -30,7 +29,7 @@ spec:
   chartReference:
     chart: nvidia
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.3.5
+    version: 0.3.6
     values: |
       ---
       grafana:
