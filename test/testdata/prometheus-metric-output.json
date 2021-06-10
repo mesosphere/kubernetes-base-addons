@@ -18277,10 +18277,10 @@
           "__name__": "up",
           "endpoint": "http",
           "instance": "192.168.136.19:8080",
-          "job": "prometheus-kubeaddons-kube-operator",
+          "job": "prometheus-kubeaddons-prom-operator",
           "namespace": "kubeaddons",
-          "pod": "prometheus-kubeaddons-kube-operator-6db988ccc4-qwrk6",
-          "service": "prometheus-kubeaddons-kube-operator"
+          "pod": "prometheus-kubeaddons-prom-operator-6db988ccc4-qwrk6",
+          "service": "prometheus-kubeaddons-prom-operator"
         },
         "values": [
           [
@@ -29233,7 +29233,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-z2whp",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -30450,7 +30450,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-7xm8c",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -31667,7 +31667,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-xw8g4",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -32884,7 +32884,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-njwtv",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -34101,7 +34101,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-6ngmw",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -35318,7 +35318,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-zg76x",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -36535,7 +36535,7 @@
           "job": "kube-proxy",
           "namespace": "kube-system",
           "pod": "kube-proxy-nrpkv",
-          "service": "prometheus-kubeaddons-kube-kube-proxy"
+          "service": "prometheus-kubeaddons-prom-kube-proxy"
         },
         "values": [
           [
@@ -37752,7 +37752,7 @@
           "job": "coredns",
           "namespace": "kube-system",
           "pod": "coredns-6955765f44-rgsfc",
-          "service": "prometheus-kubeaddons-kube-coredns"
+          "service": "prometheus-kubeaddons-prom-coredns"
         },
         "values": [
           [
@@ -38969,7 +38969,7 @@
           "job": "coredns",
           "namespace": "kube-system",
           "pod": "coredns-6955765f44-gjjr9",
-          "service": "prometheus-kubeaddons-kube-coredns"
+          "service": "prometheus-kubeaddons-prom-coredns"
         },
         "values": [
           [
@@ -43835,7 +43835,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-128-80.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -45053,7 +45053,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-128-80.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -46271,7 +46271,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-128-80.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -47489,7 +47489,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-128-80.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -48707,7 +48707,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-129-168.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -49925,7 +49925,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-129-168.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -51143,7 +51143,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-129-168.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -52361,7 +52361,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-129-168.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -53579,7 +53579,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-129-228.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -54797,7 +54797,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-129-228.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -56015,7 +56015,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-129-228.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -57233,7 +57233,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-129-228.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -58451,7 +58451,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-129-244.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -59669,7 +59669,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-129-244.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -60887,7 +60887,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-129-244.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -62105,7 +62105,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-129-244.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -63323,7 +63323,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-194-126.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -64541,7 +64541,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-194-126.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -65759,7 +65759,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-194-126.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -66977,7 +66977,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-194-126.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -68195,7 +68195,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-194-47.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -69413,7 +69413,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-194-47.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -70631,7 +70631,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-194-47.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -71849,7 +71849,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-194-47.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -73067,7 +73067,7 @@
           "metrics_path": "/metrics",
           "namespace": "kube-system",
           "node": "ip-10-0-195-99.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -74285,7 +74285,7 @@
           "metrics_path": "/metrics/cadvisor",
           "namespace": "kube-system",
           "node": "ip-10-0-195-99.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -75503,7 +75503,7 @@
           "metrics_path": "/metrics/probes",
           "namespace": "kube-system",
           "node": "ip-10-0-195-99.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -76721,7 +76721,7 @@
           "metrics_path": "/metrics/resource/v1alpha1",
           "namespace": "kube-system",
           "node": "ip-10-0-195-99.us-west-2.compute.internal",
-          "service": "prometheus-kubeaddons-kube-kubelet"
+          "service": "prometheus-kubeaddons-prom-kubelet"
         },
         "values": [
           [
@@ -93756,10 +93756,10 @@
           "__name__": "up",
           "endpoint": "web",
           "instance": "192.168.174.73:9093",
-          "job": "prometheus-kubeaddons-kube-alertmanager",
+          "job": "prometheus-kubeaddons-prom-alertmanager",
           "namespace": "kubeaddons",
-          "pod": "alertmanager-prometheus-kubeaddons-kube-alertmanager-0",
-          "service": "prometheus-kubeaddons-kube-alertmanager"
+          "pod": "alertmanager-prometheus-kubeaddons-prom-alertmanager-0",
+          "service": "prometheus-kubeaddons-prom-alertmanager"
         },
         "values": [
           [
@@ -94973,10 +94973,10 @@
           "__name__": "up",
           "endpoint": "web",
           "instance": "192.168.174.74:9090",
-          "job": "prometheus-kubeaddons-kube-prometheus",
+          "job": "prometheus-kubeaddons-prom-prometheus",
           "namespace": "kubeaddons",
-          "pod": "prometheus-prometheus-kubeaddons-kube-prometheus-0",
-          "service": "prometheus-kubeaddons-kube-prometheus"
+          "pod": "prometheus-prometheus-kubeaddons-prom-prometheus-0",
+          "service": "prometheus-kubeaddons-prom-prometheus"
         },
         "values": [
           [
