@@ -45,7 +45,7 @@ spec:
   chartReference:
     chart: kube-prometheus-stack
     repo: https://mesosphere.github.io/charts/staging
-    version: 15.4.5
+    version: 15.5.0
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
@@ -59,6 +59,7 @@ spec:
         rules:
           # addon alert rules are defaulted to false to prevent potential misfires if addons
           # are disabled.
+          elasticsearch: false
           velero: false
       prometheus:
         ingress:
