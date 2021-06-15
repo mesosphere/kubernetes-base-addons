@@ -45,7 +45,7 @@ spec:
   chartReference:
     chart: kube-prometheus-stack
     repo: https://mesosphere.github.io/charts/staging
-    version: 15.5.0
+    version: 15.4.7
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
