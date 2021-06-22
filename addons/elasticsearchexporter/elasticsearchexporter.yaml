@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: elasticsearchexporter
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-6"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.1.0-7"
     appversion.kubeaddons.mesosphere.io/elasticsearchexporter: "1.1.0"
-    values.chart.helm.kubeaddons.mesosphere.io/elasticsearchexporter: "https://raw.githubusercontent.com/mesosphere/charts/bf61152/stable/elasticsearch-exporter/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/elasticsearchexporter: "https://raw.githubusercontent.com/mesosphere/charts/ec2a317/stable/elasticsearch-exporter/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -31,7 +31,7 @@ spec:
   chartReference:
     chart: prometheus-elasticsearch-exporter
     repo: https://prometheus-community.github.io/helm-charts
-    version: 4.1.0
+    version: 4.4.0
     values: |
       ---
       # As defined in the readme file when migrating from old chart to new chart
