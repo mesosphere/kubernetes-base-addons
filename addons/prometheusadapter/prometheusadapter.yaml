@@ -32,6 +32,8 @@ spec:
     chart: prometheus-adapter
     repo: https://prometheus-community.github.io/helm-charts
     version: 2.11.1
+    valuesRemap:
+      "rules.resource": "rules.resource"
     values: |
       ---
       prometheus:
