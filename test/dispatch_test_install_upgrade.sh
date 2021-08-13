@@ -17,7 +17,7 @@ if [[ -n "${CLAIM_NAME}" ]]; then
 fi
 
 echo "INFO: the following test groups will be run against branch ${branch}:"
-tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (grep -E '^Test' || true) | grep -v 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
+tests=$(go run -tags experimental scripts/test-wrapper.go origin ${branch} | (grep -E '^Test' || true) | grep -Ev 'TestAwsGroup\|TestElasticsearchGroup\|TestIstioGroup')
 echo ${tests}
 
 for g in ${tests}

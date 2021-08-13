@@ -1,5 +1,90 @@
 # Release Notes
 
+## stable-1.18-3.5.0, stable-1.19-3.5.0, v3.5.0
+
+### dex
+  - Defer AuthRequest creation until after initial login page to avoid too many objects.
+  #1115 (@mesosphere-mergebot)
+
+### dex-k8s-authenticator
+  - security: use a service account rather than adding extra permissions to the default namespace account
+  #1041 (@mesosphere-mergebot)
+
+### fluentbit
+  - Update to the latest minor version just to keep up with upstream. The bugfixes listed should have no effect on our default configurations.
+  - https://fluentbit.io/announcements/v1.6.9/
+  - https://fluentbit.io/announcements/v1.6.10/
+  #1037 (@mesosphere-mergebot)
+
+### opsportal
+  - fix: update UI dependencies to mitigate CVE-2021-23337
+  #1124 (@armandgrillet)
+
+  - Fixes bug in OpsPortal & Kommander UI where LDAP Root CA is malformed when saved
+  - Updated UI to only ship with needed dependencies
+  #1042 (@mesosphere-mergebot)
+
+### prometheus
+  - fix(prometheus): In upgrades, use existing PVC from previous installation.
+  #1016 (@mesosphere-mergebot)
+
+  - [prometheus] Upgrades to the latest version of the kube-prometheus-stack chart. This includes upgrades for multiple applications. The changes listed should not be disruptive to the default addon configuration.
+  - prometheus 2.26.0:
+  - https://github.com/prometheus/prometheus/releases/tag/v2.22.2
+  - https://github.com/prometheus/prometheus/releases/tag/v2.23.0
+  - https://github.com/prometheus/prometheus/releases/tag/v2.24.0
+  - https://github.com/prometheus/prometheus/releases/tag/v2.24.1
+  - https://github.com/prometheus/prometheus/releases/tag/v2.25.0
+  - https://github.com/prometheus/prometheus/releases/tag/v2.25.1
+  - https://github.com/prometheus/prometheus/releases/tag/v2.25.2
+  - https://github.com/prometheus/prometheus/releases/tag/v2.26.0
+  - grafana 7.5.3:
+  - https://github.com/grafana/grafana/releases/tag/v7.3.6
+  - https://github.com/grafana/grafana/releases/tag/v7.3.7
+  - https://github.com/grafana/grafana/releases/tag/v7.3.10
+  - https://github.com/grafana/grafana/releases/tag/v7.4.0
+  - https://github.com/grafana/grafana/releases/tag/v7.4.1
+  - https://github.com/grafana/grafana/releases/tag/v7.4.2
+  - https://github.com/grafana/grafana/releases/tag/v7.4.3
+  - https://github.com/grafana/grafana/releases/tag/v7.4.5
+  - https://github.com/grafana/grafana/releases/tag/v7.5.0
+  - https://github.com/grafana/grafana/releases/tag/v7.5.1
+  - https://github.com/grafana/grafana/releases/tag/v7.5.2
+  - https://github.com/grafana/grafana/releases/tag/v7.5.3
+  - prometheus-operator 0.47.0:
+  - https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.44.1
+  - https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.45.0
+  - https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.46.0
+  - https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.47.0
+  #1131 (@mesosphere-mergebot)
+
+### traefik
+  - [traefik] A bug causing configuration updates to fail when a user adds an invalid tls secret has been fixed
+  #1163 (@mesosphere-mergebot)
+
+### vsphere-csi-driver
+  - Update vpshere-csi-driver to v2.2.0 to pull in the fix for duplicate operations failure when attaching PVs (https://github.com/kubernetes-sigs/vsphere-csi-driver/issues/580) (COPS-6906)
+  #1149 (@mesosphere-mergebot)
+
+
+## stable-1.18-3.4.0, stable-1.19-3.4.0, v3.4.0
+
+### opsportal
+  - Fixes bug in OpsPortal where Identity Providers would not show up (COPS-6843)
+  #954 (@mesosphere-mergebot)
+
+### prometheus
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #981 (@gracedo)
+
+  - prometheus(fix): Re-enable etcd prometheus rules
+  #941 (@mesosphere-mergebot)
+
+### reloader
+  - When upgrading from a release that used helm 2 to install, reloader cannot be cleanly upgraded due to selector changes. This adds a flag that causes reloader to be uninstalled before being upgraded. This should have no effect on running applications.
+  #957 (@mesosphere-mergebot)
+
+
 ## stable-1.18-3.3.0, stable-1.19-3.3.0, v3.3.0
 
 ### defaultstorageclass-protection
