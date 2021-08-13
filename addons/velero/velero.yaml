@@ -30,7 +30,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.5.3-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.6.0-1"
     values.chart.helm.kubeaddons.mesosphere.io/velero: "https://raw.githubusercontent.com/mesosphere/charts/8b85fea/staging/velero/values.yaml"
     # minio StatefulSet changes too much to be updated
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=3.0.6\", \"strategy\": \"delete\"}]"
@@ -88,7 +88,7 @@ spec:
             servicemonitor.kubeaddons.mesosphere.io/path: "metrics"
       initContainers:
         - name: initialize-velero
-          image: mesosphere/kubeaddons-addon-initializer:v0.4.4
+          image: mesosphere/kubeaddons-addon-initializer:v0.5.4
           args: ["velero"]
           env:
             - name: "VELERO_MINIO_FALLBACK_SECRET_NAME"
