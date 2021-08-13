@@ -8,7 +8,7 @@ metadata:
   annotations:
     catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-3"
     appversion.kubeaddons.mesosphere.io/kube-oidc-proxy: "v0.2.0"
-    values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/8b85fea/staging/kube-oidc-proxy/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/9c84710/staging/kube-oidc-proxy/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
