@@ -6,7 +6,7 @@ metadata:
     kubeaddons.mesosphere.io/name: traefik
     kubeaddons.mesosphere.io/provides: ingresscontroller
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.30-0"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.7.30-1"
     appversion.kubeaddons.mesosphere.io/traefik: "1.7.30+d2iq.0"
     endpoint.kubeaddons.mesosphere.io/traefik: "/ops/portal/traefik"
     docs.kubeaddons.mesosphere.io/traefik: "https://docs.traefik.io/v1.7"
@@ -21,7 +21,11 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
+<<<<<<< HEAD
     version: 1.88.0
+=======
+    version: 1.90.0
+>>>>>>> e4603d3... bump all kubeaddons-addon-initializer
     valuesRemap:
       "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
@@ -116,7 +120,7 @@ spec:
 
       initContainers:
       - name: initialize-traefik-certificate
-        image: mesosphere/kubeaddons-addon-initializer:v0.3.0
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["traefik"]
         env:
         - name: "TRAEFIK_INGRESS_NAMESPACE"
@@ -134,7 +138,7 @@ spec:
         - name: "TRAEFIK_CLUSTER_HOSTNAME_KEY"
           value: "clusterHostname"
 
-      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.3.0
+      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.5.4
       extraServicePorts:
         - name: velero-minio
           port: 9000
