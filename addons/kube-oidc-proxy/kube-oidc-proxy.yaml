@@ -36,7 +36,7 @@ spec:
   chartReference:
     chart: kube-oidc-proxy
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.2.6
+    version: 0.2.7
     values: |
       ---
       image:
