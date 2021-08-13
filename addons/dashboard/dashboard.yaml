@@ -5,17 +5,8 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dashboard
   annotations:
-<<<<<<< HEAD
-<<<<<<< HEAD
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.2-0"
-    appversion.kubeaddons.mesosphere.io/dashboard: "3.0.2"
-=======
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.3.1-1"
-=======
     catalog.kubeaddons.mesosphere.io/addon-revision: "3.1.0-1"
->>>>>>> 5fe65f9... fix bad revision bump automation
     appversion.kubeaddons.mesosphere.io/dashboard: "2.3.1"
->>>>>>> 4b19b3a... Bump kubernetes-dashboard to 4.5.0
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
     values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/f4f301a/stable/kubernetes-dashboard/values.yaml"
@@ -42,11 +33,7 @@ spec:
   chartReference:
     chart: kubernetes-dashboard
     repo: https://kubernetes.github.io/dashboard/
-<<<<<<< HEAD
-    version: 3.0.2
-=======
     version: 4.5.0
->>>>>>> 4b19b3a... Bump kubernetes-dashboard to 4.5.0
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
