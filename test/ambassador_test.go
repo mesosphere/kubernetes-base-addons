@@ -114,7 +114,7 @@ func ambassadorChecker(t *testing.T, cluster testcluster.Cluster) testharness.Jo
 
 		// I've checked with upstream, even though there's a status available in the Mapping API, they don't use it since several
 		// versions ago, so for the time being we just give the mapping a reasonable amount of time to resolve.
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 20)
 
 		// get the svc IP for ambassador
 		localport, stop, err := portForwardPodWithPrefix(cluster, constants.DefaultAddonNamespace, "ambassador", "8080")
