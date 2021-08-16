@@ -4,7 +4,7 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.0.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.1-1"
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
 spec:
@@ -31,7 +31,7 @@ spec:
   chartReference:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.3.0
+    version: 0.3.1
     values: |
       ---
       replicaCount: 1
