@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kube-oidc-proxy
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-3"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.2.0-4"
     appversion.kubeaddons.mesosphere.io/kube-oidc-proxy: "v0.2.0"
     values.chart.helm.kubeaddons.mesosphere.io/kube-oidc-proxy: "https://raw.githubusercontent.com/mesosphere/charts/9c84710/staging/kube-oidc-proxy/values.yaml"
 spec:
@@ -72,5 +72,5 @@ spec:
 
       initContainers:
       - name: initialize-kube-oidc-proxy
-        image: mesosphere/kubeaddons-addon-initializer:v0.1.9
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["kube-oidc-proxy"]
