@@ -21,11 +21,7 @@ spec:
   chartReference:
     chart: traefik
     repo: https://mesosphere.github.io/charts/staging
-<<<<<<< HEAD
-    version: 1.88.0
-=======
     version: 1.90.0
->>>>>>> e4603d3... bump all kubeaddons-addon-initializer
     valuesRemap:
       "dashboard.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
