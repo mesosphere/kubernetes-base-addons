@@ -1,5 +1,24 @@
 # Release Notes
 
+## stable-1.18-3.6.0, stable-1.19-3.6.0, v3.6.0
+
+### dashboard
+  - Starting from version 4.0.0 of this chart, it will only support Helm 3 and remove the support for Helm 2
+  #1057 (@mesosphere-mergebot)
+
+### nvidia
+  - Updated Nvidia addon to support driver v460
+  #1205 (@mesosphere-mergebot)
+
+### prometheus
+  - fix: Bump Prometheus to v2.29.2 which fixes head GC and pending readers race condition that caused issues with rule evaluations.
+  #1313 (@mesosphere-mergebot)
+
+### traefik-forward-auth
+  - traefik-forward-auth: shorten hook names to be within 63 character length.
+  #1317 (@mesosphere-mergebot)
+
+
 ## stable-1.18-3.5.0, stable-1.19-3.5.0, v3.5.0
 
 ### dex
