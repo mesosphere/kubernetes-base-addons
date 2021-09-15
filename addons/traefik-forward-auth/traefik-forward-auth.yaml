@@ -4,17 +4,9 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-<<<<<<< HEAD
-<<<<<<< HEAD
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.0.5-1"
-=======
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.2-1"
-=======
     catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-1"
->>>>>>> dcec584... fix: Use correct tfa addon-revision version
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
->>>>>>> 8b38321... Bump traefik-forward-auth to 0.3.3
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -39,21 +31,13 @@ spec:
   chartReference:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
-<<<<<<< HEAD
-    version: 0.2.14
-=======
     version: 0.3.3
->>>>>>> 8b38321... Bump traefik-forward-auth to 0.3.3
     values: |
       ---
       replicaCount: 1
       image:
         repository: mesosphere/traefik-forward-auth
-<<<<<<< HEAD
-        tag: 2.0.5
-=======
         tag: 3.0.2
->>>>>>> 5911450... chore: update image tag
         pullPolicy: IfNotPresent
       resources:
         requests:
@@ -100,7 +84,7 @@ spec:
       initContainers:
       # initialize-traefik-forward-auth deploys credentials for use by the proxy
       - name: initialize-traefik-forward-auth
-        image: mesosphere/kubeaddons-addon-initializer:v0.2.9
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["traefikforwardauth"]
         env:
         - name: "TFA_CONFIGMAP_NAME"
@@ -111,3 +95,7 @@ spec:
           value: "kubeaddons"
         - name: "TFA_INGRESS_SERVICE_NAME"
           value: "traefik-kubeaddons"
+      clusterStorage:
+        enabled: false
+        namespace: kubeaddons
+      addonsInitializer: mesosphere/kubeaddons-addon-initializer:v0.5.4
