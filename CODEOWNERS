@@ -21,5 +21,4 @@ addons/metallb/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-cata
 addons/istio/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
 addons/kiali/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
 addons/jaeger/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
-addons/ambassador/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog
 addons/external-dns/* @mesosphere/sig-ksphere-networking @mesosphere/sig-ksphere-catalog

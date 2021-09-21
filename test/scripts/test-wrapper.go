@@ -24,7 +24,7 @@ const (
 
 type addonName string
 
-var re = regexp.MustCompile(`^addons/([a-zA-Z0-9-]+)/?`)
+var re = regexp.MustCompile(`^[AM]\taddons/([a-zA-Z0-9-]+)/?`)
 
 func main() {
 	upstreamRemote := defaultUpstreamRemote
@@ -87,7 +87,7 @@ func main() {
 func getModifiedAddons(upstreamRemote, upstreamBranch string) ([]addonName, error) {
 	addonsModifiedMap := make(map[addonName]struct{})
 	stdout := new(bytes.Buffer)
-	cmd := exec.Command("git", "diff", upstreamRemote+"/"+upstreamBranch, "--name-only")
+	cmd := exec.Command("git", "diff", upstreamRemote+"/"+upstreamBranch, "--name-status")
 	cmd.Stdout = stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {

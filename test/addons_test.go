@@ -177,12 +177,6 @@ func TestGeneralGroup(t *testing.T) {
 	}
 }
 
-func TestAmbassadorGroup(t *testing.T) {
-	if err := testgroup(t, "ambassador", defaultKindestNodeImage, ambassadorChecker); err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestBackupsGroup(t *testing.T) {
 	if err := testgroup(t, "backups", defaultKindestNodeImage); err != nil {
 		t.Fatal(err)
