@@ -29,10 +29,10 @@
 |kubeaddons|kibana|6.8.13-15|6.8.10|Addon|
 |kubeaddons|konvoyconfig|0.0.4-4|0.0.4|Addon|
 |kubeaddons|kube-oidc-proxy|0.2.0-2|v0.2.0|Addon|
-|kubeaddons|nvidia|0.2.0-8|0.2.0|ClusterAddon|
+|kubeaddons|nvidia|0.2.2-1|0.2.0|ClusterAddon|
 |kubeaddons|opsportal|1.5.0-15|1.5.0|Addon|
-|kubeaddons|prometheus|0.47.0-3|2.26.0|Addon|
+|kubeaddons|prometheus|0.47.0-5|2.29.2|Addon|
 |kubeaddons|prometheusadapter|v0.7.0-7|v0.7.0|Addon|
 |kubeaddons|reloader|v0.0.85-1|v0.0.85|Addon|
-|kubeaddons|traefik-forward-auth|1.0.5-1|null|Addon|
+|kubeaddons|traefik-forward-auth|3.3.0-1|null|Addon|
 |kubeaddons-flagger|flagger|0.19.0-6|0.19.0|ClusterAddon|
