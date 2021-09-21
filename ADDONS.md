@@ -1,6 +1,5 @@
 |Namespace|Name|Version|App Version|Kind|
 |---------|----|-------|-----------|----|
-| |ambassador|1.11.1-1|1.11.1|ClusterAddon|
 | |awsebscsiprovisioner|0.8.0-1|0.8.0|ClusterAddon|
 | |awsebsprovisioner|1.0.0-1|1.0|ClusterAddon|
 | |azuredisk-csi-driver|0.7.2-3|0.7.2|ClusterAddon|
