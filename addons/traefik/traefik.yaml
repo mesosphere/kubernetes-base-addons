@@ -116,7 +116,7 @@ spec:
 
       initContainers:
       - name: initialize-traefik-certificate
-        image: mesosphere/kubeaddons-addon-initializer:v0.3.0
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["traefik"]
         env:
         - name: "TRAEFIK_INGRESS_NAMESPACE"
@@ -134,7 +134,7 @@ spec:
         - name: "TRAEFIK_CLUSTER_HOSTNAME_KEY"
           value: "clusterHostname"
 
-      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.3.0
+      initCertJobImage: mesosphere/kubeaddons-addon-initializer:v0.5.4
       extraServicePorts:
         - name: velero-minio
           port: 9000

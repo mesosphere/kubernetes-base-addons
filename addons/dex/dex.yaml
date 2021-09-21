@@ -6,7 +6,7 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "2.27.0-4"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.27.0-5"
     appversion.kubeaddons.mesosphere.io/dex: "2.27.0"
     values.chart.helm.kubeaddons.mesosphere.io/dex: "https://raw.githubusercontent.com/mesosphere/charts/9c84710/stable/dex/values.yaml"
 spec:
@@ -104,7 +104,7 @@ spec:
             - 'https://PUBLIC.URI/_oauth'
       initContainers:
       - name: initialize-dex
-        image: mesosphere/kubeaddons-addon-initializer:v0.2.12
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["dex"]
         env:
         - name: "DEX_NAMESPACE"

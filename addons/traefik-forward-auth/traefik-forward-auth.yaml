@@ -4,7 +4,7 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.0.1-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-1"
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
 spec:
@@ -31,13 +31,13 @@ spec:
   chartReference:
     chart: traefik-forward-auth
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.3.1
+    version: 0.3.3
     values: |
       ---
       replicaCount: 1
       image:
         repository: mesosphere/traefik-forward-auth
-        tag: 3.0.1
+        tag: 3.0.2
         pullPolicy: IfNotPresent
       resources:
         requests:
@@ -84,7 +84,7 @@ spec:
       initContainers:
       # initialize-traefik-forward-auth deploys credentials for use by the proxy
       - name: initialize-traefik-forward-auth
-        image: mesosphere/kubeaddons-addon-initializer:v0.5.1
+        image: mesosphere/kubeaddons-addon-initializer:v0.5.4
         args: ["traefikforwardauth"]
         env:
         - name: "TFA_CONFIGMAP_NAME"
@@ -98,4 +98,4 @@ spec:
       clusterStorage:
         enabled: true
         namespace: kubeaddons
-      addonsInitializer: mesosphere/kubeaddons-addon-initializer:v0.5.1
+      addonsInitializer: mesosphere/kubeaddons-addon-initializer:v0.5.4
