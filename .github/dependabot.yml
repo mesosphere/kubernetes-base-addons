@@ -36,9 +36,6 @@ updates:
       - dependency-name: sigs.k8s.io/controller-runtime
         versions:
           - 0.8.2
-      - dependency-name: github.com/datawire/ambassador
-        versions:
-          - 1.11.1
       - dependency-name: github.com/mesosphere/ksphere-testing-framework
         versions:
           - 0.2.4
