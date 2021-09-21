@@ -1,6 +1,4 @@
 ---
-addon/ambassador:
-  - addons/ambassador/*
 addon/awsebscsiprovisioner:
   - addons/awsebscsiprovisioner/*
 addon/awsebsprovisioner:
