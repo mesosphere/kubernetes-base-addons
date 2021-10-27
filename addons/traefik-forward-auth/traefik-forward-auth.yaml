@@ -4,7 +4,7 @@ metadata:
   name: traefik-forward-auth
   namespace: kubeaddons
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "3.3.0-2"
     helm.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: '[{"upgradeFrom": "<=1.0.5", "strategy": "delete"}]'
 spec:
@@ -37,7 +37,7 @@ spec:
       replicaCount: 1
       image:
         repository: mesosphere/traefik-forward-auth
-        tag: 3.0.2
+        tag: 3.0.3
         pullPolicy: IfNotPresent
       resources:
         requests:
