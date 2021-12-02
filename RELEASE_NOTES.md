@@ -1,5 +1,12 @@
 # Release Notes
 
+## stable-1.20-4.3.0, v4.3.0
+
+### traefik-forward-auth
+  - [traefik-forward-auth] Upgrade container image to 3.0.3, pulling in a fix for URL pattern matching.
+  #1345 (@mesosphere-mergebot)
+
+
 ## stable-1.20-4.2.0, v4.2.0
 
 ### ambassador
