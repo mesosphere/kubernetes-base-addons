@@ -34,5 +34,5 @@
 |kubeaddons|prometheus|0.47.0-5|2.29.2|Addon|
 |kubeaddons|prometheusadapter|v0.8.3-4|v0.8.3|Addon|
 |kubeaddons|reloader|v0.0.99-1|v0.0.99|Addon|
-|kubeaddons|traefik-forward-auth|3.3.0-1|null|Addon|
+|kubeaddons|traefik-forward-auth|3.3.0-2|null|Addon|
 |kubeaddons-flagger|flagger|0.19.0-6|0.19.0|ClusterAddon|
