@@ -36,12 +36,12 @@ spec:
   chartReference:
     chart: kube-oidc-proxy
     repo: https://mesosphere.github.io/charts/staging
-    version: 0.2.7
+    version: 0.3.0
     values: |
       ---
       image:
         repository: quay.io/jetstack/kube-oidc-proxy
-        tag: v0.2.0
+        tag: v0.3.0
         pullPolicy: IfNotPresent
 
       deploymentAnnotations:
