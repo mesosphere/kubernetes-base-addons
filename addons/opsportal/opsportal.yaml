@@ -41,7 +41,8 @@ spec:
             memory: 128Mi
       secrets:
         image:
-          tag: "v0.5.3"
+          repository: "mesosphere/kubeaddons-addon-initializer"
+          tag: "v0.5.4"
       opsportalRBAC:
         enabled: true
         path: /ops/portal
