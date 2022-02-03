@@ -28,10 +28,10 @@
 |kubeaddons|gatekeeper|3.4.0-3|3.4.0|Addon|
 |kubeaddons|kibana|7.9.3-2|7.9.3|Addon|
 |kubeaddons|konvoyconfig|0.0.4-4|0.0.4|Addon|
-|kubeaddons|kube-oidc-proxy|0.2.0-4|v0.2.0|Addon|
-|kubeaddons|nvidia|0.2.2-1|0.2.0|ClusterAddon|
+|kubeaddons|kube-oidc-proxy|v0.3.0-1|v0.3.0|Addon|
+|kubeaddons|nvidia|0.2.2-3|0.2.0|ClusterAddon|
 |kubeaddons|opsportal|1.6.0-2|1.5.0|Addon|
-|kubeaddons|prometheus|0.47.0-5|2.29.2|Addon|
+|kubeaddons|prometheus|0.47.0-7|2.29.2|Addon|
 |kubeaddons|prometheusadapter|v0.8.3-4|v0.8.3|Addon|
 |kubeaddons|reloader|v0.0.99-1|v0.0.99|Addon|
 |kubeaddons|traefik-forward-auth|3.3.0-2|null|Addon|
