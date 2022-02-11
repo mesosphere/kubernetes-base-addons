@@ -17,8 +17,15 @@
   - Adds concurrency policy Replace configuration to the Grafana home dashboard CronJob to avoid potentially creating an unbound number of pods (COPS-7105)
   #1399 (@mesosphere-mergebot)
 
+  - chore: Pins Grafana image to 7.5.6 and bumps kubectl image to 1.20.6 (COPS-6963)
+  #1428 (@mesosphere-mergebot)
+
   - Alertmanager CRD is now properly upgraded (COPS-6842)
   #1330 (@mesosphere-mergebot)
+
+### traefik-forward-auth
+  - traefik-forward-auth: bring back the in-cluster storage feature.
+  #1442 (@mesosphere-mergebot)
 
 
 ## stable-1.20-4.3.0, v4.3.0
