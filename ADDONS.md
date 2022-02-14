@@ -30,9 +30,9 @@
 |kubeaddons|konvoyconfig|0.0.4-4|0.0.4|Addon|
 |kubeaddons|kube-oidc-proxy|v0.3.0-1|v0.3.0|Addon|
 |kubeaddons|nvidia|0.2.2-3|0.2.0|ClusterAddon|
-|kubeaddons|opsportal|1.6.0-2|1.5.0|Addon|
-|kubeaddons|prometheus|0.47.0-7|2.29.2|Addon|
+|kubeaddons|opsportal|1.6.0-3|1.5.0|Addon|
+|kubeaddons|prometheus|0.47.0-8|2.29.2|Addon|
 |kubeaddons|prometheusadapter|v0.8.3-4|v0.8.3|Addon|
 |kubeaddons|reloader|v0.0.99-1|v0.0.99|Addon|
-|kubeaddons|traefik-forward-auth|3.3.0-2|null|Addon|
+|kubeaddons|traefik-forward-auth|3.3.0-3|null|Addon|
 |kubeaddons-flagger|flagger|0.19.0-6|0.19.0|ClusterAddon|
