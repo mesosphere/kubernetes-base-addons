@@ -7,7 +7,7 @@
 | |azurediskprovisioner|1.0.0-2|1.0|ClusterAddon|
 | |cert-manager|1.0.3-8|1.0.3|ClusterAddon|
 | |dashboard|3.1.0-1|2.3.1|ClusterAddon|
-| |defaultstorageclass-protection|1.1.0-0|0.0.6|ClusterAddon|
+| |defaultstorageclass-protection|1.1.0-1|0.1.0|ClusterAddon|
 | |external-dns|0.7.0-4|0.7.0|ClusterAddon|
 | |gcpdisk-csi-driver|0.7.1-2|0.7.1|ClusterAddon|
 | |gcpdiskprovisioner|1.0.0-2|1.0|ClusterAddon|
