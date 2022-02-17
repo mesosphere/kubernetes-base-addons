@@ -2,6 +2,10 @@
 
 ## stable-1.20-4.4.0, v4.4.0
 
+### defaultstorageclass-protection
+  - Use a chart version that has no reference to "latest" tag of default-storage-class
+  #1446 (@mesosphere-mergebot)
+
 ### kube-oidc-proxy
   - Bumps kube-oidc-proxy to 0.3.0 to resolve "kubectl log" latency issues (COPS-7123)
   #1420 (@mesosphere-mergebot)
@@ -14,11 +18,11 @@
   #1412 (@mesosphere-mergebot)
 
 ### prometheus
-  - Adds concurrency policy Replace configuration to the Grafana home dashboard CronJob to avoid potentially creating an unbound number of pods (COPS-7105)
-  #1399 (@mesosphere-mergebot)
-
   - chore: Pins Grafana image to 7.5.6 and bumps kubectl image to 1.20.6 (COPS-6963)
   #1428 (@mesosphere-mergebot)
+
+  - Adds concurrency policy Replace configuration to the Grafana home dashboard CronJob to avoid potentially creating an unbound number of pods (COPS-7105)
+  #1399 (@mesosphere-mergebot)
 
   - Alertmanager CRD is now properly upgraded (COPS-6842)
   #1330 (@mesosphere-mergebot)
