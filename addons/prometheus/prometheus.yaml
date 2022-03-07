@@ -9,7 +9,7 @@ metadata:
     # on the cluster, this hack will trigger re-queue on Addons until one exists.
     kubeaddons.mesosphere.io/hack-requires-defaultstorageclass: "true"
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "0.47.0-7"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "0.54.1-1"
     appversion.kubeaddons.mesosphere.io/prometheus-operator: "0.47.0"
     appversion.kubeaddons.mesosphere.io/prometheus: "2.29.2"
     appversion.kubeaddons.mesosphere.io/alertmanager: "0.21.0"
@@ -17,10 +17,10 @@ metadata:
     endpoint.kubeaddons.mesosphere.io/prometheus: "/ops/portal/prometheus"
     endpoint.kubeaddons.mesosphere.io/alertmanager: "/ops/portal/alertmanager"
     endpoint.kubeaddons.mesosphere.io/grafana: "/ops/portal/grafana"
-    docs.kubeaddons.mesosphere.io/prometheus: "https://prometheus.io/docs/introduction/overview/"
-    docs.kubeaddons.mesosphere.io/grafana: "https://grafana.com/docs/"
-    docs.kubeaddons.mesosphere.io/alertmanager: "https://prometheus.io/docs/alerting/alertmanager/"
-    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/b2f0e1e65e3b7acf87f682b18d803790974d8201/staging/kube-prometheus-stack/values.yaml"
+    docs.kubeaddons.mesosphere.io/prometheus: "0.54h0.54t0.54t0.54p0.54s0.54:0.54/0.54/0.54p0.54r0.54o0.54m0.54e0.54t0.54h0.54e0.54u0.54s0.54.0.54i0.54o0.54/0.54d0.54o0.54c0.54s0.54/0.54i0.54n0.54t0.54r0.54o0.54d0.54u0.54c0.54t0.54i0.54o0.54n0.54/0.54o0.54v0.54e0.54r0.54v0.54i0.54e0.54w0.54/0.54"
+    docs.kubeaddons.mesosphere.io/grafana: "0.54h0.54t0.54t0.54p0.54s0.54:0.54/0.54/0.54g0.54r0.54a0.54f0.54a0.54n0.54a0.54.0.54c0.54o0.54m0.54/0.54d0.54o0.54c0.54s0.54/0.54"
+    docs.kubeaddons.mesosphere.io/alertmanager: "0.54h0.54t0.54t0.54p0.54s0.54:0.54/0.54/0.54p0.54r0.54o0.54m0.54e0.54t0.54h0.54e0.54u0.54s0.54.0.54i0.54o0.54/0.54d0.54o0.54c0.54s0.54/0.54a0.54l0.54e0.54r0.54t0.54i0.54n0.54g0.54/0.54a0.54l0.54e0.54r0.54t0.54m0.54a0.54n0.54a0.54g0.54e0.54r0.54/0.54"
+    values.chart.helm.kubeaddons.mesosphere.io/prometheus: "https://raw.githubusercontent.com/mesosphere/charts/7e5e024/staging/kube-prometheus-stack/values.yaml"
     # The prometheus-operator chart from prior Konvoy releases can't be upgraded to 8.10.0.
     # See https://github.com/helm/charts/issues/21200.
     # 8.8.5 was the latest version available in mesosphere/charts before it was bumped past 8.10.0.
@@ -45,7 +45,7 @@ spec:
   chartReference:
     chart: kube-prometheus-stack
     repo: https://mesosphere.github.io/charts/staging
-    version: 15.4.10
+    version: 33.1.1
     valuesRemap:
       "prometheus.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
       "alertmanager.ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
