@@ -5,11 +5,11 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dashboard
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "3.1.0-1"
-    appversion.kubeaddons.mesosphere.io/dashboard: "2.3.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "2.5.1-1"
+    appversion.kubeaddons.mesosphere.io/dashboard: "2.5.1"
     endpoint.kubeaddons.mesosphere.io/dashboard: "/ops/portal/kubernetes/"
     docs.kubeaddons.mesosphere.io/dashboard: "https://github.com/kubernetes/dashboard/blob/master/README.md"
-    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/f4f301a/stable/kubernetes-dashboard/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/dashboard: "https://raw.githubusercontent.com/helm/charts/390ee66/stable/kubernetes-dashboard/values.yaml"
     # versions of the dashboard older than v2 are not directly compatible and so a delete uprade is needed in this case to avoid conflicts with the older resources.
     helm.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
     helm2.kubeaddons.mesosphere.io/upgrade-strategy: "[{\"upgradeFrom\": \"<=2.0.0\", \"strategy\": \"delete\"}]"
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: kubernetes-dashboard
     repo: https://kubernetes.github.io/dashboard/
-    version: 4.5.0
+    version: 5.3.1
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
