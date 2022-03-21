@@ -8,13 +8,13 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: kiali
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.29.1-4"
-    appversion.kubeaddons.mesosphere.io/kiali-operator: "v1.29.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.48.0-1"
+    appversion.kubeaddons.mesosphere.io/kiali-operator: "v1.48.0"
     appversion.kubeaddons.mesosphere.io/kiali: "1.29.0"
     stage.kubeaddons.mesosphere.io/kiali: Experimental
     endpoint.kubeaddons.mesosphere.io/kiali: "/ops/portal/kiali"
-    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.29/"
-    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/3c8a896/kiali-operator/values.yaml"
+    docs.kubeaddons.mesosphere.io/kiali: "https://kiali.io/documentation/v1.48/"
+    values.chart.helm.kubeaddons.mesosphere.io/kiali: "https://raw.githubusercontent.com/kiali/helm-charts/989a7a8/kiali-operator/values.yaml"
 spec:
   namespace: istio-system
   kubernetes:
@@ -35,7 +35,7 @@ spec:
   chartReference:
     chart: kiali-operator
     repo: https://kiali.org/helm-charts/
-    version: 1.29.1
+    version: 1.48.0
     valuesRemap:
       "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/auth-url": "ingress.auth.auth-url"
     values: |
