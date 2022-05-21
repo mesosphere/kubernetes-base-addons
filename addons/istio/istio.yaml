@@ -8,10 +8,10 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: istio
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.9.1-1"
-    appversion.kubeaddons.mesosphere.io/istio: "1.9.1"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "1.11.5-1"
+    appversion.kubeaddons.mesosphere.io/istio: "1.11.5"
     docs.kubeaddons.mesosphere.io/istio: "https://istio.io/docs/"
-    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/1749586/staging/istio/values.yaml"
+    values.chart.helm.kubeaddons.mesosphere.io/istio: "https://raw.githubusercontent.com/mesosphere/charts/d239449/staging/istio/values.yaml"
 spec:
   namespace: istio-system
   requires:
@@ -36,7 +36,7 @@ spec:
   chartReference:
     chart: istio
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.9.1
+    version: 1.11.6
     values: |
       istioOperator:
         components:
