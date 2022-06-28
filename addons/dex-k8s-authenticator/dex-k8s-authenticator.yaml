@@ -6,9 +6,9 @@ metadata:
   labels:
     kubeaddons.mesosphere.io/name: dex-k8s-authenticator
   annotations:
-    catalog.kubeaddons.mesosphere.io/addon-revision: "1.2.2-7"
-    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.2"
-    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/679ae2a/staging/dex-k8s-authenticator/values.yaml"
+    catalog.kubeaddons.mesosphere.io/addon-revision: "v1.2.4-1"
+    appversion.kubeaddons.mesosphere.io/dex-k8s-authenticator: "v1.2.4"
+    values.chart.helm.kubeaddons.mesosphere.io/dex-k8s-authenticator: "https://raw.githubusercontent.com/mesosphere/charts/371ac70/staging/dex-k8s-authenticator/values.yaml"
 spec:
   kubernetes:
     minSupportedVersion: v1.15.6
@@ -33,7 +33,7 @@ spec:
   chartReference:
     chart: dex-k8s-authenticator
     repo: https://mesosphere.github.io/charts/staging
-    version: 1.2.8
+    version: 1.2.12
     values: |
       ---
       image:
