@@ -204,5 +204,5 @@ action(tasks=["test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["tes
 action(tasks=["test-install", clean_install_kind, "test-upgrade", clean_upgrade_kind], on=pull_request(chatops=["test-all"]))
 
 # Cron Actions
-do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
-action(name="bump-charts", on=cron(schedule="0 3 7,21 * *"), tasks=[do_bump_charts])
+# do_bump_charts = bump_charts(repo_name="kubernetes-base-addons", task_name="kba-bumps")
+# action(name="bump-charts", on=cron(schedule="0 3 7,21 * *"), tasks=[do_bump_charts])
